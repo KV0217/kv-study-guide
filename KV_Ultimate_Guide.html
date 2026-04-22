@@ -3000,149 +3000,853 @@ plt.show()                                                <span class="code-comm
     <div class="algo-number">11</div>
     <div>
       <div class="algo-title">Neural Networks (ANN)</div>
-      <div class="algo-subtitle">Layers of artificial neurons that learn complex patterns through examples</div>
+      <div class="algo-subtitle">Every layer, every parameter, every concept — explained from zero for non-technical learners</div>
     </div>
   </div>
   <div class="tab-bar">
     <button class="tab-btn active" onclick="showTab('s11','what')">📖 What Is It</button>
     <button class="tab-btn" onclick="showTab('s11','how')">⚙️ How It Works</button>
     <button class="tab-btn" onclick="showTab('s11','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s11','code')">💻 Code & Internals</button>
+    <button class="tab-btn" onclick="showTab('s11','code')">💻 Code &amp; Internals</button>
     <button class="tab-btn" onclick="showTab('s11','terms')">📚 Key Terms</button>
   </div>
 
   <div class="tab-content active" id="s11-what">
+
     <div class="card">
-      <h3>Inspired by the Human Brain</h3>
-      <p>Your brain has ~86 billion neurons connected by synapses. When you see a cat, signals fire through layers of neurons until you recognize "cat." Artificial Neural Networks (ANNs) are a very simplified mathematical version of this.</p>
+      <h3>What Is a Neural Network? (Plain English, Zero Jargon)</h3>
+      <p>Imagine you're teaching a child to recognise cats. You show them 1,000 pictures — some cats, some dogs. After enough examples they start to "get it." They've learned patterns: pointy ears, whiskers, certain face shapes. A neural network does the exact same thing — but with numbers instead of eyes, and math instead of a brain.</p>
+      <p>At its core, a neural network is just a <strong>big mathematical function</strong> that takes in a bunch of numbers (your data — age, price, pixel values, whatever) and outputs a number (a prediction). It learns this function automatically by looking at thousands of examples.</p>
+      <p>The "neural" part comes from a loose inspiration from biology — real neurons in the brain receive signals, process them, and pass the result on. Artificial neurons do the same thing with math. The "network" part is because thousands of these artificial neurons are connected together in layers.</p>
+      <div class="highlight"><p><strong>One-line summary:</strong> A neural network is a layered system of simple math operations that, when stacked and trained on data, can learn to recognise incredibly complex patterns — faces, speech, fraud, disease, anything that has patterns.</p></div>
     </div>
+
+    <div style="text-align:center;margin:20px 0">
+<svg viewBox="0 0 560 295" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;background:#0f172a;border-radius:12px;">
+  <!-- Input→H1 connections -->
+  <line x1="82" y1="55"  x2="198" y2="35"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="55"  x2="198" y2="90"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="55"  x2="198" y2="145" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="55"  x2="198" y2="200" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="55"  x2="198" y2="255" stroke="#1e3a5f" stroke-width="1.2"/>
+  <line x1="82" y1="115" x2="198" y2="35"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="115" x2="198" y2="90"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="115" x2="198" y2="145" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="115" x2="198" y2="200" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="115" x2="198" y2="255" stroke="#1e3a5f" stroke-width="1.2"/>
+  <line x1="82" y1="175" x2="198" y2="35"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="175" x2="198" y2="90"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="175" x2="198" y2="145" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="175" x2="198" y2="200" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="175" x2="198" y2="255" stroke="#1e3a5f" stroke-width="1.2"/>
+  <line x1="82" y1="235" x2="198" y2="35"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="235" x2="198" y2="90"  stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="235" x2="198" y2="145" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="235" x2="198" y2="200" stroke="#1e3a5f" stroke-width="1.2"/><line x1="82" y1="235" x2="198" y2="255" stroke="#1e3a5f" stroke-width="1.2"/>
+  <!-- H1→H2 connections -->
+  <line x1="222" y1="35"  x2="338" y2="65"  stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="35"  x2="338" y2="125" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="35"  x2="338" y2="185" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="35"  x2="338" y2="245" stroke="#2d1b69" stroke-width="1.2"/>
+  <line x1="222" y1="90"  x2="338" y2="65"  stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="90"  x2="338" y2="125" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="90"  x2="338" y2="185" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="90"  x2="338" y2="245" stroke="#2d1b69" stroke-width="1.2"/>
+  <line x1="222" y1="145" x2="338" y2="65"  stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="145" x2="338" y2="125" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="145" x2="338" y2="185" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="145" x2="338" y2="245" stroke="#2d1b69" stroke-width="1.2"/>
+  <line x1="222" y1="200" x2="338" y2="65"  stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="200" x2="338" y2="125" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="200" x2="338" y2="185" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="200" x2="338" y2="245" stroke="#2d1b69" stroke-width="1.2"/>
+  <line x1="222" y1="255" x2="338" y2="65"  stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="255" x2="338" y2="125" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="255" x2="338" y2="185" stroke="#2d1b69" stroke-width="1.2"/><line x1="222" y1="255" x2="338" y2="245" stroke="#2d1b69" stroke-width="1.2"/>
+  <!-- H2→Output connections -->
+  <line x1="362" y1="65"  x2="478" y2="120" stroke="#14532d" stroke-width="1.5"/><line x1="362" y1="65"  x2="478" y2="190" stroke="#14532d" stroke-width="1.5"/>
+  <line x1="362" y1="125" x2="478" y2="120" stroke="#14532d" stroke-width="1.5"/><line x1="362" y1="125" x2="478" y2="190" stroke="#14532d" stroke-width="1.5"/>
+  <line x1="362" y1="185" x2="478" y2="120" stroke="#14532d" stroke-width="1.5"/><line x1="362" y1="185" x2="478" y2="190" stroke="#14532d" stroke-width="1.5"/>
+  <line x1="362" y1="245" x2="478" y2="120" stroke="#14532d" stroke-width="1.5"/><line x1="362" y1="245" x2="478" y2="190" stroke="#14532d" stroke-width="1.5"/>
+  <!-- Input nodes -->
+  <circle cx="70" cy="55"  r="14" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/><text x="70" y="59"  text-anchor="middle" fill="white" font-size="9" font-family="monospace">x₁</text>
+  <circle cx="70" cy="115" r="14" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/><text x="70" y="119" text-anchor="middle" fill="white" font-size="9" font-family="monospace">x₂</text>
+  <circle cx="70" cy="175" r="14" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/><text x="70" y="179" text-anchor="middle" fill="white" font-size="9" font-family="monospace">x₃</text>
+  <circle cx="70" cy="235" r="14" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/><text x="70" y="239" text-anchor="middle" fill="white" font-size="9" font-family="monospace">x₄</text>
+  <!-- H1 nodes -->
+  <circle cx="210" cy="35"  r="13" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/><text x="210" y="39"  text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₁</text>
+  <circle cx="210" cy="90"  r="13" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/><text x="210" y="94"  text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₂</text>
+  <circle cx="210" cy="145" r="13" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/><text x="210" y="149" text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₃</text>
+  <circle cx="210" cy="200" r="13" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/><text x="210" y="204" text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₄</text>
+  <circle cx="210" cy="255" r="13" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/><text x="210" y="259" text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₅</text>
+  <!-- H2 nodes -->
+  <circle cx="350" cy="65"  r="13" fill="#7c3aed" stroke="#c4b5fd" stroke-width="2"/><text x="350" y="69"  text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₆</text>
+  <circle cx="350" cy="125" r="13" fill="#7c3aed" stroke="#c4b5fd" stroke-width="2"/><text x="350" y="129" text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₇</text>
+  <circle cx="350" cy="185" r="13" fill="#7c3aed" stroke="#c4b5fd" stroke-width="2"/><text x="350" y="189" text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₈</text>
+  <circle cx="350" cy="245" r="13" fill="#7c3aed" stroke="#c4b5fd" stroke-width="2"/><text x="350" y="249" text-anchor="middle" fill="white" font-size="8" font-family="monospace">h₉</text>
+  <!-- Output nodes -->
+  <circle cx="490" cy="120" r="16" fill="#065f46" stroke="#34d399" stroke-width="2.5"/><text x="490" y="124" text-anchor="middle" fill="white" font-size="9" font-family="monospace">ŷ₁</text>
+  <circle cx="490" cy="190" r="16" fill="#065f46" stroke="#34d399" stroke-width="2.5"/><text x="490" y="194" text-anchor="middle" fill="white" font-size="9" font-family="monospace">ŷ₂</text>
+  <!-- Layer labels -->
+  <text x="70"  y="278" text-anchor="middle" fill="#93c5fd" font-size="10" font-family="sans-serif" font-weight="600">Input</text>
+  <text x="70"  y="290" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">4 features</text>
+  <text x="210" y="278" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="sans-serif" font-weight="600">Dense(5)</text>
+  <text x="210" y="290" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">Hidden Layer 1</text>
+  <text x="350" y="278" text-anchor="middle" fill="#c4b5fd" font-size="10" font-family="sans-serif" font-weight="600">Dense(4)</text>
+  <text x="350" y="290" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">Hidden Layer 2</text>
+  <text x="490" y="278" text-anchor="middle" fill="#6ee7b7" font-size="10" font-family="sans-serif" font-weight="600">Output(2)</text>
+  <text x="490" y="290" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">Predictions</text>
+</svg>
+<p style="text-align:center;font-size:11px;color:#64748b;margin-top:6px">Each circle = one neuron. Each line = one weight (connection strength). Data flows left to right.</p>
+</div>
+
+    <div class="card">
+      <h3>The Three Layer Types</h3>
+      <table class="term-table">
+        <tr><th>Layer</th><th>What it does</th><th>Rule of thumb</th></tr>
+        <tr>
+          <td><strong>Input Layer</strong></td>
+          <td>Simply receives your features and passes them forward. Does NO computation. One node per feature.</td>
+          <td>20 features → input_shape=(20,). Never add activation here.</td>
+        </tr>
+        <tr>
+          <td><strong>Hidden Layers</strong></td>
+          <td>Where ALL the learning happens. Each layer learns progressively more abstract patterns. Layer 1 might learn edges; layer 5 might learn "face shape".</td>
+          <td>Start with 1-3 hidden layers. Deeper = more powerful but needs more data.</td>
+        </tr>
+        <tr>
+          <td><strong>Output Layer</strong></td>
+          <td>The final prediction. Its structure depends on your problem.</td>
+          <td>Binary classification → 1 node + sigmoid. Multi-class (5 classes) → 5 nodes + softmax. Regression → 1 node, no activation.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Types of Neural Networks (Overview)</h3>
+      <table class="term-table">
+        <tr><th>Type</th><th>Best For</th><th>Key Layers</th></tr>
+        <tr><td><strong>ANN / MLP</strong> (what this section covers)</td><td>Tabular data, structured features</td><td>Dense, Dropout, BatchNorm</td></tr>
+        <tr><td><strong>CNN</strong> (Convolutional)</td><td>Images, spatial data</td><td>Conv2D, MaxPooling, Flatten</td></tr>
+        <tr><td><strong>RNN / LSTM</strong></td><td>Sequences: time series, text</td><td>LSTM, GRU, Embedding</td></tr>
+        <tr><td><strong>Transformer</strong></td><td>Text, language, attention</td><td>MultiHeadAttention, LayerNorm</td></tr>
+        <tr><td><strong>Autoencoder</strong></td><td>Anomaly detection, compression</td><td>Encoder + Decoder Dense blocks</td></tr>
+      </table>
+      <div class="highlight"><p>This guide section covers <strong>ANN/MLP</strong> — the foundation that every other type builds on. Master this first.</p></div>
+    </div>
+
     <div class="analogy">
-      <div class="label">🧠 Analogy — Assembly Line of Workers</div>
-      <p>Imagine an assembly line. Worker 1 (input layer) receives raw material. Middle workers (hidden layers) process and transform it step by step. Final worker (output layer) delivers the finished product. Each worker's output feeds into the next. The whole factory (network) can build something incredibly complex from simple parts.</p>
+      <div class="label">🏭 Real-world analogy — Factory Quality Inspector</div>
+      <p>Imagine a factory that inspects products. Worker 1 (layer 1) checks colour. Worker 2 (layer 2) checks shape using Worker 1's output. Worker 3 (layer 3) checks texture. Final inspector (output layer) makes the pass/fail decision using all previous workers' findings. Each worker specialises in one aspect. Together, they catch defects no single worker could.</p>
     </div>
-    <div class="card">
-      <h3>Architecture: Input → Hidden → Output</h3>
-      <ul>
-        <li><strong>Input Layer:</strong> One node per feature. Just receives and passes data forward.</li>
-        <li><strong>Hidden Layers:</strong> Where the magic happens. Each layer learns increasingly abstract patterns.</li>
-        <li><strong>Output Layer:</strong> Final prediction. One node for regression. One node per class for classification.</li>
-      </ul>
-      <div class="highlight"><p>Deep Learning = Neural Networks with many hidden layers. "Deep" refers to depth (number of layers), not complexity of code.</p></div>
-    </div>
+
   </div>
 
   <div class="tab-content" id="s11-how">
+
     <div class="card">
-      <h3>Forward Pass: Making a Prediction</h3>
-      <p>Each neuron: (1) takes weighted sum of all inputs + bias, (2) applies activation function, (3) sends result to next layer.</p>
-      <div class="highlight"><p>output = activation(w₁x₁ + w₂x₂ + ... + wₙxₙ + b)</p></div>
+      <h3>Step 1 — The Building Block: A Single Neuron</h3>
+      <p>Every layer is made of individual neurons. Here's exactly what ONE neuron does:</p>
+      <ol>
+        <li>Receives several input numbers (e.g., x₁=0.8, x₂=0.3, x₃=1.2)</li>
+        <li>Multiplies each input by a <strong>weight</strong> (e.g., w₁=0.5, w₂=−0.3, w₃=0.9)</li>
+        <li>Adds all those products together: (0.8×0.5) + (0.3×−0.3) + (1.2×0.9) = 0.4 − 0.09 + 1.08 = 1.39</li>
+        <li>Adds a <strong>bias</strong> (a learnable offset): 1.39 + 0.1 = 1.49</li>
+        <li>Passes the result through an <strong>activation function</strong> (e.g., ReLU): max(0, 1.49) = 1.49</li>
+        <li>Outputs 1.49 to every neuron in the next layer</li>
+      </ol>
+      <div class="highlight"><p><strong>Formula:</strong> output = activation( w₁x₁ + w₂x₂ + ... + wₙxₙ + b )<br>This is it. This is the entire computation of one neuron.</p></div>
     </div>
+
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 540 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;background:#0f172a;border-radius:12px;">
+  <!-- Input arrows -->
+  <line x1="10" y1="50"  x2="150" y2="88"  stroke="#60a5fa" stroke-width="1.8" marker-end="url(#a11)"/>
+  <line x1="10" y1="90"  x2="150" y2="90"  stroke="#60a5fa" stroke-width="1.8" marker-end="url(#a11)"/>
+  <line x1="10" y1="130" x2="150" y2="92"  stroke="#60a5fa" stroke-width="1.8" marker-end="url(#a11)"/>
+  <defs><marker id="a11" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#60a5fa"/></marker>
+  <marker id="a12" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#34d399"/></marker></defs>
+  <!-- Input labels -->
+  <text x="8"  y="46"  fill="#93c5fd" font-size="11" font-family="monospace">x₁=0.8</text>
+  <text x="8"  y="86"  fill="#93c5fd" font-size="11" font-family="monospace">x₂=0.3</text>
+  <text x="8"  y="126" fill="#93c5fd" font-size="11" font-family="monospace">x₃=1.2</text>
+  <!-- Weight labels on arrows -->
+  <text x="52" y="62"  fill="#fbbf24" font-size="10" font-family="monospace">×w₁=0.5</text>
+  <text x="52" y="84"  fill="#fbbf24" font-size="10" font-family="monospace">×w₂=−0.3</text>
+  <text x="52" y="122" fill="#fbbf24" font-size="10" font-family="monospace">×w₃=0.9</text>
+  <!-- Neuron circle -->
+  <circle cx="200" cy="90" r="40" fill="#1e293b" stroke="#a78bfa" stroke-width="2.5"/>
+  <text x="200" y="82"  text-anchor="middle" fill="#e2e8f0" font-size="9" font-family="monospace">Σ(w·x)+b</text>
+  <text x="200" y="96"  text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">=(0.4+−0.09</text>
+  <text x="200" y="108" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="monospace">+1.08)+0.1</text>
+  <text x="200" y="120" text-anchor="middle" fill="#fbbf24" font-size="9" font-family="monospace" font-weight="bold">=1.53</text>
+  <!-- Arrow to activation -->
+  <line x1="240" y1="90" x2="290" y2="90" stroke="#a78bfa" stroke-width="2" marker-end="url(#a11)"/>
+  <!-- Activation box -->
+  <rect x="292" y="70" width="80" height="40" rx="8" fill="#4c1d95" stroke="#7c3aed" stroke-width="2"/>
+  <text x="332" y="86"  text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="monospace">ReLU</text>
+  <text x="332" y="100" text-anchor="middle" fill="#c4b5fd" font-size="9"  font-family="monospace">max(0,x)</text>
+  <!-- Arrow to output -->
+  <line x1="372" y1="90" x2="430" y2="90" stroke="#34d399" stroke-width="2" marker-end="url(#a12)"/>
+  <!-- Output label -->
+  <text x="440" y="86"  fill="#34d399" font-size="12" font-family="monospace" font-weight="bold">1.53</text>
+  <text x="436" y="100" fill="#6ee7b7" font-size="9"  font-family="monospace">(output)</text>
+  <!-- Bias label -->
+  <text x="175" y="145" fill="#fb923c" font-size="10" font-family="monospace">+bias=0.1</text>
+  <!-- Labels -->
+  <text x="270" y="30" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="sans-serif">One Neuron: inputs → weighted sum + bias → activation → output</text>
+</svg>
+</div>
+
     <div class="card">
-      <h3>Activation Functions — Adding Non-Linearity</h3>
-      <p>Without activation functions, stacking layers is mathematically equivalent to one layer (linear). Activation functions add non-linearity, allowing the network to learn complex patterns.</p>
-      <ul>
-        <li><strong>ReLU: max(0, x)</strong> — most common for hidden layers. Simple, fast. Outputs 0 for negative inputs, x for positive.</li>
-        <li><strong>Sigmoid: 1/(1+e⁻ˣ)</strong> — squishes to 0-1. Use in binary output layer.</li>
-        <li><strong>Softmax</strong> — converts scores to probabilities that sum to 1. Use for multi-class output.</li>
-        <li><strong>Tanh</strong> — similar to sigmoid but outputs -1 to 1. Sometimes better in hidden layers.</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Backpropagation: Learning from Mistakes</h3>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Forward Pass</div><div class="step-txt">Make prediction with current weights</div></div>
-        <div class="flow-step"><div class="step-num">Calculate Loss</div><div class="step-txt">Compare prediction to actual answer (MSE, cross-entropy)</div></div>
-        <div class="flow-step"><div class="step-num">Backprop</div><div class="step-txt">Compute gradient of loss w.r.t. each weight using chain rule</div></div>
-        <div class="flow-step"><div class="step-num">Update Weights</div><div class="step-txt">Adjust each weight to reduce loss (gradient descent)</div></div>
-        <div class="flow-step"><div class="step-num">Repeat</div><div class="step-txt">Do this for every batch of training data, for many epochs</div></div>
+      <h3>Dense Layer — The Most Common Layer (Fully Connected)</h3>
+      <p>"Dense" means <em>every</em> input connects to <em>every</em> output neuron. A Dense(64) layer has 64 neurons, each connected to every input.</p>
+
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:10px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">Dense(units, activation, use_bias, kernel_initializer, kernel_regularizer)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>Impact if changed</th></tr>
+          <tr>
+            <td><code>units</code></td>
+            <td>Number of neurons in this layer. More neurons = more learning capacity.</td>
+            <td>required</td>
+            <td><strong>64→128:</strong> doubles parameters, slower but can learn more complex patterns. <strong>Too many:</strong> overfits, wastes compute. <strong>Too few:</strong> underfits, misses patterns.</td>
+          </tr>
+          <tr>
+            <td><code>activation</code></td>
+            <td>The activation function applied to each neuron's output. Without this, stacking Dense layers is mathematically identical to one layer.</td>
+            <td>None (linear)</td>
+            <td><strong>'relu':</strong> best default for hidden layers. <strong>'sigmoid':</strong> use only on binary output. <strong>'softmax':</strong> use only on multi-class output. <strong>None / 'linear':</strong> use on regression output.</td>
+          </tr>
+          <tr>
+            <td><code>use_bias</code></td>
+            <td>Whether to add a learnable bias term (the "+b" in the formula). Almost always True.</td>
+            <td>True</td>
+            <td>Setting False removes the bias. Only do this if you have a specific mathematical reason. Default True is almost always correct.</td>
+          </tr>
+          <tr>
+            <td><code>kernel_initializer</code></td>
+            <td>How to set the starting values of the weights BEFORE training. Wrong initialisation = very slow training or total failure.</td>
+            <td>'glorot_uniform'</td>
+            <td><strong>'glorot_uniform':</strong> best for sigmoid/tanh. <strong>'he_uniform':</strong> better for ReLU. <strong>'zeros':</strong> NEVER use — all neurons learn the same thing. <strong>'random_normal':</strong> risky with deep networks.</td>
+          </tr>
+          <tr>
+            <td><code>kernel_regularizer</code></td>
+            <td>Adds a penalty to the loss for large weights. Forces the model to keep weights small, which reduces overfitting.</td>
+            <td>None</td>
+            <td><strong>l2(0.01):</strong> mild regularisation, good starting point. <strong>l2(0.1):</strong> strong — may underfit. <strong>l1(0.01):</strong> promotes sparse weights (some become exactly zero). Use when model overfits.</td>
+          </tr>
+          <tr>
+            <td><code>bias_regularizer</code></td>
+            <td>Same as kernel_regularizer but applies to the bias values.</td>
+            <td>None</td>
+            <td>Rarely needed. Only add if you suspect bias overfitting, which is uncommon.</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="highlight">
+        <p><strong>Simple rule for units:</strong> Start with powers of 2 (32, 64, 128, 256). Decrease toward the output. Example: Dense(128) → Dense(64) → Dense(32) → Dense(1)</p>
       </div>
     </div>
+
+    <div class="card">
+      <h3>Dropout Layer — Preventing Memorisation (Overfitting)</h3>
+      <p><strong>The problem it solves:</strong> Without Dropout, a neural network can memorise the training data — like a student who memorises every past exam question but can't handle new questions. This is called <em>overfitting</em>. The model performs great on training data but terrible on new data.</p>
+      <p><strong>What Dropout does:</strong> During each training step, it randomly picks some neurons and turns them off (sets their output to zero). This forces the network to NOT rely on any single path. Every neuron must learn something useful on its own, because its neighbours might be gone next step.</p>
+      <p><strong>At test time</strong>, ALL neurons are active. Dropout is a training-only trick.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#f87171;font-weight:700;margin:0 0 6px;font-size:12px">Training: Dropout(0.4) — 2 of 5 dropped</p>
+<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <circle cx="30" cy="30" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="30" cy="70" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <!-- dropped neurons (grayed out, X) -->
+  <circle cx="90" cy="20" r="16" fill="#1e293b" stroke="#475569" stroke-width="2" stroke-dasharray="4,2"/>
+  <line x1="80" y1="10" x2="100" y2="30" stroke="#ef4444" stroke-width="2"/><line x1="100" y1="10" x2="80" y2="30" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="90" cy="55" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="90" cy="85" r="16" fill="#1e293b" stroke="#475569" stroke-width="2" stroke-dasharray="4,2"/>
+  <line x1="80" y1="75" x2="100" y2="95" stroke="#ef4444" stroke-width="2"/><line x1="100" y1="75" x2="80" y2="95" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="155" cy="50" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <!-- connections only from active neurons -->
+  <line x1="46" y1="30" x2="74" y2="55" stroke="#334155" stroke-width="1"/>
+  <line x1="46" y1="70" x2="74" y2="55" stroke="#334155" stroke-width="1"/>
+  <line x1="106" y1="55" x2="139" y2="50" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="100" y="112" text-anchor="middle" fill="#f87171" font-size="9">Random neurons silenced each step</text>
+</svg>
+</div>
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#34d399;font-weight:700;margin:0 0 6px;font-size:12px">Testing: All neurons active</p>
+<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <circle cx="30" cy="30" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="30" cy="70" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="90" cy="20" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="90" cy="55" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="90" cy="85" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <circle cx="155" cy="50" r="16" fill="#6d28d9" stroke="#a78bfa" stroke-width="2"/>
+  <line x1="46" y1="30" x2="74" y2="20" stroke="#a78bfa" stroke-width="1"/><line x1="46" y1="30" x2="74" y2="55" stroke="#a78bfa" stroke-width="1"/><line x1="46" y1="30" x2="74" y2="85" stroke="#a78bfa" stroke-width="1"/>
+  <line x1="46" y1="70" x2="74" y2="20" stroke="#a78bfa" stroke-width="1"/><line x1="46" y1="70" x2="74" y2="55" stroke="#a78bfa" stroke-width="1"/><line x1="46" y1="70" x2="74" y2="85" stroke="#a78bfa" stroke-width="1"/>
+  <line x1="106" y1="20" x2="139" y2="50" stroke="#a78bfa" stroke-width="1"/><line x1="106" y1="55" x2="139" y2="50" stroke="#a78bfa" stroke-width="1"/><line x1="106" y1="85" x2="139" y2="50" stroke="#a78bfa" stroke-width="1"/>
+  <text x="100" y="112" text-anchor="middle" fill="#34d399" font-size="9">No dropout — full network used</text>
+</svg>
+</div>
+</div>
+
+    <div class="card">
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:10px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">Dropout(rate, noise_shape, seed)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>Impact if changed</th></tr>
+          <tr>
+            <td><code>rate</code></td>
+            <td>Fraction of neurons to randomly DROP each training step. rate=0.3 means 30% of neurons are zeroed out each step.</td>
+            <td>required</td>
+            <td><strong>0.1–0.2:</strong> mild regularisation, barely noticeable. <strong>0.2–0.5:</strong> standard range, use this. <strong>0.5:</strong> classic "50% dropout", strong regularisation. <strong>0.6+:</strong> too aggressive — model learns too little. <strong>0.0:</strong> no dropout at all.</td>
+          </tr>
+          <tr>
+            <td><code>noise_shape</code></td>
+            <td>Shape of the random dropout mask. Usually not set. Only needed for advanced use cases like dropping entire time steps in sequences.</td>
+            <td>None</td>
+            <td>Leave as None unless you know what you're doing.</td>
+          </tr>
+          <tr>
+            <td><code>seed</code></td>
+            <td>Random seed for reproducibility. Set to a fixed integer (e.g., seed=42) if you want the same dropout pattern across runs.</td>
+            <td>None</td>
+            <td>Setting seed=42 makes runs reproducible. Leave as None in production.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="highlight">
+        <p><strong>Where to put Dropout:</strong> After Dense layers in hidden layers. NOT after the output layer. Typical pattern: Dense → Dropout → Dense → Dropout → Output.</p>
+        <p><strong>Rate guide:</strong> Small dataset or overfitting badly → use 0.4–0.5. Large dataset → use 0.2–0.3. No overfitting → don't add Dropout at all.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>BatchNormalization — Stable and Fast Training</h3>
+      <p><strong>The problem it solves:</strong> As data passes through layers, the numbers can become very large or very small. This makes training unstable — gradients explode or vanish. BatchNorm "normalises" each layer's output: zero mean, unit variance. This makes every layer receive consistently scaled inputs.</p>
+      <p><strong>Think of it like:</strong> Standardising exam scores. Instead of scores ranging from 0–10,000, you transform them to mean=0, std=1. Every subsequent calculation becomes more stable.</p>
+      <p><strong>Bonus effect:</strong> Acts as a mild regulariser. Often allows you to use a higher learning rate and train faster.</p>
+
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:10px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">BatchNormalization(axis, momentum, epsilon, center, scale)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>Impact if changed</th></tr>
+          <tr>
+            <td><code>axis</code></td>
+            <td>Which axis to normalise over. For Dense layers: -1 (last axis, which is the features axis). For Conv layers: 1 (channels axis).</td>
+            <td>-1</td>
+            <td>Rarely need to change for standard networks. Set to 1 for Conv2D layers.</td>
+          </tr>
+          <tr>
+            <td><code>momentum</code></td>
+            <td>Controls how the running mean and variance are updated during training. Higher value = updates use more of the old estimate.</td>
+            <td>0.99</td>
+            <td><strong>0.99:</strong> stable, slow updates. <strong>0.9:</strong> faster adaptation. Lower for small batches. Rarely needs changing.</td>
+          </tr>
+          <tr>
+            <td><code>epsilon</code></td>
+            <td>Small number added to variance to prevent division by zero.</td>
+            <td>0.001</td>
+            <td>Increase slightly (e.g., 0.01) if you see NaN values during training. Otherwise leave alone.</td>
+          </tr>
+          <tr>
+            <td><code>center</code></td>
+            <td>If True, learns a beta (shift) parameter to shift the normalised output.</td>
+            <td>True</td>
+            <td>Almost always True. Setting False removes the learnable shift.</td>
+          </tr>
+          <tr>
+            <td><code>scale</code></td>
+            <td>If True, learns a gamma (scale) parameter to scale the normalised output.</td>
+            <td>True</td>
+            <td>Almost always True. Setting False removes the learnable scale.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="highlight">
+        <p><strong>Where to put BatchNorm:</strong> After Dense, BEFORE or AFTER activation. Common pattern: Dense → BatchNorm → Activation (ReLU) → Dropout. In practice, BN before activation is most common.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Activation Functions — The Entire Picture</h3>
+      <p>Without activation functions, stacking 10 Dense layers is <strong>mathematically identical</strong> to 1 Dense layer. You can prove this with algebra. Activation functions break this linearity and allow the network to learn curves, complex boundaries, and non-linear patterns.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0">
+
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#fbbf24;font-weight:700;margin:0 0 8px;font-size:13px">ReLU — max(0, x)</p>
+<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <line x1="10" y1="60" x2="150" y2="60" stroke="#334155" stroke-width="1"/>
+  <line x1="80" y1="10" x2="80"  y2="110" stroke="#334155" stroke-width="1"/>
+  <text x="152" y="63" fill="#64748b" font-size="8">x</text>
+  <text x="83"  y="12" fill="#64748b" font-size="8">y</text>
+  <!-- negative side: flat at y=60 -->
+  <line x1="10" y1="60" x2="80" y2="60" stroke="#ef4444" stroke-width="2.5"/>
+  <!-- positive side: diagonal up -->
+  <line x1="80" y1="60" x2="145" y2="10" stroke="#fbbf24" stroke-width="2.5"/>
+  <!-- labels -->
+  <text x="20" y="55" fill="#ef4444" font-size="8">f(x)=0</text>
+  <text x="95" y="30" fill="#fbbf24" font-size="8">f(x)=x</text>
+  <text x="55" y="100" fill="#94a3b8" font-size="7">x&lt;0 → 0</text>
+  <text x="85" y="100" fill="#94a3b8" font-size="7">x≥0 → x</text>
+</svg>
+<p style="color:#94a3b8;font-size:10px;margin:4px 0 0">Use in: hidden layers<br>Fast, simple, prevents vanishing gradient</p>
+</div>
+
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#60a5fa;font-weight:700;margin:0 0 8px;font-size:13px">Sigmoid — 1/(1+e⁻ˣ)</p>
+<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <line x1="10" y1="60" x2="150" y2="60" stroke="#334155" stroke-width="1"/>
+  <line x1="80" y1="10" x2="80"  y2="110" stroke="#334155" stroke-width="1"/>
+  <text x="152" y="63" fill="#64748b" font-size="8">x</text>
+  <!-- S-curve approximated with polyline (0→1 range mapped to y 110→10) -->
+  <polyline points="10,108 25,106 40,100 55,88 65,74 72,64 80,58 88,52 95,46 105,34 120,22 135,16 150,14"
+    fill="none" stroke="#60a5fa" stroke-width="2.5"/>
+  <!-- dashed line at 0.5 -->
+  <line x1="10" y1="58" x2="80" y2="58" stroke="#334155" stroke-dasharray="3,2" stroke-width="1"/>
+  <text x="12" y="53" fill="#64748b" font-size="7">0.5</text>
+  <text x="12" y="18" fill="#64748b" font-size="7">1.0</text>
+  <text x="12" y="107" fill="#64748b" font-size="7">0.0</text>
+</svg>
+<p style="color:#94a3b8;font-size:10px;margin:4px 0 0">Use in: binary output layer<br>Squashes to 0–1 (probability)</p>
+</div>
+
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#34d399;font-weight:700;margin:0 0 8px;font-size:13px">Tanh</p>
+<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <line x1="10" y1="60" x2="150" y2="60" stroke="#334155" stroke-width="1"/>
+  <line x1="80" y1="10" x2="80"  y2="110" stroke="#334155" stroke-width="1"/>
+  <text x="152" y="63" fill="#64748b" font-size="8">x</text>
+  <!-- S-curve from -1 to 1 -->
+  <polyline points="10,106 25,103 40,95 53,80 62,66 70,57 80,55 90,53 98,44 107,30 120,17 135,13 150,11"
+    fill="none" stroke="#34d399" stroke-width="2.5"/>
+  <text x="12" y="14" fill="#64748b" font-size="7">+1</text>
+  <text x="12" y="110" fill="#64748b" font-size="7">−1</text>
+  <text x="12" y="62" fill="#64748b" font-size="7">0</text>
+</svg>
+<p style="color:#94a3b8;font-size:10px;margin:4px 0 0">Use in: hidden layers (sometimes)<br>Outputs −1 to +1, zero-centered</p>
+</div>
+
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#f472b6;font-weight:700;margin:0 0 8px;font-size:13px">Softmax (multi-class)</p>
+<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <!-- 3 raw scores → 3 probabilities as bars -->
+  <text x="10" y="18" fill="#94a3b8" font-size="8">Raw scores → Probabilities</text>
+  <!-- Raw scores (left bars) -->
+  <rect x="12" y="30" width="30" height="20" rx="3" fill="#334155"/><text x="27" y="44" text-anchor="middle" fill="#e2e8f0" font-size="8">2.0</text>
+  <rect x="12" y="55" width="30" height="20" rx="3" fill="#334155"/><text x="27" y="69" text-anchor="middle" fill="#e2e8f0" font-size="8">1.0</text>
+  <rect x="12" y="80" width="30" height="20" rx="3" fill="#334155"/><text x="27" y="94" text-anchor="middle" fill="#e2e8f0" font-size="8">0.5</text>
+  <!-- Arrow -->
+  <text x="52" y="65" fill="#64748b" font-size="14">→</text>
+  <!-- Probability bars (scaled) -->
+  <rect x="72" y="30" width="72" height="20" rx="3" fill="#9333ea"/><text x="148" y="44" fill="#f472b6" font-size="8"> 62%</text>
+  <rect x="72" y="55" width="27" height="20" rx="3" fill="#7c3aed"/><text x="148" y="69" fill="#c4b5fd" font-size="8"> 23%</text>
+  <rect x="72" y="80" width="16" height="20" rx="3" fill="#4c1d95"/><text x="148" y="94" fill="#a78bfa" font-size="8"> 15%</text>
+  <text x="80" y="115" fill="#64748b" font-size="7">All sum to 100%</text>
+</svg>
+<p style="color:#94a3b8;font-size:10px;margin:4px 0 0">Use in: multi-class output layer<br>Converts scores to probabilities summing to 1</p>
+</div>
+
+</div>
+
+    <div class="card">
+      <table class="term-table" style="font-size:12px">
+        <tr><th>Activation</th><th>Formula</th><th>Output range</th><th>Use in</th><th>Problem</th></tr>
+        <tr>
+          <td><strong>ReLU</strong></td>
+          <td>max(0, x)</td>
+          <td>0 to ∞</td>
+          <td>Hidden layers — almost always the default</td>
+          <td>Dying ReLU: neurons can get stuck at 0 if too many inputs are negative. Fix: use LeakyReLU or He initialiser.</td>
+        </tr>
+        <tr>
+          <td><strong>LeakyReLU</strong></td>
+          <td>x if x&gt;0, else 0.01x</td>
+          <td>−∞ to ∞ (small negatives)</td>
+          <td>Hidden layers when you suspect dying ReLU</td>
+          <td>Small negatives can occasionally cause instability.</td>
+        </tr>
+        <tr>
+          <td><strong>Sigmoid</strong></td>
+          <td>1 / (1 + e⁻ˣ)</td>
+          <td>0 to 1</td>
+          <td>Output layer for binary classification</td>
+          <td>Vanishing gradient: saturates at 0 and 1, gradient ≈ 0. Never use in hidden layers.</td>
+        </tr>
+        <tr>
+          <td><strong>Softmax</strong></td>
+          <td>eˣⁱ / Σeˣʲ</td>
+          <td>0 to 1 (sums to 1)</td>
+          <td>Output layer for multi-class classification</td>
+          <td>Same vanishing gradient issue as sigmoid. Only for output.</td>
+        </tr>
+        <tr>
+          <td><strong>Tanh</strong></td>
+          <td>(eˣ−e⁻ˣ) / (eˣ+e⁻ˣ)</td>
+          <td>−1 to 1</td>
+          <td>Hidden layers (zero-centered, better than sigmoid for hidden)</td>
+          <td>Still has vanishing gradient, just slower than sigmoid. ReLU usually better.</td>
+        </tr>
+        <tr>
+          <td><strong>Linear / None</strong></td>
+          <td>f(x) = x</td>
+          <td>−∞ to ∞</td>
+          <td>Regression output layer (predicting a continuous number)</td>
+          <td>No non-linearity, so NEVER use in hidden layers.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Loss Functions — Measuring How Wrong the Model Is</h3>
+      <p>The loss function calculates a single number representing "how wrong" the current prediction is. Training tries to minimise this number.</p>
+      <table class="term-table" style="font-size:12px">
+        <tr><th>Loss Function</th><th>When to use</th><th>What it measures</th><th>Example output range</th></tr>
+        <tr>
+          <td><strong>binary_crossentropy</strong></td>
+          <td>Binary classification (output: sigmoid, 1 class)</td>
+          <td>How far the predicted probability is from the true label (0 or 1)</td>
+          <td>0.0 (perfect) to ∞ (terrible)</td>
+        </tr>
+        <tr>
+          <td><strong>categorical_crossentropy</strong></td>
+          <td>Multi-class classification with one-hot encoded labels (e.g., [0,1,0,0])</td>
+          <td>How far the predicted class probabilities are from the true class</td>
+          <td>0.0 to ∞</td>
+        </tr>
+        <tr>
+          <td><strong>sparse_categorical_crossentropy</strong></td>
+          <td>Same as categorical_crossentropy but labels are integers (e.g., 2) not one-hot</td>
+          <td>Same as above — just different label format</td>
+          <td>0.0 to ∞</td>
+        </tr>
+        <tr>
+          <td><strong>mse</strong> (Mean Squared Error)</td>
+          <td>Regression (predicting a number)</td>
+          <td>Average squared difference between predicted and actual values. Penalises large errors heavily.</td>
+          <td>0.0 to ∞</td>
+        </tr>
+        <tr>
+          <td><strong>mae</strong> (Mean Absolute Error)</td>
+          <td>Regression — when you have outliers and don't want to penalise them too hard</td>
+          <td>Average absolute difference. More robust to outliers than MSE.</td>
+          <td>0.0 to ∞</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Optimizers — How Weights Are Updated</h3>
+      <p>After backpropagation computes the gradient (direction of steepest error), the optimizer decides HOW MUCH and in WHAT WAY to adjust each weight.</p>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:10px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">Adam — Adaptive Moment Estimation (default choice)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>When to change</th></tr>
+          <tr><td><code>learning_rate</code></td><td>How big each weight update step is. THE most important hyperparameter.</td><td>0.001</td><td><strong>Too high (e.g. 0.1):</strong> training oscillates, never converges. <strong>Too low (e.g. 1e-6):</strong> training takes forever. Start at 0.001, halve if unstable, double if too slow.</td></tr>
+          <tr><td><code>beta_1</code></td><td>Decay rate for the 1st moment (running average of gradients). Controls momentum.</td><td>0.9</td><td>Almost never change. 0.9 is the universal standard.</td></tr>
+          <tr><td><code>beta_2</code></td><td>Decay rate for the 2nd moment (running average of squared gradients). Controls adaptive scaling.</td><td>0.999</td><td>Almost never change. Lower (e.g. 0.99) for noisy gradients.</td></tr>
+          <tr><td><code>epsilon</code></td><td>Small number to prevent division by zero in the update formula.</td><td>1e-7</td><td>Increase to 1e-4 if you see NaN losses.</td></tr>
+          <tr><td><code>amsgrad</code></td><td>Uses the maximum of past squared gradients instead of the running average. More stable convergence.</td><td>False</td><td>Set True if Adam seems to diverge late in training.</td></tr>
+        </table>
+      </div>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:10px 0">
+        <p style="color:#60a5fa;font-weight:700;margin:0 0 8px">SGD — Stochastic Gradient Descent</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>When to change</th></tr>
+          <tr><td><code>learning_rate</code></td><td>Step size per update. Needs to be much lower than Adam (0.01 is typical).</td><td>0.01</td><td>Start at 0.01. Use learning rate schedulers to decay over time.</td></tr>
+          <tr><td><code>momentum</code></td><td>Fraction of the previous update direction to keep. Helps escape local minima and smooth oscillations.</td><td>0.0</td><td>Use 0.9 almost always when using SGD. Without momentum, SGD is very slow.</td></tr>
+          <tr><td><code>nesterov</code></td><td>Lookahead variant of momentum — looks ahead before computing gradient. Usually slightly better than standard momentum.</td><td>False</td><td>Set True whenever momentum > 0.</td></tr>
+        </table>
+      </div>
+      <div class="highlight"><p><strong>Which optimizer to use?</strong> Default: Adam(learning_rate=0.001). If Adam doesn't converge: try SGD(lr=0.01, momentum=0.9). Adam is the safe default for 90% of problems.</p></div>
+    </div>
+
+    <div class="card">
+      <h3>The Training Loop: What Actually Happens</h3>
+      <p>Training a neural network is a cycle. Here's what happens every time you call <code>model.fit()</code>:</p>
+      <ol>
+        <li><strong>Forward Pass:</strong> Input data flows through every layer. Each neuron computes its output using current weights. A prediction comes out of the output layer.</li>
+        <li><strong>Compute Loss:</strong> The loss function compares the prediction to the true label. Produces a single number (e.g., loss = 0.43).</li>
+        <li><strong>Backpropagation:</strong> Calculates how much each weight CONTRIBUTED to the error, using the chain rule of calculus. This gives each weight a "gradient" (how to change it to reduce loss).</li>
+        <li><strong>Weight Update:</strong> The optimizer adjusts every weight in the direction that reduces loss: new_weight = old_weight − (learning_rate × gradient)</li>
+        <li><strong>Repeat:</strong> Steps 1–4 happen for every batch. After all batches = 1 epoch done. This continues for all epochs.</li>
+      </ol>
+    </div>
+
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;background:#0f172a;border-radius:12px;">
+  <defs><marker id="at" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#64748b"/></marker></defs>
+  <!-- Boxes -->
+  <rect x="10"  y="80" width="80" height="40" rx="8" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="50"  y="96"  text-anchor="middle" fill="white" font-size="9"  font-family="sans-serif" font-weight="600">Forward</text>
+  <text x="50"  y="110" text-anchor="middle" fill="#bfdbfe" font-size="8" font-family="sans-serif">Pass</text>
+
+  <rect x="130" y="80" width="80" height="40" rx="8" fill="#7c3aed" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="170" y="96"  text-anchor="middle" fill="white" font-size="9"  font-family="sans-serif" font-weight="600">Compute</text>
+  <text x="170" y="110" text-anchor="middle" fill="#ddd6fe" font-size="8" font-family="sans-serif">Loss</text>
+
+  <rect x="250" y="80" width="80" height="40" rx="8" fill="#b91c1c" stroke="#f87171" stroke-width="1.5"/>
+  <text x="290" y="96"  text-anchor="middle" fill="white" font-size="9"  font-family="sans-serif" font-weight="600">Backprop</text>
+  <text x="290" y="110" text-anchor="middle" fill="#fecaca" font-size="8" font-family="sans-serif">Gradients</text>
+
+  <rect x="370" y="80" width="80" height="40" rx="8" fill="#065f46" stroke="#34d399" stroke-width="1.5"/>
+  <text x="410" y="96"  text-anchor="middle" fill="white" font-size="9"  font-family="sans-serif" font-weight="600">Update</text>
+  <text x="410" y="110" text-anchor="middle" fill="#a7f3d0" font-size="8" font-family="sans-serif">Weights</text>
+
+  <!-- Arrows between boxes -->
+  <line x1="90" y1="100" x2="130" y2="100" stroke="#64748b" stroke-width="1.8" marker-end="url(#at)"/>
+  <line x1="210" y1="100" x2="250" y2="100" stroke="#64748b" stroke-width="1.8" marker-end="url(#at)"/>
+  <line x1="330" y1="100" x2="370" y2="100" stroke="#64748b" stroke-width="1.8" marker-end="url(#at)"/>
+
+  <!-- Curved arrow back from Update to Forward -->
+  <path d="M 410 120 Q 410 170 250 170 Q 90 170 50 120" fill="none" stroke="#475569" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#at)"/>
+  <text x="250" y="185" text-anchor="middle" fill="#475569" font-size="9" font-family="sans-serif">Repeat for every batch, every epoch</text>
+
+  <!-- "Data in" label -->
+  <text x="8" y="75" fill="#60a5fa" font-size="9" font-family="sans-serif">Data in</text>
+  <line x1="18" y1="78" x2="18" y2="80" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#at)"/>
+
+  <!-- Title -->
+  <text x="250" y="20" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="sans-serif" font-weight="600">The Training Loop — Happens Every Batch</text>
+  <text x="250" y="35" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">1 epoch = all training data goes through this loop once</text>
+  <text x="250" y="50" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">batch_size=32 → weights updated every 32 samples</text>
+</svg>
+</div>
+
+    <div class="card">
+      <h3>Key Training Parameters Explained</h3>
+      <table class="term-table" style="font-size:12px">
+        <tr><th>Parameter</th><th>What it means</th><th>Too low effect</th><th>Too high effect</th><th>Sweet spot</th></tr>
+        <tr>
+          <td><strong>epochs</strong></td>
+          <td>How many times the model sees the entire training dataset</td>
+          <td>Underfits — hasn't learned enough</td>
+          <td>Overfits — memorises training data</td>
+          <td>Use EarlyStopping instead of guessing a fixed number</td>
+        </tr>
+        <tr>
+          <td><strong>batch_size</strong></td>
+          <td>How many samples to process before updating weights</td>
+          <td>1 (online): very noisy updates, slow. But can escape local minima.</td>
+          <td>Full dataset: smooth but poor generalisation, needs lots of RAM</td>
+          <td>32–256. Start with 32. Try 64 or 128 if training is slow.</td>
+        </tr>
+        <tr>
+          <td><strong>validation_split</strong></td>
+          <td>Fraction of training data to hold out for validation (measuring generalisation)</td>
+          <td>0.0: no way to detect overfitting during training</td>
+          <td>0.4+: too little data for training</td>
+          <td>0.1–0.2 (10–20% of training data)</td>
+        </tr>
+        <tr>
+          <td><strong>learning_rate</strong></td>
+          <td>Step size for weight updates — the single most impactful hyperparameter</td>
+          <td>1e-6: training is glacially slow</td>
+          <td>0.1+: loss oscillates or explodes to NaN</td>
+          <td>0.001 for Adam. 0.01 for SGD with momentum.</td>
+        </tr>
+      </table>
+    </div>
+
   </div>
 
   <div class="tab-content" id="s11-use">
+
     <div class="card">
-      <h3>💰 Real Use Case: Customer Lifetime Value Prediction</h3>
-      <p>Traditional ML algorithms struggle when patterns are deeply non-linear and hidden in hundreds of behavioral features. A neural network excels here.</p>
-    </div>
-    <div class="card">
-      <h3>Features That Predict CLV</h3>
+      <h3>When Neural Networks Shine</h3>
+      <p>Neural networks are overkill for simple problems and essential for complex ones. The deciding factors:</p>
       <ul>
-        <li>Purchase history: frequency, recency, amount, categories</li>
-        <li>Browsing behavior: pages viewed, time spent, searches</li>
-        <li>Demographics: age, location, device type</li>
-        <li>Customer service interactions: calls, complaints, resolutions</li>
-        <li>Response to marketing: email open rates, click rates</li>
+        <li><strong>Large data:</strong> NNs need thousands of examples to learn well. Less than ~1000 rows → try Random Forest or XGBoost first.</li>
+        <li><strong>Non-linear patterns:</strong> If the relationship between input and output is complex, curvy, or involves interactions, NNs excel.</li>
+        <li><strong>Unstructured data:</strong> Images, text, audio — NNs (specifically CNNs, RNNs, Transformers) are the only practical choice.</li>
+        <li><strong>Black box is acceptable:</strong> NNs are hard to interpret. If you need to explain every prediction (banking, medical), prefer decision trees.</li>
       </ul>
-      <div class="highlight"><p>With 200+ features and complex interactions (e.g., "mobile + night browsing + fashion category → high CLV"), a neural network finds patterns that XGBoost might miss.</p></div>
     </div>
+    <div class="card">
+      <h3>Industry Applications (Real Examples)</h3>
+      <table class="term-table">
+        <tr><th>Industry</th><th>Use Case</th><th>Input Features</th><th>Output</th></tr>
+        <tr><td>E-Commerce</td><td>Customer Lifetime Value prediction</td><td>Purchase history, browsing behaviour, demographics</td><td>Predicted spend over 12 months (regression)</td></tr>
+        <tr><td>Banking</td><td>Credit risk / fraud detection</td><td>Transaction amount, time, location, merchant category, account history</td><td>Fraud probability 0–1 (binary classification)</td></tr>
+        <tr><td>Healthcare</td><td>Disease risk scoring</td><td>Lab results, vitals, age, medical history</td><td>Risk score for disease (regression or classification)</td></tr>
+        <tr><td>Retail</td><td>Demand forecasting</td><td>Historical sales, promotions, holidays, weather, price</td><td>Predicted units sold next week (regression)</td></tr>
+        <tr><td>HR / Recruitment</td><td>Attrition prediction</td><td>Tenure, salary, job level, engagement scores, manager rating</td><td>Probability employee will leave (binary classification)</td></tr>
+        <tr><td>Marketing</td><td>Campaign response prediction</td><td>Demographics, purchase history, email engagement, RFM scores</td><td>Probability of responding to campaign (binary)</td></tr>
+        <tr><td>Manufacturing</td><td>Predictive maintenance</td><td>Sensor readings (vibration, temperature, pressure) over time</td><td>Probability of machine failure in next 7 days</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>When NOT to Use Neural Networks</h3>
+      <table class="term-table">
+        <tr><th>Situation</th><th>Better Alternative</th><th>Why</th></tr>
+        <tr><td>Less than ~500 rows of data</td><td>Logistic Regression, Random Forest</td><td>NNs overfit badly on tiny datasets. Simpler models generalise better.</td></tr>
+        <tr><td>Need to explain every prediction</td><td>Decision Tree, Logistic Regression</td><td>NNs are black boxes. Can't say "why" it predicted this.</td></tr>
+        <tr><td>Very quick prototype / baseline</td><td>XGBoost or Random Forest</td><td>NNs take more time to tune. Tree models are faster to get running well.</td></tr>
+        <tr><td>Simple linear relationship</td><td>Linear/Logistic Regression</td><td>If data is linearly separable, a regression is faster and just as accurate.</td></tr>
+        <tr><td>Very limited compute / deployment constraints</td><td>Lightweight models</td><td>NNs can be large and slow at inference. Simpler models may be necessary.</td></tr>
+      </table>
+    </div>
+
   </div>
 
   <div class="tab-content" id="s11-code">
-    <div class="card"><h3>Complete Code: ANN with Keras</h3></div>
+
+    <div class="card"><h3>Complete Annotated Code — ANN for Binary Classification</h3>
+    <p>Every single line below is explained. Read it like a recipe.</p></div>
     <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-<span class="c-kw">from</span> tensorflow.keras.models <span class="c-kw">import</span> <span class="c-cls">Sequential</span>            <span class="code-comment"># grab Sequential from tensorflow.keras.models</span>
-<span class="c-kw">from</span> tensorflow.keras.layers <span class="c-kw">import</span> <span class="c-cls">Dense</span>, <span class="c-cls">Dropout</span>, <span class="c-cls">BatchNormalization</span> <span class="code-comment"># grab Dense, Dropout, BatchNormalization from tensorflow.keras.layers</span>
-<span class="c-kw">from</span> tensorflow.keras.callbacks <span class="c-kw">import</span> <span class="c-cls">EarlyStopping</span>      <span class="code-comment"># grab EarlyStopping from tensorflow.keras.callbacks</span>
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>          <span class="code-comment"># grab StandardScaler from sklearn.preprocessing</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split      <span class="code-comment"># grab train_test_split from sklearn.model_selection</span>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+<span class="c-kw">from</span> tensorflow.keras.models     <span class="c-kw">import</span> <span class="c-cls">Sequential</span>
+<span class="c-kw">from</span> tensorflow.keras.layers     <span class="c-kw">import</span> <span class="c-cls">Dense</span>, <span class="c-cls">Dropout</span>, <span class="c-cls">BatchNormalization</span>
+<span class="c-kw">from</span> tensorflow.keras.callbacks  <span class="c-kw">import</span> <span class="c-cls">EarlyStopping</span>, <span class="c-cls">ReduceLROnPlateau</span>
+<span class="c-kw">from</span> tensorflow.keras.optimizers <span class="c-kw">import</span> <span class="c-cls">Adam</span>
+<span class="c-kw">from</span> tensorflow.keras.regularizers <span class="c-kw">import</span> l2
+<span class="c-kw">from</span> sklearn.preprocessing       <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>
+<span class="c-kw">from</span> sklearn.model_selection      <span class="c-kw">import</span> train_test_split
+<span class="c-kw">from</span> sklearn.metrics              <span class="c-kw">import</span> classification_report
 
-np.random.seed(42)                                        <span class="code-comment"># lock in a random seed so results are the same every run</span>
-n = 5000
-X = np.random.randn(n, 20)
-y = (X[:, 0] + X[:, 1]**2 + np.sin(X[:, 2]) > 1).astype(float) # ← # convert column to a different data type
+<span class="code-comment"># ── 1. DATA PREP ────────────────────────────────────────────────────</span>
+np.random.seed(42)             <span class="code-comment"># makes results reproducible — same random numbers every run</span>
+n = 5000                       <span class="code-comment"># 5000 training examples</span>
+X = np.random.randn(n, 20)    <span class="code-comment"># 20 input features, normally distributed</span>
+<span class="code-comment"># Create target: 1 if a combination of features exceeds threshold</span>
+y = (X[:, 0] + X[:, 1]**2 + np.sin(X[:, 2]) > 1).astype(float)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) # ← # split data into training set and test set
-scaler = <span class="c-cls">StandardScaler</span>()                                 <span class="code-comment"># make all features the same scale (mean 0, spread 1)</span>
-X_train = scaler.fit_transform(X_train)                   <span class="code-comment"># learn AND apply the transformation in one step</span>
-X_test = scaler.transform(X_test)                         <span class="code-comment"># apply a function but keep the same shape</span>
-
-model = <span class="c-cls">Sequential</span>([
-    <span class="c-cls">Dense</span>(64, activation='relu', input_shape=(20,)),
-    <span class="c-cls">BatchNormalization</span>(),
-    <span class="c-cls">Dropout</span>(0.3),
-    <span class="c-cls">Dense</span>(32, activation='relu'),
-    <span class="c-cls">Dropout</span>(0.2),
-    <span class="c-cls">Dense</span>(16, activation='relu'),
-    <span class="c-cls">Dense</span>(1, activation='sigmoid')
-])
-
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-model.summary()
-
-early_stop = <span class="c-cls">EarlyStopping</span>(monitor='val_loss', patience=10, restore_best_weights=True)
-
-history = model.fit(                                      <span class="code-comment"># learn patterns from this data</span>
-    X_train, y_train,
-    validation_split=0.2,
-    epochs=100,
-    batch_size=32,
-    callbacks=[early_stop],
-    verbose=1
+<span class="code-comment"># Split: 80% for training, 20% for final testing (model never sees test during training)</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,       <span class="code-comment"># 20% held out as test set</span>
+    random_state=42      <span class="code-comment"># fixed seed so split is same every run</span>
 )
 
+<span class="code-comment"># Standardise: subtract mean, divide by std → all features have mean=0, std=1</span>
+<span class="code-comment"># WHY: if one feature is 0-1 and another is 0-100000, the big one dominates</span>
+scaler = <span class="c-cls">StandardScaler</span>()
+X_train = scaler.fit_transform(X_train)  <span class="code-comment"># LEARN mean/std from training data AND transform</span>
+X_test  = scaler.transform(X_test)       <span class="code-comment"># ONLY transform — use same mean/std from training</span>
+                                          <span class="code-comment"># NEVER fit on test data — that's data leakage!</span>
+
+<span class="code-comment"># ── 2. BUILD THE MODEL ──────────────────────────────────────────────</span>
+model = <span class="c-cls">Sequential</span>([
+
+    <span class="code-comment"># ── LAYER 1: First hidden layer ──────────────────────────────────</span>
+    <span class="c-cls">Dense</span>(
+        units=128,                          <span class="code-comment"># 128 neurons</span>
+        activation='relu',                  <span class="code-comment"># ReLU activation — standard for hidden layers</span>
+        input_shape=(20,),                  <span class="code-comment"># tells Keras: 20 input features</span>
+        kernel_initializer='he_uniform',    <span class="code-comment"># He init: better than glorot for ReLU</span>
+        kernel_regularizer=l2(0.001)        <span class="code-comment"># L2 penalty: mild regularisation to prevent overfit</span>
+    ),
+    <span class="c-cls">BatchNormalization</span>(),  <span class="code-comment"># normalise layer output → stable training, acts as regulariser</span>
+    <span class="c-cls">Dropout</span>(0.3),         <span class="code-comment"># randomly drop 30% of neurons each training step</span>
+
+    <span class="code-comment"># ── LAYER 2: Second hidden layer (fewer neurons — funnel shape) ──</span>
+    <span class="c-cls">Dense</span>(
+        units=64,                           <span class="code-comment"># 64 neurons (decreasing from 128 is common)</span>
+        activation='relu',
+        kernel_initializer='he_uniform',
+        kernel_regularizer=l2(0.001)
+    ),
+    <span class="c-cls">BatchNormalization</span>(),
+    <span class="c-cls">Dropout</span>(0.2),         <span class="code-comment"># less dropout here — smaller layer, less risk of overfit</span>
+
+    <span class="code-comment"># ── LAYER 3: Third hidden layer ──────────────────────────────────</span>
+    <span class="c-cls">Dense</span>(32, activation='relu', kernel_initializer='he_uniform'),
+
+    <span class="code-comment"># ── OUTPUT LAYER ─────────────────────────────────────────────────</span>
+    <span class="c-cls">Dense</span>(
+        units=1,              <span class="code-comment"># 1 neuron: outputs a single value</span>
+        activation='sigmoid'  <span class="code-comment"># sigmoid: squashes output to 0–1 → interpret as probability</span>
+                              <span class="code-comment"># For multi-class: units=num_classes, activation='softmax'</span>
+                              <span class="code-comment"># For regression: units=1, no activation (or 'linear')</span>
+    )
+])
+
+<span class="code-comment"># ── 3. COMPILE ──────────────────────────────────────────────────────</span>
+model.compile(
+    optimizer=<span class="c-cls">Adam</span>(learning_rate=0.001), <span class="code-comment"># Adam: adaptive optimizer, best default</span>
+                                           <span class="code-comment"># learning_rate=0.001 is the standard starting point</span>
+    loss='binary_crossentropy',            <span class="code-comment"># loss for binary classification</span>
+                                           <span class="code-comment"># multi-class: 'categorical_crossentropy'</span>
+                                           <span class="code-comment"># regression:  'mse' or 'mae'</span>
+    metrics=['accuracy']                   <span class="code-comment"># what to DISPLAY during training (not optimised directly)</span>
+                                           <span class="code-comment"># can add: ['accuracy', AUC(), Precision()]</span>
+)
+model.summary()   <span class="code-comment"># prints layer shapes and parameter counts — always run this first</span>
+
+<span class="code-comment"># ── 4. CALLBACKS ────────────────────────────────────────────────────</span>
+early_stop = <span class="c-cls">EarlyStopping</span>(
+    monitor='val_loss',        <span class="code-comment"># watch validation loss (NOT training loss)</span>
+    patience=10,               <span class="code-comment"># stop if no improvement for 10 consecutive epochs</span>
+    restore_best_weights=True, <span class="code-comment"># after stopping, reload the best weights seen</span>
+    min_delta=0.0001           <span class="code-comment"># minimum change to qualify as improvement</span>
+)
+
+reduce_lr = <span class="c-cls">ReduceLROnPlateau</span>(
+    monitor='val_loss',   <span class="code-comment"># watch validation loss</span>
+    factor=0.5,           <span class="code-comment"># multiply learning rate by 0.5 when plateau detected</span>
+    patience=5,           <span class="code-comment"># wait 5 epochs before reducing</span>
+    min_lr=1e-6           <span class="code-comment"># never go below this learning rate</span>
+)
+<span class="code-comment"># ModelCheckpoint would go here to save best model to disk:</span>
+<span class="code-comment"># from tensorflow.keras.callbacks import ModelCheckpoint</span>
+<span class="code-comment"># checkpoint = ModelCheckpoint('best_model.h5', save_best_only=True, monitor='val_loss')</span>
+
+<span class="code-comment"># ── 5. TRAIN ────────────────────────────────────────────────────────</span>
+history = model.fit(
+    X_train, y_train,          <span class="code-comment"># training features and labels</span>
+    validation_split=0.2,      <span class="code-comment"># use 20% of X_train as validation set (auto-split)</span>
+    epochs=200,                <span class="code-comment"># max epochs — EarlyStopping will stop before this</span>
+    batch_size=32,             <span class="code-comment"># process 32 samples → update weights → repeat</span>
+                               <span class="code-comment"># larger batch (128, 256) = faster but may generalise worse</span>
+    callbacks=[early_stop, reduce_lr],  <span class="code-comment"># apply both callbacks</span>
+    verbose=1                  <span class="code-comment"># 0=silent, 1=progress bar, 2=one line per epoch</span>
+)
+
+<span class="code-comment"># ── 6. EVALUATE ─────────────────────────────────────────────────────</span>
 test_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)
-print(f"Test Accuracy: {test_acc:.3f}")                   <span class="code-comment"># show this value in the terminal</span>
-y_pred_prob = model.predict(X_test).flatten()             <span class="code-comment"># let the model guess labels for test data</span>
+print(f"Test Loss: {test_loss:.4f}  |  Test Accuracy: {test_acc:.4f}")
+<span class="code-comment"># evaluate() returns the same metrics you specified in compile()</span>
+
+<span class="code-comment"># ── 7. PREDICT ──────────────────────────────────────────────────────</span>
+y_pred_prob = model.predict(X_test).flatten()   <span class="code-comment"># outputs probabilities (0.0–1.0)</span>
+y_pred_class = (y_pred_prob > 0.5).astype(int)  <span class="code-comment"># convert probabilities to class labels</span>
+                                                  <span class="code-comment"># threshold=0.5 is default; adjust for imbalanced data</span>
+print(classification_report(y_test, y_pred_class))
+
+<span class="code-comment"># ── 8. INSPECT TRAINING HISTORY ─────────────────────────────────────</span>
+<span class="code-comment"># history.history is a dict: {'loss': [...], 'val_loss': [...], 'accuracy': [...], ...}</span>
+<span class="code-comment"># Plot training vs validation loss to diagnose overfitting:</span>
+<span class="code-comment"># import matplotlib.pyplot as plt</span>
+<span class="code-comment"># plt.plot(history.history['loss'],     label='train loss')</span>
+<span class="code-comment"># plt.plot(history.history['val_loss'], label='val loss')</span>
+<span class="code-comment"># plt.legend(); plt.show()</span>
+<span class="code-comment"># If val_loss goes UP while train loss goes DOWN → overfitting → add Dropout or reduce model size</span>
 </pre></div>
+
+    <div class="card">
+      <h3>Diagnosing Your Model from Training Curves</h3>
+      <table class="term-table">
+        <tr><th>What you see</th><th>Diagnosis</th><th>Fix</th></tr>
+        <tr><td>val_loss decreasing, train_loss decreasing (both going down together)</td><td>Healthy training</td><td>Keep going until EarlyStopping triggers</td></tr>
+        <tr><td>val_loss going UP, train_loss still going DOWN</td><td>Overfitting — model memorising training data</td><td>Add Dropout (0.3–0.5), add L2 regularisation, reduce model size, get more data</td></tr>
+        <tr><td>Both losses high and barely moving</td><td>Underfitting — model too small or learning rate too low</td><td>Increase model size (more units, more layers), increase learning rate, train longer</td></tr>
+        <tr><td>Loss oscillates wildly, never settles</td><td>Learning rate too high</td><td>Reduce learning_rate by 10x (e.g., 0.001 → 0.0001)</td></tr>
+        <tr><td>Loss goes to NaN immediately</td><td>Learning rate WAY too high, or data not scaled</td><td>Check scaling (StandardScaler applied?), reduce learning_rate drastically</td></tr>
+      </table>
+    </div>
+
   </div>
 
   <div class="tab-content" id="s11-terms">
+
     <div class="card">
-      <h3>Key Terms</h3>
+      <h3>Complete Glossary — Neural Networks</h3>
       <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Neuron/Node</span></td><td>A single computational unit that takes weighted inputs, adds bias, applies activation, outputs a number</td><td>Dense(64) = a layer of 64 neurons</td></tr>
-        <tr><td><span class="term-name">Weight</span></td><td>The strength of connection between two neurons. Learned during training. Like the importance of each input.</td><td>w=2.3 means this input has strong positive influence on the neuron</td></tr>
-        <tr><td><span class="term-name">Bias</span></td><td>An extra learnable offset added to the weighted sum. Allows the neuron to shift its activation up/down.</td><td>Like the intercept in linear regression</td></tr>
-        <tr><td><span class="term-name">ReLU</span></td><td>Rectified Linear Unit. f(x) = max(0, x). Simple and powerful. Prevents vanishing gradient problem.</td><td>Input=-3 → ReLU → 0. Input=5 → ReLU → 5.</td></tr>
-        <tr><td><span class="term-name">Forward Pass</span></td><td>Sending data through the network from input to output to get a prediction</td><td>X_input → layer1 → layer2 → output_prediction</td></tr>
-        <tr><td><span class="term-name">Backward Pass</span></td><td>Computing gradients and updating weights to reduce the loss. Uses chain rule of calculus.</td><td>loss → gradient → update each weight by -learning_rate × gradient</td></tr>
-        <tr><td><span class="term-name">Epoch</span></td><td>One complete pass through ALL training data. Training typically runs for 10-1000 epochs.</td><td>epochs=50: model sees each training example 50 times</td></tr>
-        <tr><td><span class="term-name">Batch Size</span></td><td>Number of training examples processed together before updating weights. Smaller = noisier but faster per update.</td><td>batch_size=32: weights updated every 32 samples</td></tr>
-        <tr><td><span class="term-name">Dropout</span></td><td>Randomly set a fraction of neurons to zero during each training pass. Forces network to not rely on any single neuron. Prevents overfitting.</td><td>Dropout(0.3): 30% of neurons disabled each forward pass during training</td></tr>
+        <tr><th>Term</th><th>Plain English</th><th>Quick Example</th></tr>
+        <tr><td><span class="term-name">Neuron / Node</span></td><td>A single computation unit. Takes weighted inputs, adds bias, applies activation, outputs one number.</td><td>Dense(64) = a layer of 64 neurons</td></tr>
+        <tr><td><span class="term-name">Weight</span></td><td>A learnable number that controls how strongly one neuron influences the next. Initialised randomly, adjusted during training.</td><td>w=2.3: this input strongly influences the output. w=-0.1: weak negative influence.</td></tr>
+        <tr><td><span class="term-name">Bias</span></td><td>A learnable offset added to the weighted sum. Lets the neuron shift its activation independent of inputs — like the intercept in y=mx+b.</td><td>Without bias, every line through origin. With bias, can shift left/right.</td></tr>
+        <tr><td><span class="term-name">Activation Function</span></td><td>A non-linear function applied after the weighted sum. Without it, all layers collapse into one. Adds the ability to learn non-linear patterns.</td><td>ReLU(−2)=0, ReLU(3)=3. Sigmoid(0)=0.5, Sigmoid(10)≈1.0</td></tr>
+        <tr><td><span class="term-name">Forward Pass</span></td><td>Data flowing through the network from input to output to produce a prediction. Happens every time you call model.predict().</td><td>X → Dense(128) → Dense(64) → Dense(1) → prediction 0.73</td></tr>
+        <tr><td><span class="term-name">Loss</span></td><td>A single number measuring how wrong the current prediction is. Goal of training: minimise this number.</td><td>loss=0.05 (good), loss=1.4 (bad)</td></tr>
+        <tr><td><span class="term-name">Gradient</span></td><td>For each weight: how much would the loss change if this weight changed slightly? Points in the direction of steepest increase in loss.</td><td>gradient=+0.2: increasing this weight increases loss, so decrease it.</td></tr>
+        <tr><td><span class="term-name">Backpropagation</span></td><td>Algorithm to compute gradients for every weight in the network. Goes backwards from output to input using the chain rule of calculus.</td><td>loss → gradient for output layer weights → gradient for layer 2 weights → ...</td></tr>
+        <tr><td><span class="term-name">Gradient Descent</span></td><td>The optimisation process: repeatedly move weights in the direction that decreases loss. Like rolling a ball downhill on the loss surface.</td><td>new_weight = old_weight − (learning_rate × gradient)</td></tr>
+        <tr><td><span class="term-name">Learning Rate</span></td><td>How big each weight update step is. The most important hyperparameter.</td><td>lr=0.001: small cautious steps. lr=0.1: large risky steps (may overshoot).</td></tr>
+        <tr><td><span class="term-name">Epoch</span></td><td>One complete pass through all training data. Training runs for multiple epochs.</td><td>epochs=50: model sees all 5000 training samples 50 times = 250,000 total sample-looks</td></tr>
+        <tr><td><span class="term-name">Batch Size</span></td><td>Number of samples processed together before updating weights. Large batch = smooth but slow to generalise. Small = noisy but sometimes better.</td><td>batch_size=32 with 5000 samples = 156 weight updates per epoch</td></tr>
+        <tr><td><span class="term-name">Overfitting</span></td><td>Model memorises training data instead of learning patterns. Gets great training accuracy but fails on new data.</td><td>train_acc=99%, val_acc=62% → overfitting</td></tr>
+        <tr><td><span class="term-name">Underfitting</span></td><td>Model is too simple to learn the pattern. Bad performance on both training AND test data.</td><td>train_acc=55%, val_acc=54% → underfitting</td></tr>
+        <tr><td><span class="term-name">Dropout</span></td><td>Randomly zeros out a fraction of neurons during each training step. Forces robustness. Prevents overfitting. Only active during training.</td><td>Dropout(0.3): 30% of neurons disabled randomly each step</td></tr>
+        <tr><td><span class="term-name">BatchNormalization</span></td><td>Normalises each layer's output to zero mean, unit variance. Stabilises training, acts as regulariser, allows higher learning rates.</td><td>Before BN: layer outputs range 0–10,000. After: range ≈ −3 to +3.</td></tr>
+        <tr><td><span class="term-name">Vanishing Gradient</span></td><td>In deep networks, gradients get multiplied many times going backward. With sigmoid/tanh, these tiny values shrink to near-zero — early layers stop learning.</td><td>Why ReLU replaced sigmoid in hidden layers of deep networks.</td></tr>
+        <tr><td><span class="term-name">EarlyStopping</span></td><td>A callback that monitors validation loss and stops training when it stops improving. Prevents overfitting and saves time.</td><td>patience=10: stop if val_loss hasn't improved in 10 epochs</td></tr>
+        <tr><td><span class="term-name">Hyperparameter</span></td><td>A setting YOU choose before training (not learned from data). Learning rate, batch size, number of layers, units — all hyperparameters.</td><td>Contrast with "parameters" (weights and biases) which are learned.</td></tr>
+        <tr><td><span class="term-name">model.summary()</span></td><td>Prints a table showing each layer, its output shape, and number of trainable parameters. Always run this after building a model.</td><td>Dense(128) with 20 inputs = 20×128 weights + 128 biases = 2688 parameters</td></tr>
+        <tr><td><span class="term-name">L2 Regularisation</span></td><td>Adds a penalty to the loss equal to the sum of squared weights × regularisation strength. Discourages large weights, reducing overfitting.</td><td>kernel_regularizer=l2(0.01): adds 0.01 × sum(w²) to loss</td></tr>
+        <tr><td><span class="term-name">He Initialisation</span></td><td>Sets initial weights using a formula designed for ReLU: variance = 2/n_inputs. Better than default glorot when using ReLU.</td><td>kernel_initializer='he_uniform'</td></tr>
+        <tr><td><span class="term-name">Validation Split</span></td><td>Fraction of training data held out as a "check" set during training. Model doesn't train on this — used only to measure generalisation each epoch.</td><td>validation_split=0.2: last 20% of X_train used for validation</td></tr>
+        <tr><td><span class="term-name">Callbacks</span></td><td>Functions that run at specific points during training (end of epoch, end of batch). Used for early stopping, saving checkpoints, adjusting learning rate.</td><td>callbacks=[EarlyStopping(...), ReduceLROnPlateau(...)]</td></tr>
       </table>
     </div>
+
   </div>
 </div>
 

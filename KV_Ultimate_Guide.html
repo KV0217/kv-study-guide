@@ -8615,139 +8615,289 @@ FROM orders GROUP BY 1 ORDER BY total_revenue DESC;       <span class="code-comm
 <div class="phase-section" id="p3">
   <div class="phase-header">
     <h2>Phase 3 — Pandas &amp; NumPy</h2>
+    <p style="color:#a8b8d0;font-size:13px;margin-top:4px;">The data manipulation toolkit every DA/DS must master. Pandas = tables for data. NumPy = numbers for math.</p>
   </div>
   <div class="phase-content">
 
+    <div class="algo-section" style="margin-bottom:16px">
+      <h3 style="color:#38bdf8;margin-bottom:8px">What is a DataFrame? (Plain English)</h3>
+      <p style="color:#94a3b8;font-size:13px">A DataFrame is like an Excel spreadsheet in Python. It has rows (each row = one record, e.g. one customer) and columns (each column = one attribute, e.g. age, salary). You can filter, sort, group, merge, and transform data with a single line of code instead of hours of manual Excel work.</p>
+      <svg viewBox="0 0 560 280" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%;font-family:sans-serif">
+  <rect width="560" height="280" rx="12" fill="#0f172a"/>
+  <text x="280" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Pandas DataFrame — Anatomy</text>
+  <!-- Column headers -->
+  <rect x="100" y="40" width="100" height="28" rx="4" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="150" y="58" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">name</text>
+  <rect x="210" y="40" width="100" height="28" rx="4" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="260" y="58" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">age</text>
+  <rect x="320" y="40" width="100" height="28" rx="4" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="370" y="58" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">salary</text>
+  <rect x="430" y="40" width="100" height="28" rx="4" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="480" y="58" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">dept</text>
+  <!-- Columns label -->
+  <text x="290" y="36" text-anchor="middle" fill="#3b82f6" font-size="10">← columns (axis=1) →</text>
+  <!-- Row index -->
+  <rect x="30"  y="80"  width="60" height="28" rx="4" fill="#1a3b1a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="60"  y="98"  text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">0</text>
+  <rect x="30"  y="118" width="60" height="28" rx="4" fill="#1a3b1a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="60"  y="136" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">1</text>
+  <rect x="30"  y="156" width="60" height="28" rx="4" fill="#1a3b1a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="60"  y="174" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">2</text>
+  <rect x="30"  y="194" width="60" height="28" rx="4" fill="#1a3b1a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="60"  y="212" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">3</text>
+  <!-- Row 0 -->
+  <rect x="100" y="80"  width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="150" y="98"  text-anchor="middle" fill="#f1f5f9" font-size="11">Alice</text>
+  <rect x="210" y="80"  width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="260" y="98"  text-anchor="middle" fill="#f1f5f9" font-size="11">28</text>
+  <rect x="320" y="80"  width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="370" y="98"  text-anchor="middle" fill="#f1f5f9" font-size="11">75000</text>
+  <rect x="430" y="80"  width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="480" y="98"  text-anchor="middle" fill="#f1f5f9" font-size="11">IT</text>
+  <!-- Row 1 -->
+  <rect x="100" y="118" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="150" y="136" text-anchor="middle" fill="#f1f5f9" font-size="11">Bob</text>
+  <rect x="210" y="118" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="260" y="136" text-anchor="middle" fill="#f1f5f9" font-size="11">34</text>
+  <rect x="320" y="118" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="370" y="136" text-anchor="middle" fill="#f1f5f9" font-size="11">90000</text>
+  <rect x="430" y="118" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="480" y="136" text-anchor="middle" fill="#f1f5f9" font-size="11">Finance</text>
+  <!-- Row 2 -->
+  <rect x="100" y="156" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="150" y="174" text-anchor="middle" fill="#f1f5f9" font-size="11">Carol</text>
+  <rect x="210" y="156" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="260" y="174" text-anchor="middle" fill="#f1f5f9" font-size="11">NaN</text>
+  <rect x="320" y="156" width="100" height="28" rx="4" fill="#334155"/>
+  <text x="370" y="174" text-anchor="middle" fill="#ef4444" font-size="11">NaN</text>
+  <rect x="430" y="156" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="480" y="174" text-anchor="middle" fill="#f1f5f9" font-size="11">IT</text>
+  <!-- Row 3 -->
+  <rect x="100" y="194" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="150" y="212" text-anchor="middle" fill="#f1f5f9" font-size="11">David</text>
+  <rect x="210" y="194" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="260" y="212" text-anchor="middle" fill="#f1f5f9" font-size="11">45</text>
+  <rect x="320" y="194" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="370" y="212" text-anchor="middle" fill="#f1f5f9" font-size="11">120000</text>
+  <rect x="430" y="194" width="100" height="28" rx="4" fill="#1e293b"/>
+  <text x="480" y="212" text-anchor="middle" fill="#f1f5f9" font-size="11">HR</text>
+  <!-- Axis labels -->
+  <text x="16" y="155" text-anchor="middle" fill="#22c55e" font-size="10" transform="rotate(-90,16,155)">rows (axis=0)</text>
+  <!-- Labels and annotations -->
+  <rect x="320" y="148" width="110" height="38" rx="4" fill="#334155" stroke="#ef4444" stroke-width="1"/>
+  <text x="375" y="164" text-anchor="middle" fill="#ef4444" font-size="9">← Missing value (NaN)</text>
+  <text x="375" y="178" text-anchor="middle" fill="#94a3b8" font-size="9">fillna() handles these</text>
+  <!-- Shape info -->
+  <text x="280" y="250" text-anchor="middle" fill="#94a3b8" font-size="11">df.shape = (4, 4) → 4 rows × 4 columns</text>
+  <text x="280" y="267" text-anchor="middle" fill="#475569" font-size="10">df['salary'] → Series (one column) | df[['name','age']] → DataFrame (multiple columns)</text>
+</svg>
+      <p style="color:#94a3b8;font-size:12px;margin-top:8px">The red NaN (row 2, salary) is a missing value — one of the most common data quality issues. Use <code>df.isnull().sum()</code> to find them, <code>fillna()</code> to fill them, or <code>dropna()</code> to remove those rows.</p>
+    </div>
+
     <div class="topic-card">
-      <h3>NumPy Essentials</h3>
+      <h3>NumPy Essentials — Fast Mathematical Operations</h3>
+      <div class="note-box" style="margin-bottom:8px"><strong>Why NumPy?</strong> Python lists are slow for math — a loop of 1 million additions takes seconds. NumPy stores data in C arrays and uses vectorised operations (runs on the whole array at once), making it 100-1000x faster than Python loops.</div>
       <div class="code-block"><pre>
-import numpy as np                                        <span class="code-comment">-- give this column or table a nickname</span>
+import numpy as np                                        <span class="code-comment">-- import numpy library, nickname it 'np'</span>
 
 # Array creation
-a = np.array([1,2,3,4,5])
-b = np.zeros((3,4))
-c = np.ones((2,3)) * 5
-d = np.arange(0, 100, 5)
-e = np.linspace(0, 1, 50)
-r = np.random.randn(1000)
+a = np.array([1,2,3,4,5])                                <span class="code-comment">-- convert Python list to numpy array</span>
+b = np.zeros((3,4))                                      <span class="code-comment">-- 3×4 matrix filled with zeros</span>
+c = np.ones((2,3)) * 5                                   <span class="code-comment">-- 2×3 matrix filled with 5s</span>
+d = np.arange(0, 100, 5)                                 <span class="code-comment">-- [0, 5, 10, 15, ..., 95] like range() but numpy</span>
+e = np.linspace(0, 1, 50)                                <span class="code-comment">-- 50 evenly spaced numbers from 0 to 1 (inclusive)</span>
+r = np.random.randn(1000)                                <span class="code-comment">-- 1000 random numbers from normal distribution (mean=0, std=1)</span>
 
-# Broadcasting
-X = np.random.randn(100, 5)
-X_centered = X - X.mean(axis=0)
-X_scaled   = X / X.std(axis=0)
+# Broadcasting — operate on entire arrays without loops
+X = np.random.randn(100, 5)                              <span class="code-comment">-- 100×5 matrix of random numbers</span>
+X_centered = X - X.mean(axis=0)                         <span class="code-comment">-- subtract column mean from every row (axis=0=column-wise)</span>
+X_scaled   = X / X.std(axis=0)                          <span class="code-comment">-- divide by column std dev — now each column has std=1</span>
 
 # Vectorized operations (fast, no loops)
 arr = np.array([1, -2, 3, -4, 5])
-pos = arr[arr > 0]               # boolean indexing: [1,3,5]
-clipped = np.clip(arr, 0, 4)     # [1,0,3,0,4]
-log_arr = np.log1p(np.abs(arr))  # log(1+x), safe for zeros
+pos = arr[arr > 0]               # boolean indexing: [1,3,5]  — faster than any loop
+clipped = np.clip(arr, 0, 4)     # [1,0,3,0,4]   — cap values between 0 and 4
+log_arr = np.log1p(np.abs(arr))  # log(1+|x|), safe for zeros — avoids log(0) error
 
 # Useful functions
-np.unique(arr, return_counts=True)
-np.percentile(arr, [25, 50, 75])
-np.corrcoef(arr1, arr2)
-np.argmax(arr), np.argmin(arr)
-np.where(arr > 0, 1, 0)                                   <span class="code-comment">-- keep only rows that meet this condition</span>
-np.concatenate([a, b], axis=0)
+np.unique(arr, return_counts=True)   <span class="code-comment">-- unique values + how many times each appears</span>
+np.percentile(arr, [25, 50, 75])    <span class="code-comment">-- Q1, median, Q3 in one call</span>
+np.corrcoef(arr1, arr2)             <span class="code-comment">-- correlation matrix between two arrays</span>
+np.argmax(arr), np.argmin(arr)      <span class="code-comment">-- INDEX of the maximum / minimum value (not the value itself)</span>
+np.where(arr > 0, 1, 0)            <span class="code-comment">-- if condition → 1, else → 0 (vectorised if-else)</span>
+np.concatenate([a, b], axis=0)     <span class="code-comment">-- stack arrays along rows (axis=0) or columns (axis=1)</span>
 </pre></div>
     </div>
 
     <div class="topic-card">
-      <h3>Pandas — Core Operations</h3>
+      <h3>Pandas — Core Operations (The 90% You Use Daily)</h3>
       <div class="code-block"><pre>
-import pandas as pd                                       <span class="code-comment">-- give this column or table a nickname</span>
+import pandas as pd                                       <span class="code-comment">-- import pandas, nickname it 'pd'</span>
 
-# Read / Inspect
-df = pd.read_csv('data.csv', parse_dates=['date'], low_memory=False) # ← # load CSV file into a pandas DataFrame
-df.info(); df.describe(); df.head(); df.sample(5)
+# Read / Inspect — always do these first on a new dataset
+df = pd.read_csv('data.csv', parse_dates=['date'], low_memory=False) <span class="code-comment">-- load CSV into DataFrame, parse date columns automatically</span>
+df.info()       <span class="code-comment">-- column names, data types, non-null counts → find missing values and wrong types</span>
+df.describe()   <span class="code-comment">-- mean, std, min, max, quartiles for ALL numeric columns at once</span>
+df.head(5)      <span class="code-comment">-- first 5 rows — quick visual check</span>
+df.sample(5)    <span class="code-comment">-- 5 random rows — less biased than head() which shows only the top</span>
 
-# Select                                                  <span class="code-comment">-- pick which columns to show</span>
-df['col']               # Series
-df[['col1','col2']]     # DataFrame
-df.iloc[0:5, 0:3]       # by position
-df.loc[df['age']>25, ['name','salary']]  # by label + condition
+# Select columns
+df['col']               <span class="code-comment">-- one column → returns a Series (1D)</span>
+df[['col1','col2']]     <span class="code-comment">-- multiple columns → returns DataFrame (2D)</span>
+df.iloc[0:5, 0:3]       <span class="code-comment">-- rows 0-4, cols 0-2 by INTEGER position (like Python slicing)</span>
+df.loc[df['age']>25, ['name','salary']]  <span class="code-comment">-- rows where age>25, select name + salary columns by LABEL</span>
 
-# Filter
-df[df['salary'] > 50000]
-df[(df['dept']=='IT') & (df['salary'] > 50000)]
-df[df['city'].isin(['Mumbai','Pune','Chennai'])]
-df[df['name'].str.contains('Kavin', na=False)]
+# Filter — powerful boolean indexing
+df[df['salary'] > 50000]                                 <span class="code-comment">-- keep only rows where salary > 50000</span>
+df[(df['dept']=='IT') & (df['salary'] > 50000)]          <span class="code-comment">-- AND condition: use & (not 'and'), wrap each condition in parentheses</span>
+df[df['city'].isin(['Mumbai','Pune','Chennai'])]          <span class="code-comment">-- rows where city is one of these 3 values (like SQL IN clause)</span>
+df[df['name'].str.contains('Kavin', na=False)]           <span class="code-comment">-- rows where name contains 'Kavin' as substring (na=False ignores NaN)</span>
 
-# Missing values
-df.isnull().sum()                                         <span class="code-comment">-- add up all values in this column</span>
-df['col'].fillna(df['col'].median(), inplace=True)
-df['col'].fillna(df['col'].mode()[0], inplace=True)
-df.dropna(subset=['important_col'], inplace=True)
+# Missing values — handle BEFORE modelling
+df.isnull().sum()                                        <span class="code-comment">-- count NaN in each column — your data quality report</span>
+df['col'].fillna(df['col'].median(), inplace=True)       <span class="code-comment">-- fill NaN with median (better than mean for skewed data)</span>
+df['col'].fillna(df['col'].mode()[0], inplace=True)      <span class="code-comment">-- fill NaN with most frequent value (for categorical columns)</span>
+df.dropna(subset=['important_col'], inplace=True)        <span class="code-comment">-- delete rows where THIS column is null (don't delete entire row for other NaNs)</span>
 
-# String operations
-df['name'].str.lower().str.strip().str.replace('  ',' ') # ← # string accessor — apply string methods to a column <span class="code-comment">-- convert text to all lowercase</span>
-df['email'].str.split('@').str[1]
+# String operations (str accessor)
+df['name'].str.lower().str.strip().str.replace('  ',' ') <span class="code-comment">-- chain: lowercase → remove spaces → fix double spaces</span>
+df['email'].str.split('@').str[1]                        <span class="code-comment">-- split on '@', take the second part (domain)</span>
 
-# Apply
-df['category'] = df['score'].apply(lambda x: 'High' if x > 80 else 'Low') # ← # apply a custom function to each row or column <span class="code-comment">-- if no condition matched, use this default</span>
+# Apply — custom function per row or column
+df['category'] = df['score'].apply(lambda x: 'High' if x > 80 else 'Low') <span class="code-comment">-- apply function to each value in 'score' column</span>
 
-# GroupBy
-df.groupby('dept')['salary'].mean()
-df.groupby('dept').agg({'salary':['mean','max','count'], 'age':'median'}) # ← # split data into groups by column value
-df.groupby('dept').transform('mean')
+# GroupBy — split-apply-combine (like SQL GROUP BY)
+df.groupby('dept')['salary'].mean()                      <span class="code-comment">-- average salary per department</span>
+df.groupby('dept').agg({'salary':['mean','max','count'], 'age':'median'})   <span class="code-comment">-- multiple aggregations at once</span>
+df.groupby('dept').transform('mean')                     <span class="code-comment">-- replaces each value with its group's mean (keeps original DataFrame shape)</span>
 
-# Merge / Join                                            <span class="code-comment">-- connect with another table on a shared column</span>
-pd.merge(df1, df2, on='id', how='left')                   <span class="code-comment">-- the condition that links the two tables</span>
-pd.merge(df1, df2, left_on='user_id', right_on='id', how='inner') # ← # SQL-style join: combine two DataFrames on a key <span class="code-comment">-- connect with another table on a shared column</span>
+# Merge / Join — combine two tables
+pd.merge(df1, df2, on='id', how='left')                  <span class="code-comment">-- SQL LEFT JOIN: all df1 rows, matching df2 rows (or NaN)</span>
+pd.merge(df1, df2, left_on='user_id', right_on='id', how='inner')  <span class="code-comment">-- different column names in each table</span>
 
-# Pivot
-pivot = df.pivot_table(values='sales', index='region', # ← # aggregate and reshape — like a spreadsheet pivot <span class="code-comment">-- pattern search (% = anything, _ = one character)</span>
-                        columns='product', aggfunc='sum', fill_value=0)
+# Pivot Table — like Excel pivot
+pivot = df.pivot_table(values='sales', index='region', columns='product', aggfunc='sum', fill_value=0) <span class="code-comment">-- total sales by region (rows) and product (columns)</span>
 
 # Sort
-df.sort_values('salary', ascending=False).head(10)
-df.sort_values(['dept','salary'], ascending=[True, False]) # ← # sort rows by one or more column values
+df.sort_values('salary', ascending=False).head(10)       <span class="code-comment">-- top 10 highest salaries</span>
+df.sort_values(['dept','salary'], ascending=[True, False]) <span class="code-comment">-- sort by dept ascending, then salary descending within each dept</span>
 </pre></div>
+    </div>
+
+    <div class="algo-section" style="margin:16px 0">
+      <h3 style="color:#38bdf8;margin-bottom:8px">The 4 Types of Joins — When to Use Each</h3>
+      <svg viewBox="0 0 580 280" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="280" rx="12" fill="#0f172a"/>
+  <text x="290" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">pd.merge() — 4 Join Types</text>
+  <!-- INNER JOIN -->
+  <rect x="15" y="38" width="125" height="125" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="77" y="56" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">INNER JOIN</text>
+  <text x="77" y="70" text-anchor="middle" fill="#94a3b8" font-size="9">how='inner'</text>
+  <circle cx="62"  cy="100" r="28" fill="#3b82f666"/>
+  <circle cx="92"  cy="100" r="28" fill="#22c55e66"/>
+  <ellipse cx="77" cy="100" rx="13" ry="21" fill="#f59e0b" opacity="0.8"/>
+  <text x="77" y="148" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">Only matching rows</text>
+  <text x="77" y="160" text-anchor="middle" fill="#94a3b8" font-size="9">A∩B — keeps rows</text>
+  <text x="77" y="172" text-anchor="middle" fill="#94a3b8" font-size="9">present in BOTH tables</text>
+  <!-- LEFT JOIN -->
+  <rect x="153" y="38" width="125" height="125" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="215" y="56" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">LEFT JOIN</text>
+  <text x="215" y="70" text-anchor="middle" fill="#94a3b8" font-size="9">how='left'</text>
+  <circle cx="200" cy="100" r="28" fill="#3b82f6" opacity="0.7"/>
+  <circle cx="230" cy="100" r="28" fill="#22c55e33"/>
+  <text x="215" y="148" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold">All LEFT table rows</text>
+  <text x="215" y="160" text-anchor="middle" fill="#94a3b8" font-size="9">Right-only rows → NaN</text>
+  <text x="215" y="172" text-anchor="middle" fill="#94a3b8" font-size="9">Most common for lookups</text>
+  <!-- RIGHT JOIN -->
+  <rect x="291" y="38" width="125" height="125" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="353" y="56" text-anchor="middle" fill="#d8b4fe" font-size="11" font-weight="bold">RIGHT JOIN</text>
+  <text x="353" y="70" text-anchor="middle" fill="#94a3b8" font-size="9">how='right'</text>
+  <circle cx="338" cy="100" r="28" fill="#3b82f633"/>
+  <circle cx="368" cy="100" r="28" fill="#a855f7" opacity="0.7"/>
+  <text x="353" y="148" text-anchor="middle" fill="#a855f7" font-size="10" font-weight="bold">All RIGHT table rows</text>
+  <text x="353" y="160" text-anchor="middle" fill="#94a3b8" font-size="9">Left-only rows → NaN</text>
+  <text x="353" y="172" text-anchor="middle" fill="#94a3b8" font-size="9">Rare — use left join instead</text>
+  <!-- OUTER JOIN -->
+  <rect x="429" y="38" width="135" height="125" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="496" y="56" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="bold">OUTER JOIN</text>
+  <text x="496" y="70" text-anchor="middle" fill="#94a3b8" font-size="9">how='outer'</text>
+  <circle cx="481" cy="100" r="28" fill="#3b82f6" opacity="0.7"/>
+  <circle cx="511" cy="100" r="28" fill="#22c55e" opacity="0.7"/>
+  <text x="496" y="148" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">ALL rows from both</text>
+  <text x="496" y="160" text-anchor="middle" fill="#94a3b8" font-size="9">Non-matching → NaN</text>
+  <text x="496" y="172" text-anchor="middle" fill="#94a3b8" font-size="9">Good for finding mismatches</text>
+  <!-- Code examples -->
+  <rect x="15" y="175" width="549" height="90" rx="6" fill="#1e293b"/>
+  <text x="290" y="194" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold">Code Examples:</text>
+  <text x="40" y="212" fill="#f1f5f9" font-size="10" font-family="monospace">inner: pd.merge(df1, df2, on='id', how='inner')</text>
+  <text x="40" y="228" fill="#f1f5f9" font-size="10" font-family="monospace">left:  pd.merge(df1, df2, on='id', how='left')</text>
+  <text x="320" y="212" fill="#f1f5f9" font-size="10" font-family="monospace">right: pd.merge(df1, df2, on='id', how='right')</text>
+  <text x="320" y="228" fill="#f1f5f9" font-size="10" font-family="monospace">outer: pd.merge(df1, df2, on='id', how='outer')</text>
+  <text x="290" y="256" text-anchor="middle" fill="#94a3b8" font-size="10">Different column names: left_on='user_id', right_on='id'  |  Multiple keys: on=['id', 'date']</text>
+</svg>
     </div>
 
     <div class="topic-card">
       <h3>Pandas — Advanced &amp; Time Series</h3>
       <div class="code-block"><pre>
-# Time Series
-df['date'] = pd.to_datetime(df['date'])
-df.set_index('date', inplace=True)                        <span class="code-comment"># use this column as the row label</span>
+# Time Series — date-based analysis
+df['date'] = pd.to_datetime(df['date'])                  <span class="code-comment">-- convert text '2024-01-15' to proper datetime object</span>
+df.set_index('date', inplace=True)                       <span class="code-comment">-- use date column as the row index (enables time-based operations)</span>
 
-df['year']    = df.index.year
-df['month']   = df.index.month
-df['weekday'] = df.index.dayofweek  # 0=Monday
-df['quarter'] = df.index.quarter
+# Extract date parts
+df['year']    = df.index.year                            <span class="code-comment">-- extract year from date index</span>
+df['month']   = df.index.month                          <span class="code-comment">-- extract month (1=Jan, 12=Dec)</span>
+df['weekday'] = df.index.dayofweek                      <span class="code-comment">-- 0=Monday, 6=Sunday</span>
+df['quarter'] = df.index.quarter                        <span class="code-comment">-- 1=Q1, 2=Q2, 3=Q3, 4=Q4</span>
 
-# Resample: daily → monthly
-df_monthly = df['revenue'].resample('M').sum()            <span class="code-comment"># add all values together</span>
+# Resample: aggregate to different time frequency
+df_monthly = df['revenue'].resample('M').sum()           <span class="code-comment">-- sum daily revenue into monthly totals ('M'=month, 'W'=week, 'D'=day, 'Y'=year)</span>
 
-# Rolling window
-df['rolling_30d'] = df['revenue'].rolling(window=30, min_periods=1).mean() # ← # sliding window for moving average / rolling statistics
-df['expanding']   = df['revenue'].expanding().sum()       <span class="code-comment"># add all values together</span>
+# Rolling window — moving average / rolling statistics
+df['rolling_30d'] = df['revenue'].rolling(window=30, min_periods=1).mean() <span class="code-comment">-- 30-day moving average (min_periods=1 avoids NaN at start)</span>
+df['expanding']   = df['revenue'].expanding().sum()      <span class="code-comment">-- cumulative sum (grows as more data is seen)</span>
 
 # Performance optimization
-df['status'] = df['status'].astype('category')  # low-cardinality strings
+df['status'] = df['status'].astype('category')           <span class="code-comment">-- convert low-cardinality string column to category (10x memory savings)</span>
 
 # Vectorized instead of apply (100x faster)
-df['discount_price'] = df['price'] * (1 - df['discount']/100)  # FAST
+df['discount_price'] = df['price'] * (1 - df['discount']/100)  <span class="code-comment">-- FAST: operates on entire column at once</span>
+# BAD: df['discount_price'] = df.apply(lambda r: r['price']*(1-r['discount']/100), axis=1)  # slow loop
 
 # Read large files in chunks
-chunks = pd.read_csv('large.csv', chunksize=100000)       <span class="code-comment"># read a CSV file into a table</span>
-df = pd.concat([chunk for chunk in chunks], ignore_index=True) # ← # stack DataFrames vertically (or side by side)
+chunks = pd.read_csv('large.csv', chunksize=100000)      <span class="code-comment">-- read 100k rows at a time (for files too large for RAM)</span>
+df = pd.concat([chunk for chunk in chunks], ignore_index=True) <span class="code-comment">-- combine all chunks into one DataFrame</span>
 
-# Explode (list in cell → rows)
-df['tags'] = df['tags'].str.split(',')                    <span class="code-comment"># work with text in this column</span>
-df_exploded = df.explode('tags')
+# Explode (list in one cell → multiple rows)
+df['tags'] = df['tags'].str.split(',')                   <span class="code-comment">-- split comma-separated string into a list</span>
+df_exploded = df.explode('tags')                         <span class="code-comment">-- each tag gets its own row (1 row with [A,B,C] → 3 rows)</span>
 
-# Melt (wide → long)
-df_long = df.melt(id_vars=['id','name'],
-                   value_vars=['q1','q2','q3','q4'],
-                   var_name='quarter', value_name='revenue')
+# Melt (wide format → long format — for Seaborn, SQL, etc.)
+df_long = df.melt(id_vars=['id','name'],                 <span class="code-comment">-- these columns stay as they are</span>
+                   value_vars=['q1','q2','q3','q4'],     <span class="code-comment">-- these columns become rows</span>
+                   var_name='quarter', value_name='revenue') <span class="code-comment">-- new column names for the key and value</span>
 </pre></div>
+    </div>
+
+    <div class="topic-card">
+      <h3>Pandas Cheat Sheet — Quick Reference</h3>
+      <table class="term-table">
+        <tr><th>Operation</th><th>Code</th><th>Returns</th></tr>
+        <tr><td>Shape</td><td><code>df.shape</code></td><td>Tuple (rows, cols)</td></tr>
+        <tr><td>Data types</td><td><code>df.dtypes</code></td><td>dtype per column</td></tr>
+        <tr><td>Unique values</td><td><code>df['col'].nunique()</code></td><td>Count of unique values</td></tr>
+        <tr><td>Value counts</td><td><code>df['col'].value_counts()</code></td><td>Frequency of each value</td></tr>
+        <tr><td>Rename columns</td><td><code>df.rename(columns={'old':'new'})</code></td><td>New DataFrame</td></tr>
+        <tr><td>Drop columns</td><td><code>df.drop(['col1','col2'], axis=1)</code></td><td>New DataFrame</td></tr>
+        <tr><td>Reset index</td><td><code>df.reset_index(drop=True)</code></td><td>0,1,2... index</td></tr>
+        <tr><td>Copy DataFrame</td><td><code>df.copy()</code></td><td>Independent copy</td></tr>
+        <tr><td>Correlation</td><td><code>df.corr()</code></td><td>Correlation matrix</td></tr>
+        <tr><td>Duplicate rows</td><td><code>df.duplicated().sum()</code></td><td>Count of duplicates</td></tr>
+      </table>
     </div>
 
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      DS PHASE 4 — Feature Engineering
 ═══════════════════════════════════════════════════ -->
@@ -9310,107 +9460,262 @@ train_sizes, train_scores, val_scores = learning_curve(
 <div class="phase-section" id="p8">
   <div class="phase-header">
     <h2>Phase 8 — Hyperparameter Tuning</h2>
+    <p style="color:#a8b8d0;font-size:13px;margin-top:4px;">Hyperparameters are settings you choose BEFORE training. The model learns parameters (weights) — you choose hyperparameters (learning rate, max depth, etc.).</p>
   </div>
   <div class="phase-content">
+
+    <div class="algo-section" style="margin-bottom:16px">
+      <h3 style="color:#38bdf8;margin-bottom:8px">The Bias-Variance Tradeoff — Why Tuning Matters</h3>
+      <p style="color:#94a3b8;font-size:13px">Every hyperparameter adjustment moves your model along the bias-variance curve. Too simple (high bias) = underfitting — misses patterns. Too complex (high variance) = overfitting — memorises training data, fails on new data. Tuning finds the sweet spot.</p>
+      <svg viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg" style="max-width:540px;width:100%;font-family:sans-serif">
+  <rect width="540" height="280" rx="12" fill="#0f172a"/>
+  <text x="270" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Bias-Variance Tradeoff — The Core of Hyperparameter Tuning</text>
+  <!-- Axes -->
+  <line x1="60" y1="220" x2="500" y2="220" stroke="#475569" stroke-width="1.5"/>
+  <line x1="60" y1="220" x2="60"  y2="40"  stroke="#475569" stroke-width="1.5"/>
+  <text x="280" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">Model Complexity (more complex →)</text>
+  <text x="18"  y="130" text-anchor="middle" fill="#94a3b8" font-size="11" transform="rotate(-90,18,130)">Error</text>
+  <!-- Bias curve: decreasing -->
+  <path d="M 75,55 Q 180,80 300,140 Q 400,185 490,205" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="95" y="50" fill="#ef4444" font-size="11" font-weight="bold">Bias (Training Error)</text>
+  <!-- Variance curve: increasing -->
+  <path d="M 75,210 Q 160,200 260,175 Q 360,148 490,65" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+  <text x="395" y="60" fill="#3b82f6" font-size="11" font-weight="bold">Variance (Test Error)</text>
+  <!-- Total error = U-shape -->
+  <path d="M 75,150 Q 180,125 260,115 Q 340,120 490,145" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-dasharray="6,3"/>
+  <text x="230" y="108" fill="#22c55e" font-size="10" font-weight="bold">Total Error</text>
+  <!-- Sweet spot -->
+  <circle cx="258" cy="115" r="12" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  <line x1="258" y1="127" x2="258" y2="220" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <text x="258" y="238" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="bold">Sweet Spot</text>
+  <text x="258" y="252" text-anchor="middle" fill="#94a3b8" font-size="10">(optimal complexity)</text>
+  <!-- Zones -->
+  <rect x="60" y="40" width="140" height="180" fill="#ef444411" rx="0"/>
+  <text x="130" y="175" text-anchor="middle" fill="#ef4444" font-size="10" font-style="italic">UNDERFIT</text>
+  <text x="130" y="187" text-anchor="middle" fill="#94a3b8" font-size="9">(High Bias)</text>
+  <text x="130" y="200" text-anchor="middle" fill="#94a3b8" font-size="9">Too simple</text>
+  <rect x="360" y="40" width="140" height="180" fill="#3b82f611" rx="0"/>
+  <text x="430" y="175" text-anchor="middle" fill="#3b82f6" font-size="10" font-style="italic">OVERFIT</text>
+  <text x="430" y="187" text-anchor="middle" fill="#94a3b8" font-size="9">(High Variance)</text>
+  <text x="430" y="200" text-anchor="middle" fill="#94a3b8" font-size="9">Too complex</text>
+</svg>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+        <div class="concept-box" style="border-color:#ef4444;padding:10px">
+          <h4 style="color:#f87171;margin:0 0 6px">High Bias (Underfitting) Signs</h4>
+          <ul style="font-size:12px;line-height:1.8;color:#94a3b8">
+            <li>Training accuracy is low</li>
+            <li>Test accuracy ≈ Training accuracy (both low)</li>
+            <li>Fix: increase model complexity (max_depth, n_estimators)</li>
+          </ul>
+        </div>
+        <div class="concept-box" style="border-color:#3b82f6;padding:10px">
+          <h4 style="color:#93c5fd;margin:0 0 6px">High Variance (Overfitting) Signs</h4>
+          <ul style="font-size:12px;line-height:1.8;color:#94a3b8">
+            <li>Training accuracy is very high</li>
+            <li>Test accuracy much lower than training</li>
+            <li>Fix: regularisation (dropout, min_samples_leaf, C in SVM)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="algo-section" style="margin-bottom:16px">
+      <h3 style="color:#38bdf8;margin-bottom:8px">Three Tuning Strategies — Which to Use When</h3>
+      <svg viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="260" rx="12" fill="#0f172a"/>
+  <text x="290" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Three Hyperparameter Search Strategies</text>
+  <!-- Grid Search -->
+  <rect x="20"  y="40" width="170" height="200" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="105" y="62" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">GridSearchCV</text>
+  <text x="105" y="78" text-anchor="middle" fill="#94a3b8" font-size="10">Exhaustive — tries ALL combos</text>
+  <!-- Grid pattern -->
+  <line x1="45"  y1="95"  x2="175" y2="95"  stroke="#334155" stroke-width="1"/>
+  <line x1="45"  y1="120" x2="175" y2="120" stroke="#334155" stroke-width="1"/>
+  <line x1="45"  y1="145" x2="175" y2="145" stroke="#334155" stroke-width="1"/>
+  <line x1="70"  y1="90"  x2="70"  y2="160" stroke="#334155" stroke-width="1"/>
+  <line x1="105" y1="90"  x2="105" y2="160" stroke="#334155" stroke-width="1"/>
+  <line x1="140" y1="90"  x2="140" y2="160" stroke="#334155" stroke-width="1"/>
+  <!-- Grid dots -->
+  <circle cx="70"  cy="95"  r="5" fill="#3b82f6"/>
+  <circle cx="105" cy="95"  r="5" fill="#3b82f6"/>
+  <circle cx="140" cy="95"  r="5" fill="#3b82f6"/>
+  <circle cx="70"  cy="120" r="5" fill="#3b82f6"/>
+  <circle cx="105" cy="120" r="5" fill="#3b82f6"/>
+  <circle cx="140" cy="120" r="5" fill="#3b82f6"/>
+  <circle cx="70"  cy="145" r="5" fill="#3b82f6"/>
+  <circle cx="105" cy="145" r="5" fill="#3b82f6"/>
+  <circle cx="140" cy="145" r="5" fill="#3b82f6"/>
+  <text x="105" y="180" text-anchor="middle" fill="#22c55e" font-size="10">✓ Finds global optimum</text>
+  <text x="105" y="194" text-anchor="middle" fill="#ef4444" font-size="10">✗ Very slow: N^K combos</text>
+  <text x="105" y="208" text-anchor="middle" fill="#ef4444" font-size="10">✗ Wastes time on bad areas</text>
+  <text x="105" y="228" text-anchor="middle" fill="#94a3b8" font-size="9">Use: small param spaces</text>
+  <!-- Random Search -->
+  <rect x="205" y="40" width="170" height="200" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="290" y="62" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">RandomizedSearchCV</text>
+  <text x="290" y="78" text-anchor="middle" fill="#94a3b8" font-size="10">Samples N random combos</text>
+  <!-- Scatter of random points -->
+  <circle cx="235" cy="105" r="5" fill="#22c55e"/>
+  <circle cx="320" cy="98"  r="5" fill="#22c55e"/>
+  <circle cx="260" cy="140" r="5" fill="#22c55e"/>
+  <circle cx="345" cy="130" r="5" fill="#22c55e"/>
+  <circle cx="280" cy="115" r="5" fill="#22c55e"/>
+  <circle cx="230" cy="150" r="5" fill="#22c55e"/>
+  <circle cx="305" cy="145" r="5" fill="#22c55e"/>
+  <circle cx="355" cy="105" r="5" fill="#22c55e"/>
+  <circle cx="250" cy="125" r="5" fill="#22c55e"/>
+  <text x="290" y="180" text-anchor="middle" fill="#22c55e" font-size="10">✓ Covers space efficiently</text>
+  <text x="290" y="194" text-anchor="middle" fill="#22c55e" font-size="10">✓ n_iter controls speed</text>
+  <text x="290" y="208" text-anchor="middle" fill="#f59e0b" font-size="10">~ May miss best region</text>
+  <text x="290" y="228" text-anchor="middle" fill="#94a3b8" font-size="9">Use: large param spaces</text>
+  <!-- Bayesian (Optuna) -->
+  <rect x="390" y="40" width="170" height="200" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="475" y="62" text-anchor="middle" fill="#d8b4fe" font-size="11" font-weight="bold">Bayesian (Optuna)</text>
+  <text x="475" y="78" text-anchor="middle" fill="#94a3b8" font-size="10">Learns which regions are good</text>
+  <!-- Concentrated points near optimum -->
+  <circle cx="415" cy="140" r="5" fill="#a855f7" opacity="0.5"/>
+  <circle cx="550" cy="100" r="5" fill="#a855f7" opacity="0.5"/>
+  <circle cx="440" cy="115" r="5" fill="#a855f7" opacity="0.7"/>
+  <circle cx="480" cy="130" r="5" fill="#a855f7" opacity="0.8"/>
+  <circle cx="495" cy="120" r="5" fill="#a855f7" opacity="0.9"/>
+  <circle cx="475" cy="110" r="7" fill="#a855f7"/>
+  <circle cx="465" cy="118" r="6" fill="#a855f7"/>
+  <circle cx="485" cy="115" r="6" fill="#a855f7"/>
+  <!-- Arrow showing convergence -->
+  <path d="M 420,140 Q 450,130 475,112" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowYellow)"/>
+  <defs>
+    <marker id="arrowYellow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+  <text x="475" y="180" text-anchor="middle" fill="#22c55e" font-size="10">✓ Most efficient (smart)</text>
+  <text x="475" y="194" text-anchor="middle" fill="#22c55e" font-size="10">✓ Focuses on promising areas</text>
+  <text x="475" y="208" text-anchor="middle" fill="#f59e0b" font-size="10">~ Slower per trial (overhead)</text>
+  <text x="475" y="228" text-anchor="middle" fill="#94a3b8" font-size="9">Use: expensive models</text>
+</svg>
+    </div>
 
     <div class="topic-card">
       <h3>GridSearchCV &amp; RandomizedSearchCV</h3>
       <div class="code-block"><pre>
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV # ← # import GridSearchCV, RandomizedSearchCV from sklearn.model_selection
-from xgboost import XGBClassifier                         <span class="code-comment"># grab XGBClassifier from xgboost</span>
-from scipy.stats import randint, uniform                  <span class="code-comment"># grab randint, uniform from scipy.stats</span>
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from xgboost import XGBClassifier
+from scipy.stats import randint, uniform
 
-# GridSearchCV: exhaustive search
+# GridSearchCV: exhaustive search — tries EVERY combination
 param_grid = {
-    'max_depth':     [3, 4, 5, 6],
-    'learning_rate': [0.01, 0.05, 0.1],
-    'n_estimators':  [100, 200, 300],
-    'subsample':     [0.7, 0.8, 0.9]
+    'max_depth':     [3, 4, 5, 6],         <span class="code-comment">-- 4 values</span>
+    'learning_rate': [0.01, 0.05, 0.1],    <span class="code-comment">-- 3 values</span>
+    'n_estimators':  [100, 200, 300],      <span class="code-comment">-- 3 values</span>
+    'subsample':     [0.7, 0.8, 0.9]      <span class="code-comment">-- 3 values</span>
 }
-# 4×3×3×3 = 108 combinations × 5 folds = 540 model fits
+# 4×3×3×3 = 108 combinations × 5 folds = 540 model fits — can be slow!
 
-grid = GridSearchCV(                                      <span class="code-comment"># try every combination of settings to find the best</span>
-    XGBClassifier(random_state=42), param_grid=param_grid, # ← # XGBoost: fast gradient boosting, handles missing values
-    cv=5, scoring='roc_auc', n_jobs=-1
+grid = GridSearchCV(
+    XGBClassifier(random_state=42),
+    param_grid=param_grid,
+    cv=5,                                  <span class="code-comment">-- 5-fold cross-validation per combo</span>
+    scoring='roc_auc',                     <span class="code-comment">-- metric to optimise</span>
+    n_jobs=-1                              <span class="code-comment">-- use all CPU cores in parallel</span>
 )
-grid.fit(X_train, y_train)                                <span class="code-comment"># teach the model using training examples</span>
-print(f"Best params: {grid.best_params_}")                <span class="code-comment"># the settings that gave the best score</span>
-print(f"Best AUC:    {grid.best_score_:.4f}")             <span class="code-comment"># the best score found during tuning</span>
+grid.fit(X_train, y_train)
+print(f"Best params: {grid.best_params_}") <span class="code-comment">-- the winning combination</span>
+print(f"Best AUC:    {grid.best_score_:.4f}") <span class="code-comment">-- cross-validated score of the best combo</span>
 
-# RandomizedSearchCV: sample n random combinations
+# RandomizedSearchCV: sample n random combinations — much faster
 param_dist = {
-    'max_depth':       randint(3, 8),
-    'learning_rate':   uniform(0.01, 0.2),
-    'n_estimators':    randint(100, 500),
-    'subsample':       uniform(0.6, 0.4),
-    'colsample_bytree':uniform(0.5, 0.5),
+    'max_depth':       randint(3, 8),           <span class="code-comment">-- random integer between 3 and 7</span>
+    'learning_rate':   uniform(0.01, 0.2),      <span class="code-comment">-- random float between 0.01 and 0.21</span>
+    'n_estimators':    randint(100, 500),       <span class="code-comment">-- random integer between 100 and 499</span>
+    'subsample':       uniform(0.6, 0.4),       <span class="code-comment">-- random float between 0.6 and 1.0</span>
+    'colsample_bytree':uniform(0.5, 0.5),       <span class="code-comment">-- random float between 0.5 and 1.0</span>
 }
-rand = RandomizedSearchCV(                                <span class="code-comment"># try random settings — faster than trying everything</span>
-    XGBClassifier(random_state=42), param_distributions=param_dist, # ← # XGBoost: fast gradient boosting, handles missing values
-    n_iter=50, cv=5, scoring='roc_auc', n_jobs=-1, random_state=42
+rand = RandomizedSearchCV(
+    XGBClassifier(random_state=42),
+    param_distributions=param_dist,
+    n_iter=50,                             <span class="code-comment">-- only try 50 random combos instead of hundreds</span>
+    cv=5, scoring='roc_auc', n_jobs=-1, random_state=42
 )
-rand.fit(X_train, y_train)                                <span class="code-comment"># teach the model using training examples</span>
+rand.fit(X_train, y_train)
 </pre></div>
     </div>
 
     <div class="topic-card">
-      <h3>Optuna (Bayesian Optimization)</h3>
+      <h3>Optuna (Bayesian Optimization) — Smart Tuning</h3>
+      <div class="note-box" style="margin-bottom:8px"><strong>Why Optuna?</strong> Grid/Random search are "blind" — they don't learn from past trials. Optuna tracks which parameter combinations gave good results and intelligently focuses future trials on promising regions. It can find better hyperparameters in far fewer trials.</div>
       <div class="code-block"><pre>
-import optuna                                             <span class="code-comment"># bring in the optuna toolkit</span>
-from sklearn.model_selection import cross_val_score       <span class="code-comment"># grab cross_val_score from sklearn.model_selection</span>
-from xgboost import XGBClassifier                         <span class="code-comment"># grab XGBClassifier from xgboost</span>
+import optuna
+from sklearn.model_selection import cross_val_score
+from xgboost import XGBClassifier
 
-def objective(trial):                                     <span class="code-comment"># define a reusable function</span>
+def objective(trial):
+    # trial.suggest_*: Optuna picks values intelligently based on previous trial results
     params = {
-        'n_estimators':    trial.suggest_int('n_estimators', 100, 500), # ← # convert to integer (truncates decimals)
-        'max_depth':       trial.suggest_int('max_depth', 3, 8), # ← # convert to integer (truncates decimals)
-        'learning_rate':   trial.suggest_float('learning_rate', 0.01, 0.3, log=True), # ← # convert to floating-point number
-        'subsample':       trial.suggest_float('subsample', 0.6, 1.0), # ← # convert to floating-point number
-        'colsample_bytree':trial.suggest_float('colsample_bytree', 0.5, 1.0), # ← # convert to floating-point number
-        'scale_pos_weight':trial.suggest_float('scale_pos_weight', 1, 5) # ← # convert to floating-point number
+        'n_estimators':    trial.suggest_int('n_estimators', 100, 500),      <span class="code-comment">-- integer between 100-500</span>
+        'max_depth':       trial.suggest_int('max_depth', 3, 8),             <span class="code-comment">-- integer between 3-8</span>
+        'learning_rate':   trial.suggest_float('learning_rate', 0.01, 0.3, log=True), <span class="code-comment">-- log scale: spends more time near 0.01 than 0.3</span>
+        'subsample':       trial.suggest_float('subsample', 0.6, 1.0),      <span class="code-comment">-- continuous float</span>
+        'colsample_bytree':trial.suggest_float('colsample_bytree', 0.5, 1.0),
+        'scale_pos_weight':trial.suggest_float('scale_pos_weight', 1, 5)    <span class="code-comment">-- for imbalanced classes</span>
     }
-    model = XGBClassifier(**params, random_state=42)      <span class="code-comment"># supercharged gradient boosting — fast and powerful</span>
-    return cross_val_score(model, X_train, y_train,       <span class="code-comment"># test model fairly by rotating which rows are for testing</span>
-                            cv=3, scoring='roc_auc').mean()
+    model = XGBClassifier(**params, random_state=42)
+    return cross_val_score(model, X_train, y_train, cv=3, scoring='roc_auc').mean()
 
-study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=100, show_progress_bar=True)
-print(f"Best AUC: {study.best_value:.4f}")                <span class="code-comment"># show this value in the terminal</span>
-print(f"Best params: {study.best_params}")                <span class="code-comment"># show this value in the terminal</span>
+study = optuna.create_study(direction='maximize')     <span class="code-comment">-- we want to MAXIMISE AUC</span>
+study.optimize(objective, n_trials=100, show_progress_bar=True)  <span class="code-comment">-- run 100 intelligent trials</span>
+print(f"Best AUC: {study.best_value:.4f}")
+print(f"Best params: {study.best_params}")
+
+# Analyse which parameters mattered most
+optuna.visualization.plot_param_importances(study)    <span class="code-comment">-- shows which params had biggest impact on score</span>
 </pre></div>
     </div>
 
     <div class="topic-card">
-      <h3>Full Pipeline with Tuning</h3>
+      <h3>Full Pipeline with Tuning — Best Practice</h3>
       <div class="code-block"><pre>
-from sklearn.pipeline import Pipeline                     <span class="code-comment"># grab Pipeline from sklearn.pipeline</span>
-from sklearn.preprocessing import StandardScaler          <span class="code-comment"># grab StandardScaler from sklearn.preprocessing</span>
-from sklearn.impute import SimpleImputer                  <span class="code-comment"># grab SimpleImputer from sklearn.impute</span>
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
 
-pipe = Pipeline([                                         <span class="code-comment"># chain preprocessing + model steps into one object</span>
-    ('imputer', SimpleImputer(strategy='median')),
-    ('scaler',  StandardScaler()),                        <span class="code-comment"># make all features the same scale (mean 0, spread 1)</span>
-    ('model',   XGBClassifier(random_state=42))           <span class="code-comment"># supercharged gradient boosting — fast and powerful</span>
+# Always wrap preprocessing + model in Pipeline when tuning
+# Reason: if you scale BEFORE splitting into folds, you leak test data statistics into training
+# Pipeline ensures scaler is fit ONLY on the training fold each time — no leakage!
+
+pipe = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),  <span class="code-comment">-- fill missing values before model sees data</span>
+    ('scaler',  StandardScaler()),                  <span class="code-comment">-- scale features to mean=0, std=1</span>
+    ('model',   XGBClassifier(random_state=42))     <span class="code-comment">-- the actual model</span>
 ])
 
-# Prefix param names with step_name__
+# Prefix parameter names with step_name__parameter_name
 param_dist = {
-    'model__n_estimators':  randint(100, 400),
+    'model__n_estimators':  randint(100, 400),      <span class="code-comment">-- 'model' is step name, 'n_estimators' is param</span>
     'model__max_depth':     randint(3, 7),
     'model__learning_rate': uniform(0.01, 0.15),
-    'imputer__strategy':    ['median', 'mean']
+    'imputer__strategy':    ['median', 'mean']      <span class="code-comment">-- tune the imputer too!</span>
 }
-search = RandomizedSearchCV(pipe, param_dist, n_iter=40, # ← # random hyperparameter search — faster than grid search
-                              cv=5, scoring='roc_auc', n_jobs=-1)
-search.fit(X_train, y_train)                              <span class="code-comment"># teach the model using training examples</span>
-y_pred = search.best_estimator_.predict(X_test)           <span class="code-comment"># let the model guess labels for test data</span>
+search = RandomizedSearchCV(pipe, param_dist, n_iter=40, cv=5, scoring='roc_auc', n_jobs=-1)
+search.fit(X_train, y_train)
+y_pred = search.best_estimator_.predict(X_test)    <span class="code-comment">-- best_estimator_ is the fitted Pipeline with best params</span>
 </pre></div>
-      <div class="note-box"><strong>Always use Pipeline for tuning.</strong> Pipeline ensures scaler is fit only on training fold each time — prevents data leakage.</div>
+      <div class="note-box"><strong>Rule:</strong> Always use Pipeline for tuning. This prevents data leakage and makes your final model deployable as a single object that handles preprocessing + prediction.</div>
+    </div>
+
+    <div class="topic-card">
+      <h3>Tuning Strategy Decision Guide</h3>
+      <table class="term-table">
+        <tr><th>Situation</th><th>Recommended Approach</th><th>Why</th></tr>
+        <tr><td>Small param space (&lt;50 combos)</td><td>GridSearchCV</td><td>Exhaustive is affordable</td></tr>
+        <tr><td>Large param space, fast model</td><td>RandomizedSearchCV (n_iter=50-100)</td><td>Random coverage is sufficient</td></tr>
+        <tr><td>Slow model (XGBoost, Neural Net)</td><td>Optuna (Bayesian)</td><td>Smart search saves hours</td></tr>
+        <tr><td>Preprocessing + model together</td><td>Always use Pipeline</td><td>Prevents data leakage</td></tr>
+        <tr><td>Need reproducibility</td><td>Set random_state on all steps</td><td>Same results every run</td></tr>
+        <tr><td>After tuning, evaluate properly</td><td>Use held-out test set (not CV set)</td><td>CV data was used for tuning</td></tr>
+      </table>
     </div>
 
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      DS PHASE 9 — Probability & Bayes
 ═══════════════════════════════════════════════════ -->

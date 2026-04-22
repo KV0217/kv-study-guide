@@ -1395,7 +1395,7 @@ html, body {
     <div class="algo-number">1</div>
     <div>
       <div class="algo-title">Linear Regression</div>
-      <div class="algo-subtitle">Predict a number by drawing the best straight line through data</div>
+      <div class="algo-subtitle">Predict any number — salary, price, temperature — by finding the best straight line through data</div>
     </div>
   </div>
   <div class="tab-bar">
@@ -1405,189 +1405,405 @@ html, body {
     <button class="tab-btn" onclick="showTab('s1','code')">💻 Code &amp; Internals</button>
     <button class="tab-btn" onclick="showTab('s1','terms')">📚 Key Terms</button>
   </div>
-
   <div class="tab-content active" id="s1-what">
     <div class="card">
-      <h3>What is Linear Regression?</h3>
-      <p>Linear Regression is the simplest ML algorithm — it predicts a <strong>continuous number</strong> (not a category) by finding the best straight line through your data points.</p>
-      <p style="margin-top:10px">Examples of what it predicts: <span class="badge badge-blue">House Price</span> <span class="badge badge-blue">Employee Salary</span> <span class="badge badge-blue">Temperature Tomorrow</span> <span class="badge badge-blue">Sales Revenue</span></p>
+      <h3>What is Linear Regression? (Plain English)</h3>
+      <p>Linear Regression is the simplest ML algorithm that exists — and one of the most powerful in practice. Its job is to predict a <strong>number</strong> (not a category) by finding the best straight line through your data.</p>
+      <p>Think of it like this: you have a bunch of dots on a graph (e.g., years of experience on the x-axis, salary on the y-axis). Linear Regression draws the single best straight line through all those dots. Once that line exists, you can point to any x-value and read off the predicted y-value.</p>
+      <p>That's it. The entire algorithm is: find the best line.</p>
+      <div class="highlight"><p><strong>Core formula:</strong> ŷ = w₁x₁ + w₂x₂ + ... + wₙxₙ + b<br>In plain English: prediction = (weight × feature) for every feature, all added together, plus a starting offset (bias).</p></div>
+    </div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 480 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;background:#0f172a;border-radius:12px;">
+  <defs><marker id="ax" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#475569"/></marker></defs>
+  <!-- Axes -->
+  <line x1="50" y1="220" x2="440" y2="220" stroke="#475569" stroke-width="1.5" marker-end="url(#ax)"/>
+  <line x1="50" y1="220" x2="50"  y2="20"  stroke="#475569" stroke-width="1.5" marker-end="url(#ax)"/>
+  <text x="450" y="224" fill="#64748b" font-size="10" font-family="sans-serif">Years Exp</text>
+  <text x="52"  y="16"  fill="#64748b" font-size="10" font-family="sans-serif">Salary</text>
+  <!-- Axis ticks -->
+  <text x="44"  y="224" text-anchor="end" fill="#64748b" font-size="9">0</text>
+  <text x="140" y="234" text-anchor="middle" fill="#64748b" font-size="9">3</text>
+  <text x="230" y="234" text-anchor="middle" fill="#64748b" font-size="9">6</text>
+  <text x="320" y="234" text-anchor="middle" fill="#64748b" font-size="9">9</text>
+  <text x="410" y="234" text-anchor="middle" fill="#64748b" font-size="9">12</text>
+  <!-- Data points (scattered around the true line) -->
+  <circle cx="65"  cy="205" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="80"  cy="195" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="100" cy="183" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="115" cy="175" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="130" cy="162" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="155" cy="168" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="170" cy="148" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="190" cy="140" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="210" cy="135" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="230" cy="125" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="250" cy="118" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="270" cy="108" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="295" cy="100" r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="315" cy="88"  r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="340" cy="82"  r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="360" cy="72"  r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="385" cy="60"  r="4" fill="#60a5fa" opacity=".85"/>
+  <circle cx="410" cy="52"  r="4" fill="#60a5fa" opacity=".85"/>
+  <!-- Best-fit line: y = -13.2x + 218 (approx) -->
+  <line x1="55" y1="215" x2="425" y2="44" stroke="#f97316" stroke-width="2.5"/>
+  <!-- Residual lines (a few) -->
+  <line x1="155" y1="168" x2="155" y2="153" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="250" y1="118" x2="250" y2="120" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="315" y1="88"  x2="315" y2="80"  stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <!-- Labels -->
+  <text x="280" y="140" fill="#f97316" font-size="11" font-family="sans-serif" font-weight="600">Best-fit line</text>
+  <text x="280" y="153" fill="#f97316" font-size="10" font-family="monospace">y = 4800x + 28000</text>
+  <text x="160" y="145" fill="#ef4444" font-size="9" font-family="sans-serif">← residual</text>
+  <text x="55"  y="248" fill="#64748b" font-size="9" font-family="sans-serif">Blue dots = actual salaries. Orange line = model's best prediction. Red gaps = residuals (errors).</text>
+</svg></div>
+    <div class="card">
+      <h3>Simple vs Multiple Linear Regression</h3>
+      <table class="term-table">
+        <tr><th>Type</th><th>Inputs</th><th>Formula</th><th>Example</th></tr>
+        <tr>
+          <td><strong>Simple</strong></td>
+          <td>1 feature</td>
+          <td>y = mx + b</td>
+          <td>Salary = 4800 × YearsExp + 28000</td>
+        </tr>
+        <tr>
+          <td><strong>Multiple</strong></td>
+          <td>2+ features</td>
+          <td>y = w₁x₁ + w₂x₂ + ... + b</td>
+          <td>HousePrice = 3000×sqft + 200000×bedrooms + 50000×garage + 100000</td>
+        </tr>
+      </table>
+      <div class="highlight"><p>sklearn's <code>LinearRegression()</code> handles both automatically — you just pass in your feature matrix X with as many columns as you have features.</p></div>
     </div>
     <div class="analogy">
-      <div class="label">📐 Analogy — Study Hours vs Exam Score</div>
-      <p>Imagine you plot study hours (x-axis) vs exam scores (y-axis) for 100 students. You notice a pattern: more hours = higher score. Linear Regression draws the single best straight line through all those points. Once the line is drawn, you can ask: "If a student studies 7 hours, what score do we predict?" — just find 7 on the x-axis and read the y value on the line.</p>
-    </div>
-    <div class="card">
-      <h3>The Core Equation</h3>
-      <p>The line follows the equation: <strong style="color:#4fc3f7">y = mx + b</strong></p>
-      <ul>
-        <li><strong>y</strong> = what we're predicting (salary, house price)</li>
-        <li><strong>x</strong> = the input feature (years of experience, square footage)</li>
-        <li><strong>m</strong> = slope / coefficient (how much y changes when x increases by 1)</li>
-        <li><strong>b</strong> = intercept (starting value of y when x = 0)</li>
-      </ul>
-      <div class="highlight"><p>Example: Salary = 5000 × YearsOfExperience + 30000. This says: a fresh grad (0 years) starts at ₹30,000/month, and every extra year of experience adds ₹5,000/month.</p></div>
+      <div class="label">🎯 Analogy — Predicting Your Pizza Delivery Time</div>
+      <p>Imagine ordering pizza 50 times from the same place and noting: distance, number of orders that hour, and how long delivery took. Linear Regression says: delivery_time = 3×distance + 2×busy_factor + 8. It found that each km adds 3 minutes, each extra order adds 2 minutes, and there's always an 8-minute base time. Now you can predict any new delivery time instantly.</p>
     </div>
     <div class="card">
       <h3>When to Use Linear Regression</h3>
-      <ul>
-        <li>Your target variable is a <strong>number</strong> (not a category)</li>
-        <li>You expect a roughly <strong>linear relationship</strong> between input and output</li>
-        <li>You want a model that is easy to <strong>explain to stakeholders</strong></li>
-        <li>You want a <strong>baseline model</strong> to compare other algorithms against</li>
-      </ul>
+      <table class="term-table">
+        <tr><th>Use it when</th><th>Don't use it when</th></tr>
+        <tr><td>Target is a continuous number (price, salary, temperature)</td><td>Target is a category (yes/no, type A/B/C) — use Logistic Regression</td></tr>
+        <tr><td>Relationship is roughly linear (doubling x roughly doubles y)</td><td>Relationship is highly non-linear (use tree models or NNs)</td></tr>
+        <tr><td>You need to explain the model to non-technical stakeholders</td><td>You have text, images, audio — unstructured data</td></tr>
+        <tr><td>You want a fast, interpretable baseline</td><td>You have many irrelevant features with no feature selection (use Ridge/Lasso)</td></tr>
+      </table>
     </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s1-how">
     <div class="card">
-      <h3>The Goal: Minimize Error</h3>
-      <p>The algorithm tries to find the line that makes the <strong>smallest total error</strong> across all data points. The error for each point is the gap between the actual value and what the line predicts. This gap is called a <strong>residual</strong>.</p>
-    </div>
-    <div class="analogy">
-      <div class="label">📏 Why Square the Errors?</div>
-      <p>If we just added up the gaps, positive and negative errors would cancel each other out. Squaring each error (residual²) makes all values positive and punishes large mistakes more. This is called <strong>Mean Squared Error (MSE)</strong> = average of all squared residuals.</p>
+      <h3>The Core Goal: Minimise Mean Squared Error (MSE)</h3>
+      <p>For any candidate line, we can measure how wrong it is. The algorithm tries thousands of different lines and picks the one with the smallest total error.</p>
+      <p><strong>How error is measured:</strong></p>
+      <ol>
+        <li>For each data point, calculate the <strong>residual</strong>: actual value − predicted value</li>
+        <li><strong>Square</strong> each residual (makes all positives, punishes big errors extra)</li>
+        <li>Take the <strong>mean</strong> (average) of all squared residuals → this is MSE</li>
+        <li>The "best line" = the line with the lowest possible MSE</li>
+      </ol>
+      <div class="highlight"><p>MSE = (1/n) × Σ(yᵢ − ŷᵢ)² — average of squared errors. The goal: find weights w that make this as small as possible.</p></div>
     </div>
     <div class="card">
       <h3>Two Ways to Find the Best Line</h3>
-      <h4>Method 1: OLS (Ordinary Least Squares) — Mathematical Solution</h4>
-      <p>There's a formula that directly calculates the exact best values of m and b using linear algebra. It's fast and perfect for small datasets. This is what sklearn uses by default.</p>
-      <h4>Method 2: Gradient Descent — Iterative Solution</h4>
-      <p>Start with random m and b. Calculate how wrong the predictions are (MSE). Nudge m and b slightly in the direction that reduces error. Repeat thousands of times until the line barely moves. This is used for very large datasets or in neural networks.</p>
+      <table class="term-table">
+        <tr><th>Method</th><th>How it works</th><th>When sklearn uses it</th><th>Speed</th></tr>
+        <tr>
+          <td><strong>OLS (Ordinary Least Squares)</strong></td>
+          <td>Pure math — a closed-form formula gives the exact answer in one calculation using matrix algebra: w = (XᵀX)⁻¹Xᵀy</td>
+          <td>Default for small–medium datasets</td>
+          <td>Instant for small data, slow for millions of rows</td>
+        </tr>
+        <tr>
+          <td><strong>Gradient Descent</strong></td>
+          <td>Start with random weights. Measure error. Take a small step in the direction that reduces error. Repeat thousands of times.</td>
+          <td>Used in neural networks and SGDRegressor for very large datasets</td>
+          <td>Slower per solution, but scales to huge data</td>
+        </tr>
+      </table>
     </div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;background:#0f172a;border-radius:12px;">
+  <defs><marker id="gd" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#60a5fa"/></marker></defs>
+  <!-- Bowl / loss surface curve -->
+  <path d="M 30 170 Q 100 30 210 20 Q 320 30 390 170" fill="none" stroke="#475569" stroke-width="2"/>
+  <!-- Fill under curve -->
+  <path d="M 30 170 Q 100 30 210 20 Q 320 30 390 170 L 390 185 L 30 185 Z" fill="#1e293b" opacity=".5"/>
+  <!-- Gradient descent steps -->
+  <circle cx="340" cy="90"  r="6" fill="#ef4444"/>
+  <circle cx="295" cy="52"  r="6" fill="#f97316"/>
+  <circle cx="255" cy="31"  r="6" fill="#fbbf24"/>
+  <circle cx="225" cy="22"  r="6" fill="#84cc16"/>
+  <circle cx="210" cy="20"  r="8" fill="#34d399" stroke="#fff" stroke-width="1.5"/>
+  <!-- Arrows between steps -->
+  <line x1="334" y1="87" x2="302" y2="56" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#gd)"/>
+  <line x1="289" y1="50" x2="262" y2="35" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#gd)"/>
+  <line x1="249" y1="30" x2="232" y2="23" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#gd)"/>
+  <line x1="220" y1="22" x2="216" y2="20" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#gd)"/>
+  <!-- Labels -->
+  <text x="350" y="82"  fill="#ef4444" font-size="9" font-family="sans-serif">Start (random)</text>
+  <text x="195" y="14"  text-anchor="middle" fill="#34d399" font-size="9" font-family="sans-serif">Minimum loss ✓</text>
+  <text x="210" y="195" text-anchor="middle" fill="#64748b" font-size="9" font-family="sans-serif">Each step nudges m &amp; b toward the point of lowest error</text>
+  <!-- Axes labels -->
+  <text x="30"  y="185" fill="#64748b" font-size="9">High loss</text>
+  <text x="390" y="185" text-anchor="end" fill="#64748b" font-size="9">High loss</text>
+  <text x="210" y="10"  text-anchor="middle" fill="#94a3b8" font-size="11" font-family="sans-serif" font-weight="600">Gradient Descent — Rolling Downhill to Minimum Error</text>
+</svg></div>
     <div class="card">
-      <h3>Gradient Descent — Visual Intuition</h3>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Step 1</div><div class="step-txt">Start with random slope m and intercept b</div></div>
-        <div class="flow-step"><div class="step-num">Step 2</div><div class="step-txt">Calculate MSE — how wrong are current predictions?</div></div>
-        <div class="flow-step"><div class="step-num">Step 3</div><div class="step-txt">Calculate gradient — which direction to move m and b?</div></div>
-        <div class="flow-step"><div class="step-num">Step 4</div><div class="step-txt">Update m and b by small amount (learning rate)</div></div>
-        <div class="flow-step"><div class="step-num">Step 5</div><div class="step-txt">Repeat until MSE stops decreasing (convergence)</div></div>
+      <h3>sklearn LinearRegression — ALL Parameters Explained</h3>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:8px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">LinearRegression(fit_intercept, copy_X, n_jobs, positive)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>When to change</th></tr>
+          <tr>
+            <td><code>fit_intercept</code></td>
+            <td>Whether to calculate the bias term (b in y=mx+b). If False, the line is forced to pass through the origin (0,0).</td>
+            <td>True</td>
+            <td>Set False only if you have a mathematical reason to force the prediction to be 0 when all features are 0. Almost never change this.</td>
+          </tr>
+          <tr>
+            <td><code>copy_X</code></td>
+            <td>Whether to copy X before fitting. If False, X may be overwritten. This is a memory optimisation.</td>
+            <td>True</td>
+            <td>Set False only if your dataset is so large that RAM is a serious constraint and you don't need the original X after fitting.</td>
+          </tr>
+          <tr>
+            <td><code>n_jobs</code></td>
+            <td>Number of CPU cores to use when computing with multiple targets (multi-output regression). -1 = use all cores.</td>
+            <td>None (1 core)</td>
+            <td>Set -1 if doing multi-output regression with large data to speed up computation. No effect for single target.</td>
+          </tr>
+          <tr>
+            <td><code>positive</code></td>
+            <td>Forces all learned coefficients to be non-negative (≥ 0). Useful when you know a feature should never have a negative effect on the target.</td>
+            <td>False</td>
+            <td>Set True for use cases like: predicting house price from area (more area should never predict lower price). Constrains the model but adds interpretability.</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3>Model Attributes After Fitting (What You Can Inspect)</h3>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Attribute</th><th>What it is</th><th>Example</th></tr>
+          <tr><td><code>model.coef_</code></td><td>Array of learned weights/slopes — one per feature. The "m" values.</td><td>[4800.3, 1200.1, 500.7] for 3 features</td></tr>
+          <tr><td><code>model.intercept_</code></td><td>Learned bias/intercept — the "b" value. Prediction when all features = 0.</td><td>28034.2</td></tr>
+          <tr><td><code>model.rank_</code></td><td>Rank of the feature matrix X. Used to detect multicollinearity.</td><td>3 (for 3 independent features)</td></tr>
+          <tr><td><code>model.singular_</code></td><td>Singular values of X. Low values indicate nearly-duplicate features.</td><td>[14.2, 8.7, 2.1]</td></tr>
+        </table>
       </div>
     </div>
     <div class="card">
-      <h3>R² Score — How Good is the Model?</h3>
-      <p>R² (R-squared) tells you what percentage of the variation in the target variable is explained by your model.</p>
-      <ul>
-        <li><strong>R² = 1.0</strong> → perfect model, predicts every point exactly</li>
-        <li><strong>R² = 0.85</strong> → model explains 85% of salary variation — very good</li>
-        <li><strong>R² = 0.5</strong> → model explains only 50% — moderate</li>
-        <li><strong>R² = 0.0</strong> → model is no better than just guessing the average</li>
-        <li><strong>R² &lt; 0</strong> → model is worse than just guessing the average — something is wrong</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s1-use">
-    <div class="card">
-      <h3>🏢 Real Use Case: Predicting Employee Salary</h3>
-      <p>An HR department at a tech company wants to make fair, data-driven salary offers to new hires. They have historical data: years of experience for 200 past employees and what salary they were paid.</p>
-    </div>
-    <div class="card">
-      <h3>The Business Problem</h3>
-      <ul>
-        <li>A candidate with 5 years of experience applies. What salary should we offer?</li>
-        <li>Underpaying loses good candidates. Overpaying hurts the budget.</li>
-        <li>Linear Regression gives a fair, data-backed number.</li>
-      </ul>
-      <div class="highlight"><p>The model might learn: Salary = ₹4,800 × Years_of_Experience + ₹28,000. For 5 years: ₹4,800×5 + ₹28,000 = ₹52,000/month.</p></div>
-    </div>
-    <div class="card">
-      <h3>What the Company Gets</h3>
-      <ul>
-        <li><strong>Fairness:</strong> Offers are based on data, not negotiation skill</li>
-        <li><strong>Consistency:</strong> Every hiring manager uses the same formula</li>
-        <li><strong>Explainability:</strong> "Our model shows every year of experience adds ₹4,800/month"</li>
-        <li><strong>Scalability:</strong> Works for hundreds of hires with no extra effort</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Other Real-World Applications</h3>
-      <ul>
-        <li><strong>Real Estate:</strong> House price based on area, bedrooms, location</li>
-        <li><strong>Insurance:</strong> Premium based on age, BMI, smoking status</li>
-        <li><strong>Retail:</strong> Sales forecast based on advertising spend</li>
-        <li><strong>Healthcare:</strong> Patient hospital stay duration based on age and diagnosis</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s1-code">
-    <div class="card">
-      <h3>Complete Code: Salary Prediction with Linear Regression</h3>
-    </div>
-    <div class="code-block"><pre>
-<span class="c-cm"># ── Import the tools we need ──────────────────────────────────</span>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                  <span class="c-cm"># for working with numbers and arrays</span>
-<span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd                 <span class="c-cm"># for loading and manipulating data tables</span>
-<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt     <span class="c-cm"># for drawing charts</span>
-<span class="c-kw">from</span> sklearn.linear_model <span class="c-kw">import</span> <span class="c-cls">LinearRegression</span>   <span class="c-cm"># the algorithm</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split  <span class="c-cm"># split data into train/test</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> mean_squared_error, r2_score  <span class="c-cm"># to measure accuracy</span>
-
-<span class="c-cm"># ── Create sample data (in real life you'd load a CSV) ─────────</span>
-np.random.seed(<span class="c-num">42</span>)                                        <span class="code-comment"># lock in a random seed so results are the same every run</span>
-years_exp = np.random.uniform(<span class="c-num">0</span>, <span class="c-num">15</span>, <span class="c-num">200</span>)
-salary = <span class="c-num">4800</span> * years_exp + <span class="c-num">28000</span> + np.random.normal(<span class="c-num">0</span>, <span class="c-num">5000</span>, <span class="c-num">200</span>) # ← # generate random numbers from normal (Gaussian) distribution
-
-<span class="c-cm"># ── Prepare the data ────────────────────────────────────────────</span>
-X = years_exp.reshape(<span class="c-num">-1</span>, <span class="c-num">1</span>)
-y = salary
-
-<span class="c-cm"># ── Split into training and testing sets ────────────────────────</span>
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="c-num">0.2</span>, random_state=<span class="c-num">42</span>) # ← # split data into training set and test set
-
-<span class="c-cm"># ── Train the model ─────────────────────────────────────────────</span>
-model = <span class="c-cls">LinearRegression</span>()                                <span class="code-comment"># draw a best-fit line to predict a number</span>
-model.fit(X_train, y_train)                               <span class="code-comment"># teach the model using training examples</span>
-
-<span class="c-cm"># ── Inspect what the model learned ──────────────────────────────</span>
-<span class="c-fn">print</span>(<span class="c-str">f"Slope (m): {model.coef_[0]:.2f}"</span>) # ← # learned weight/slope for each feature
-<span class="c-fn">print</span>(<span class="c-str">f"Intercept (b): {model.intercept_:.2f}"</span>) # ← # learned bias/intercept (y when all features = 0)
-
-<span class="c-cm"># ── Make predictions on test data ───────────────────────────────</span>
-y_pred = model.predict(X_test)                            <span class="code-comment"># let the model guess labels for test data</span>
-
-<span class="c-cm"># ── Evaluate ────────────────────────────────────────────────────</span>
-mse = mean_squared_error(y_test, y_pred)                  <span class="code-comment"># average squared error — big mistakes are penalised more</span>
-rmse = np.sqrt(mse)                                       <span class="code-comment"># square root</span>
-r2 = r2_score(y_test, y_pred)                             <span class="code-comment"># how much of the variation the model explains (1 = perfect)</span>
-<span class="c-fn">print</span>(<span class="c-str">f"RMSE: ₹{rmse:.0f}"</span>)                               <span class="code-comment"># show this value in the terminal</span>
-<span class="c-fn">print</span>(<span class="c-str">f"R²: {r2:.3f}"</span>)                                    <span class="code-comment"># show this value in the terminal</span>
-
-<span class="c-cm"># ── Predict for a new candidate ─────────────────────────────────</span>
-new_candidate = np.array([[<span class="c-num">5</span>]]) # ← # convert a list or nested list to a NumPy array
-predicted_salary = model.predict(new_candidate)           <span class="code-comment"># use the trained model to make guesses</span>
-<span class="c-fn">print</span>(<span class="c-str">f"Predicted salary: ₹{predicted_salary[0]:.0f}"</span>)    <span class="code-comment"># show this value in the terminal</span>
-</pre></div>
-    <div class="card">
-      <h3>What Each Parameter Controls</h3>
-      <ul>
-        <li><strong>fit_intercept=True</strong> (default): allows model to learn the b value.</li>
-        <li><strong>model.coef_</strong>: the learned slope(s) — one per feature</li>
-        <li><strong>model.intercept_</strong>: the learned starting value</li>
-        <li><strong>test_size=0.2</strong>: hold out 20% for testing.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s1-terms">
-    <div class="card">
-      <h3>Key Terms Explained Simply</h3>
+      <h3>Evaluation Metrics — How Do You Know If the Model Is Good?</h3>
       <table class="term-table">
-        <tr><th>Term</th><th>Plain English Explanation</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Coefficient (slope)</span></td><td>How much the prediction changes when the input goes up by 1 unit</td><td>If slope = 4800, each extra year of experience adds ₹4,800 to salary</td></tr>
-        <tr><td><span class="term-name">Intercept</span></td><td>The predicted value when all inputs are zero — the starting point of the line</td><td>Intercept = 28000 means a fresh grad with 0 experience earns ₹28,000</td></tr>
-        <tr><td><span class="term-name">Residual</span></td><td>The gap between actual value and predicted value for one data point</td><td>Actual salary ₹55,000, predicted ₹52,000 → residual = ₹3,000</td></tr>
-        <tr><td><span class="term-name">MSE</span></td><td>Mean Squared Error — average of all (residual²). In squared units.</td><td>MSE = 25,000,000 (in ₹²)</td></tr>
-        <tr><td><span class="term-name">RMSE</span></td><td>Root Mean Squared Error — square root of MSE, brings it back to original units.</td><td>RMSE = ₹5,000 means predictions are off by ~₹5,000 on average</td></tr>
-        <tr><td><span class="term-name">R² Score</span></td><td>% of variation in target explained by model. 1.0 = perfect, 0 = useless, negative = worse than average</td><td>R² = 0.85 means model explains 85% of salary variation</td></tr>
-        <tr><td><span class="term-name">Overfitting</span></td><td>Model memorizes training data but fails on new data.</td><td>Train R²=0.99, Test R²=0.45 — overfitting!</td></tr>
-        <tr><td><span class="term-name">Underfitting</span></td><td>Model is too simple to capture the pattern.</td><td>Train R²=0.40, Test R²=0.38 — underfitting</td></tr>
-        <tr><td><span class="term-name">OLS</span></td><td>Ordinary Least Squares — the mathematical formula that finds the optimal m and b directly</td><td>sklearn's default solver</td></tr>
-        <tr><td><span class="term-name">Gradient Descent</span></td><td>Iterative optimization — adjust m and b slowly step by step until error is minimized.</td><td>Used in neural networks and large-scale regression</td></tr>
+        <tr><th>Metric</th><th>Formula</th><th>Interpretation</th><th>Good vs Bad</th></tr>
+        <tr>
+          <td><strong>R² Score</strong></td>
+          <td>1 − (SS_res / SS_tot)</td>
+          <td>% of target variance explained by model. The headline metric.</td>
+          <td>0.85+ = good. 0.5–0.85 = moderate. Below 0.5 = poor.</td>
+        </tr>
+        <tr>
+          <td><strong>MSE</strong></td>
+          <td>mean((y − ŷ)²)</td>
+          <td>Average squared error. In squared units (hard to interpret directly).</td>
+          <td>Lower = better. Compare models against each other.</td>
+        </tr>
+        <tr>
+          <td><strong>RMSE</strong></td>
+          <td>√MSE</td>
+          <td>Average error in original units. Most interpretable metric.</td>
+          <td>RMSE=₹5000 means predictions are off by ~₹5000 on average.</td>
+        </tr>
+        <tr>
+          <td><strong>MAE</strong></td>
+          <td>mean(|y − ŷ|)</td>
+          <td>Average absolute error. Less sensitive to outliers than RMSE.</td>
+          <td>Use when outliers shouldn't dominate the score.</td>
+        </tr>
+        <tr>
+          <td><strong>Adjusted R²</strong></td>
+          <td>1 − (1−R²)(n−1)/(n−p−1)</td>
+          <td>R² penalised for adding useless features. Use with multiple features.</td>
+          <td>If adding a feature drops Adjusted R², that feature is useless.</td>
+        </tr>
       </table>
     </div>
-  </div>
+    <div class="card">
+      <h3>Assumptions of Linear Regression (Know These for Interviews)</h3>
+      <table class="term-table">
+        <tr><th>Assumption</th><th>Plain English</th><th>What breaks if violated</th><th>How to check</th></tr>
+        <tr><td><strong>Linearity</strong></td><td>The relationship between X and y is actually linear</td><td>Systematic under/over-predictions</td><td>Residual vs fitted plot — should be random scatter</td></tr>
+        <tr><td><strong>No multicollinearity</strong></td><td>Input features are not highly correlated with each other</td><td>Coefficients become unstable — small data change = huge coefficient change</td><td>Correlation matrix, VIF score &gt; 10 = problem</td></tr>
+        <tr><td><strong>Homoscedasticity</strong></td><td>Errors have the same spread regardless of the predicted value</td><td>Prediction intervals are wrong — too wide or too narrow</td><td>Residual plot — should show constant spread</td></tr>
+        <tr><td><strong>Independence</strong></td><td>Each observation is independent of others</td><td>Underestimated standard errors, wrong confidence intervals</td><td>Common violation: time series data (use ARIMA instead)</td></tr>
+        <tr><td><strong>Normality of residuals</strong></td><td>Errors are roughly normally distributed</td><td>Confidence intervals and p-values unreliable</td><td>Q-Q plot of residuals — should be straight diagonal line</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Regularisation: Ridge, Lasso, ElasticNet</h3>
+      <p>When you have many features, standard Linear Regression can overfit. Regularisation adds a penalty for large coefficients.</p>
+      <table class="term-table">
+        <tr><th>Method</th><th>Penalty added</th><th>Effect</th><th>sklearn class</th><th>Key parameter</th></tr>
+        <tr><td><strong>Ridge (L2)</strong></td><td>α × Σw²</td><td>Shrinks all coefficients toward 0. No feature is removed entirely.</td><td>Ridge()</td><td>alpha (default 1.0): higher = stronger shrinkage</td></tr>
+        <tr><td><strong>Lasso (L1)</strong></td><td>α × Σ|w|</td><td>Shrinks some coefficients to exactly 0. Performs feature selection automatically.</td><td>Lasso()</td><td>alpha (default 1.0): higher = more features zeroed out</td></tr>
+        <tr><td><strong>ElasticNet</strong></td><td>α × (L1_ratio×L1 + (1−L1_ratio)×L2)</td><td>Combination of Ridge and Lasso. Best of both.</td><td>ElasticNet()</td><td>alpha + l1_ratio (0=Ridge, 1=Lasso)</td></tr>
+      </table>
+    </div>
+</div>
+  <div class="tab-content" id="s1-use">
+    <div class="card">
+      <h3>Real-World Applications</h3>
+      <table class="term-table">
+        <tr><th>Industry</th><th>Prediction Target</th><th>Key Features</th><th>Why Linear Regression</th></tr>
+        <tr><td>HR / Compensation</td><td>Employee salary offer</td><td>Years experience, job level, location, education</td><td>Direct linear relationship, easy to explain to hiring managers</td></tr>
+        <tr><td>Real Estate</td><td>Property price</td><td>Square footage, bedrooms, distance to city, age of building</td><td>Strong linear correlation between area and price; stakeholders understand the coefficients</td></tr>
+        <tr><td>Retail / FMCG</td><td>Sales revenue forecast</td><td>Ad spend, promotions, season, store count, pricing</td><td>Direct ROI calculation: each ₹1 of ad spend → ₹X in revenue</td></tr>
+        <tr><td>Healthcare</td><td>Hospital readmission duration</td><td>Age, BMI, comorbidity count, treatment type</td><td>Interpretable model required for clinical decision support</td></tr>
+        <tr><td>Energy</td><td>Electricity consumption</td><td>Temperature, humidity, day of week, number of occupants</td><td>Physical relationships are inherently linear (more degrees = more AC)</td></tr>
+        <tr><td>Finance</td><td>Loan repayment amount</td><td>Income, credit score, loan amount, tenure</td><td>Regulatory transparency — must explain predictions</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Worked Example: House Price Prediction</h3>
+      <p>Suppose a real estate company trains a model on 5,000 past property sales. The model learns:</p>
+      <div class="highlight"><p>Price = 3,200 × sqft + 180,000 × bedrooms + 85,000 × hasGarage − 12,000 × ageYears + 450,000</p></div>
+      <p><strong>Interpretation of each coefficient:</strong></p>
+      <ul>
+        <li>3,200 × sqft → each extra square foot adds ₹3,200 to price</li>
+        <li>180,000 × bedrooms → each extra bedroom adds ₹1,80,000</li>
+        <li>85,000 × hasGarage → a garage adds ₹85,000 (hasGarage is 0 or 1)</li>
+        <li>−12,000 × ageYears → each year of age reduces price by ₹12,000</li>
+        <li>450,000 = base price even with 0 for everything</li>
+      </ul>
+      <p>For a 1,200 sqft, 3-bedroom house, with garage, 10 years old: 3200×1200 + 180000×3 + 85000 + (−12000×10) + 450000 = ₹49,05,000</p>
+    </div>
+</div>
+  <div class="tab-content" id="s1-code">
+    <div class="card"><h3>Complete Annotated Code — Salary Prediction</h3></div>
+    <div class="code-block"><pre>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+<span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd
+<span class="c-kw">from</span> sklearn.linear_model   <span class="c-kw">import</span> <span class="c-cls">LinearRegression</span>, <span class="c-cls">Ridge</span>, <span class="c-cls">Lasso</span>
+<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split, cross_val_score
+<span class="c-kw">from</span> sklearn.metrics        <span class="c-kw">import</span> mean_squared_error, mean_absolute_error, r2_score
+<span class="c-kw">from</span> sklearn.preprocessing  <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>
+
+<span class="code-comment"># ── 1. CREATE SAMPLE DATA ───────────────────────────────────────────</span>
+np.random.seed(42)
+n = 300
+years_exp   = np.random.uniform(0, 15, n)
+education   = np.random.choice([0, 1, 2], n)   <span class="code-comment"># 0=bachelor, 1=master, 2=phd</span>
+city_tier   = np.random.choice([1, 2, 3], n)   <span class="code-comment"># 1=metro, 2=tier2, 3=tier3</span>
+
+<span class="code-comment"># True relationship (plus noise)</span>
+salary = (4800*years_exp + 15000*education + 20000*(4-city_tier)
+          + 28000 + np.random.normal(0, 6000, n))
+
+X = np.column_stack([years_exp, education, city_tier])  <span class="code-comment"># feature matrix: 300×3</span>
+y = salary
+
+<span class="code-comment"># ── 2. SPLIT (always before scaling — prevents data leakage) ────────</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,       <span class="code-comment"># 20% held out — never used during training</span>
+    random_state=42
+)
+
+<span class="code-comment"># ── 3. SCALE (optional for Linear Regression but good practice) ─────</span>
+<span class="code-comment"># Scaling helps compare coefficient magnitudes; required for Ridge/Lasso</span>
+scaler = <span class="c-cls">StandardScaler</span>()
+X_train_s = scaler.fit_transform(X_train)  <span class="code-comment"># fit on train only</span>
+X_test_s  = scaler.transform(X_test)       <span class="code-comment"># transform test with train's stats</span>
+
+<span class="code-comment"># ── 4. TRAIN ────────────────────────────────────────────────────────</span>
+model = <span class="c-cls">LinearRegression</span>(
+    fit_intercept=True,  <span class="code-comment"># learn the b term (always True unless forced through origin)</span>
+    copy_X=True,         <span class="code-comment"># don't modify original X (safe default)</span>
+    n_jobs=-1,           <span class="code-comment"># use all CPU cores (helps for multi-output)</span>
+    positive=False       <span class="code-comment"># allow negative coefficients (city_tier has negative effect)</span>
+)
+model.fit(X_train_s, y_train)
+
+<span class="code-comment"># ── 5. INSPECT LEARNED COEFFICIENTS ────────────────────────────────</span>
+feature_names = ['years_exp', 'education', 'city_tier']
+for name, coef in zip(feature_names, model.coef_):
+    print(f"  {name:15s}: {coef:+.0f}")   <span class="code-comment"># + sign shows direction of effect</span>
+print(f"  intercept      : {model.intercept_:.0f}")
+
+<span class="code-comment"># ── 6. PREDICT &amp; EVALUATE ───────────────────────────────────────────</span>
+y_pred = model.predict(X_test_s)
+
+mse  = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)                            <span class="code-comment"># in ₹ — most interpretable</span>
+mae  = mean_absolute_error(y_test, y_pred)     <span class="code-comment"># less sensitive to outliers than RMSE</span>
+r2   = r2_score(y_test, y_pred)                <span class="code-comment"># % of variance explained (0 to 1)</span>
+print(f"RMSE: ₹{rmse:.0f} | MAE: ₹{mae:.0f} | R²: {r2:.3f}")
+
+<span class="code-comment"># ── 7. CROSS-VALIDATION (more reliable than one train/test split) ──</span>
+cv_scores = cross_val_score(
+    <span class="c-cls">LinearRegression</span>(), X, y,
+    cv=5,                <span class="code-comment"># 5-fold: splits data into 5 parts, trains on 4, tests on 1, repeats</span>
+    scoring='r2'         <span class="code-comment"># metric to report — 'r2', 'neg_mean_squared_error', etc.</span>
+)
+print(f"CV R² scores: {cv_scores.round(3)}  |  Mean: {cv_scores.mean():.3f}")
+
+<span class="code-comment"># ── 8. COMPARE WITH RIDGE (L2 regularisation) ──────────────────────</span>
+ridge = <span class="c-cls">Ridge</span>(
+    alpha=1.0,       <span class="code-comment"># regularisation strength. Higher = stronger shrinkage of coefficients</span>
+                     <span class="code-comment"># alpha=0 → same as LinearRegression; alpha=100 → heavy shrinkage</span>
+    fit_intercept=True,
+    solver='auto'    <span class="code-comment"># 'auto' lets sklearn pick. 'sag' faster for large datasets.</span>
+)
+ridge.fit(X_train_s, y_train)
+print(f"Ridge R²: {r2_score(y_test, ridge.predict(X_test_s)):.3f}")
+
+<span class="code-comment"># ── 9. COMPARE WITH LASSO (L1 — feature selection) ─────────────────</span>
+lasso = <span class="c-cls">Lasso</span>(
+    alpha=100,       <span class="code-comment"># higher alpha → more coefficients become exactly 0</span>
+    max_iter=10000,  <span class="code-comment"># increase if you see ConvergenceWarning</span>
+    tol=1e-4         <span class="code-comment"># stop when coefficient change is smaller than this</span>
+)
+lasso.fit(X_train_s, y_train)
+print(f"Lasso coefs: {lasso.coef_.round(0)}")  <span class="code-comment"># zeros = removed features</span>
+
+<span class="code-comment"># ── 10. PREDICT FOR A NEW PERSON ────────────────────────────────────</span>
+new_person = np.array([[7, 1, 2]])             <span class="code-comment"># 7 years exp, master's degree, tier-2 city</span>
+new_scaled = scaler.transform(new_person)      <span class="code-comment"># MUST use same scaler as training</span>
+prediction = model.predict(new_scaled)
+print(f"Predicted salary: ₹{prediction[0]:.0f}/month")
+</pre></div>
+    <div class="card">
+      <h3>Common Mistakes to Avoid</h3>
+      <table class="term-table">
+        <tr><th>Mistake</th><th>What happens</th><th>Fix</th></tr>
+        <tr><td>Fitting scaler on test data</td><td>Data leakage — inflated R² score, model fails in production</td><td>Always fit_transform on train, only transform on test</td></tr>
+        <tr><td>Not checking residuals</td><td>Missing assumption violations — model predictions systematically off for some ranges</td><td>Plot residuals vs predicted values — should be random scatter</td></tr>
+        <tr><td>Using Linear Regression for classification</td><td>Predictions can go below 0 or above 1, not interpretable as probabilities</td><td>Use Logistic Regression for classification</td></tr>
+        <tr><td>Ignoring multicollinearity</td><td>Coefficients become huge and unstable — flip signs between runs</td><td>Check correlation matrix; use Ridge to stabilise</td></tr>
+      </table>
+    </div>
+</div>
+  <div class="tab-content" id="s1-terms">
+    <div class="card"><h3>Key Terms — Linear Regression</h3>
+    <table class="term-table">
+      <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
+      <tr><td><span class="term-name">Coefficient (weight)</span></td><td>How much the prediction changes per unit increase in that feature. The "slope" for that feature.</td><td>coef=4800 for years_exp → each extra year adds ₹4800 to salary</td></tr>
+      <tr><td><span class="term-name">Intercept (bias)</span></td><td>Predicted value when every feature is 0. The baseline starting point.</td><td>intercept=28000 → fresh grad with zero experience earns ₹28,000</td></tr>
+      <tr><td><span class="term-name">Residual</span></td><td>Actual − Predicted for one data point. The individual error.</td><td>Actual ₹55,000 − Predicted ₹52,000 = residual ₹3,000</td></tr>
+      <tr><td><span class="term-name">MSE</span></td><td>Mean Squared Error — average of (residual²) across all points. Penalises big errors heavily.</td><td>MSE = 25,000,000 (in ₹²) — hard to interpret directly</td></tr>
+      <tr><td><span class="term-name">RMSE</span></td><td>Root Mean Squared Error — square root of MSE. Back in original units.</td><td>RMSE = ₹5,000 → model is off by ~₹5,000 on average</td></tr>
+      <tr><td><span class="term-name">MAE</span></td><td>Mean Absolute Error — average of |residual|. Ignores direction. Less sensitive to outliers.</td><td>MAE = ₹4,200 → typical prediction is ₹4,200 away from actual</td></tr>
+      <tr><td><span class="term-name">R² Score</span></td><td>% of variance in the target that the model explains. 1.0 = perfect, 0 = same as predicting mean, negative = worse than mean.</td><td>R²=0.85 → model explains 85% of salary variation</td></tr>
+      <tr><td><span class="term-name">OLS</span></td><td>Ordinary Least Squares — the direct mathematical formula to find the best coefficients. Exact solution, no iteration.</td><td>sklearn LinearRegression() uses OLS by default</td></tr>
+      <tr><td><span class="term-name">Gradient Descent</span></td><td>Iterative method — start random, nudge weights toward lower error, repeat until convergence.</td><td>Used in SGDRegressor and neural networks</td></tr>
+      <tr><td><span class="term-name">Multicollinearity</span></td><td>When two input features are highly correlated with each other. Makes coefficients unstable.</td><td>Including both "height_cm" and "height_inches" as features</td></tr>
+      <tr><td><span class="term-name">Ridge (L2)</span></td><td>Linear Regression + penalty for large coefficients. Shrinks all toward 0 but never exactly 0.</td><td>Ridge(alpha=1.0) — use when features are correlated</td></tr>
+      <tr><td><span class="term-name">Lasso (L1)</span></td><td>Linear Regression + penalty that drives some coefficients to exactly 0. Automatic feature selection.</td><td>Lasso(alpha=100) — use when you suspect many features are irrelevant</td></tr>
+      <tr><td><span class="term-name">Cross-Validation</span></td><td>Train/test the model on multiple different splits of the data. Gives a more reliable R² estimate than a single split.</td><td>cv=5 → 5 different train/test splits, average the R² scores</td></tr>
+      <tr><td><span class="term-name">Data Leakage</span></td><td>Accidentally giving the model information about the test set during training. Gives falsely high scores that fail in production.</td><td>Fitting StandardScaler on full data before splitting</td></tr>
+    </table></div>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -1598,7 +1814,7 @@ predicted_salary = model.predict(new_candidate)           <span class="code-comm
     <div class="algo-number">2</div>
     <div>
       <div class="algo-title">Logistic Regression</div>
-      <div class="algo-subtitle">Classify into categories by predicting probability with an S-curve</div>
+      <div class="algo-subtitle">Classify into categories by predicting probabilities — fraud/not fraud, churn/stay, spam/inbox</div>
     </div>
   </div>
   <div class="tab-bar">
@@ -1608,146 +1824,315 @@ predicted_salary = model.predict(new_candidate)           <span class="code-comm
     <button class="tab-btn" onclick="showTab('s2','code')">💻 Code &amp; Internals</button>
     <button class="tab-btn" onclick="showTab('s2','terms')">📚 Key Terms</button>
   </div>
-
   <div class="tab-content active" id="s2-what">
     <div class="card">
-      <h3>Confusing Name Alert!</h3>
-      <p>Despite having "Regression" in its name, <strong>Logistic Regression is a classification algorithm</strong>. It was named this way for historical reasons. It doesn't predict a number — it predicts which <strong>category</strong> something belongs to.</p>
-      <div class="highlight"><p>Examples: Will this customer churn? (Yes/No) → Is this email spam? (Spam/Not Spam) → Will this loan default? (Default/No Default)</p></div>
+      <h3>What is Logistic Regression? (Don't be fooled by the name)</h3>
+      <p>Despite having "Regression" in its name, Logistic Regression is a <strong>classification algorithm</strong> — it predicts which <em>category</em> something belongs to, not a number. The "regression" part refers to the math inside, not the output type.</p>
+      <p>Its most common use: <strong>binary classification</strong> — problems with exactly two outcomes. Spam or not spam. Fraud or not fraud. Will the customer churn or stay?</p>
+      <p>The key idea: instead of predicting a number directly, Logistic Regression predicts a <strong>probability between 0 and 1</strong>. If that probability is ≥ 0.5, it says "class 1." Below 0.5, it says "class 0." This threshold can be adjusted.</p>
+      <div class="highlight"><p>Linear Regression output: any number (e.g., 52,000 or −7,000)<br>Logistic Regression output: probability between 0 and 1 (e.g., 0.82 → "very likely fraud")</p></div>
     </div>
-    <div class="analogy">
-      <div class="label">🌡️ Analogy — Fever Test</div>
-      <p>Imagine a doctor measuring body temperature to decide "sick or healthy?" At 37°C — probably healthy (5% chance of fever illness). At 38.5°C — maybe sick (60% chance). At 40°C — almost certainly sick (98% chance). Logistic Regression draws this S-shaped probability curve. Any probability above 50% → predict "sick".</p>
-    </div>
-    <div class="card">
-      <h3>The Key Insight: Probability Output</h3>
-      <p>Unlike Linear Regression that outputs any number, Logistic Regression outputs a <strong>probability between 0 and 1</strong>.</p>
-      <ul>
-        <li>Output = 0.78 → "78% chance this customer will churn"</li>
-        <li>If probability ≥ 0.5 → predict class 1 (churn)</li>
-        <li>If probability &lt; 0.5 → predict class 0 (stay)</li>
-        <li>The 0.5 threshold is adjustable!</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s2-how">
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;background:#0f172a;border-radius:12px;">
+  <defs><marker id="ax2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#475569"/></marker></defs>
+  <!-- Axes -->
+  <line x1="40" y1="200" x2="440" y2="200" stroke="#475569" stroke-width="1.5" marker-end="url(#ax2)"/>
+  <line x1="240" y1="215" x2="240" y2="15"  stroke="#475569" stroke-width="1.5" marker-end="url(#ax2)"/>
+  <!-- Grid lines -->
+  <line x1="40" y1="110" x2="440" y2="110" stroke="#1e293b" stroke-width="1"/>
+  <!-- Sigmoid curve (logistic) -->
+  <polyline points="40,198 60,196 80,193 100,187 120,176 140,160 160,140 175,125 190,112 205,102 220,94 235,88 240,86 255,82 270,76 285,70 300,62 315,55 330,47 350,36 370,28 390,23 410,20 430,19 440,18"
+    fill="none" stroke="#60a5fa" stroke-width="2.5"/>
+  <!-- Decision boundary line (x=0) -->
+  <line x1="240" y1="15" x2="240" y2="200" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <!-- 0.5 threshold line -->
+  <line x1="40" y1="110" x2="440" y2="110" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Scattered class 0 points (left) -->
+  <circle cx="70"  cy="192" r="5" fill="#ef4444" opacity=".8"/>
+  <circle cx="110" cy="185" r="5" fill="#ef4444" opacity=".8"/>
+  <circle cx="140" cy="178" r="5" fill="#ef4444" opacity=".8"/>
+  <circle cx="165" cy="162" r="5" fill="#ef4444" opacity=".8"/>
+  <!-- Scattered class 1 points (right) -->
+  <circle cx="310" cy="58" r="5" fill="#34d399" opacity=".8"/>
+  <circle cx="350" cy="42" r="5" fill="#34d399" opacity=".8"/>
+  <circle cx="380" cy="30" r="5" fill="#34d399" opacity=".8"/>
+  <circle cx="420" cy="22" r="5" fill="#34d399" opacity=".8"/>
+  <!-- Labels -->
+  <text x="60"  y="175" fill="#ef4444"  font-size="10" font-family="sans-serif">Class 0 (No)</text>
+  <text x="335" y="38"  fill="#34d399"  font-size="10" font-family="sans-serif">Class 1 (Yes)</text>
+  <text x="243" y="108" fill="#fbbf24"  font-size="9"  font-family="sans-serif">threshold = 0.5</text>
+  <text x="448" y="203" fill="#64748b"  font-size="9"  font-family="sans-serif">x</text>
+  <text x="243" y="13"  fill="#64748b"  font-size="9"  font-family="sans-serif">P(y=1)</text>
+  <text x="235" y="220" fill="#ef4444"  font-size="9"  font-family="sans-serif">Decision boundary</text>
+  <text x="100" y="228" text-anchor="middle" fill="#64748b" font-size="9">Blue S-curve: probability of class 1 at each x value. Above 0.5 line → predict class 1.</text>
+</svg></div>
     <div class="card">
       <h3>The Sigmoid Function — The Heart of Logistic Regression</h3>
-      <p>Logistic Regression first computes a linear score (just like Linear Regression: w₁x₁ + w₂x₂ + b), then <strong>squishes</strong> that score through the sigmoid function to get a probability.</p>
-      <div class="highlight"><p>sigmoid(z) = 1 / (1 + e⁻ᶻ) — This S-shaped function maps any number (−∞ to +∞) to a value between 0 and 1. Very large positive → near 1. Very large negative → near 0.</p></div>
-    </div>
-    <div class="card">
-      <h3>Training: Log Loss (Binary Cross-Entropy)</h3>
-      <p>During training, the model is punished with <strong>log loss</strong> instead of MSE. Log loss heavily penalizes confident wrong predictions.</p>
-      <ul>
-        <li>Actual: 1 (default), Predicted: 0.95 → tiny loss (confident and correct)</li>
-        <li>Actual: 1 (default), Predicted: 0.05 → huge loss (confident and WRONG!)</li>
-        <li>This forces the model to be honest about uncertainty</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Decision Boundary</h3>
-      <p>The decision boundary is the line (or curve with multiple features) where the model is exactly 50% confident. Points on one side = class 0, points on other side = class 1.</p>
-      <p style="margin-top:8px">You can <strong>shift this threshold</strong>:</p>
-      <ul>
-        <li>Lower threshold (e.g., 0.3) → model catches more positives (higher recall) but more false alarms</li>
-        <li>Higher threshold (e.g., 0.7) → model is very conservative, misses some positives but rarely wrong when it says yes</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s2-use">
-    <div class="card">
-      <h3>🏦 Real Use Case: Bank Loan Default Prediction</h3>
-      <p>A bank receives thousands of loan applications monthly. They want to automatically predict: "Will this person default on the loan?" based on financial data.</p>
-    </div>
-    <div class="card">
-      <h3>Input Features</h3>
-      <ul>
-        <li><strong>Annual Income</strong> — higher income → less likely to default</li>
-        <li><strong>Credit Score</strong> — 300-850, higher = better credit history</li>
-        <li><strong>Debt-to-Income Ratio</strong> — what % of income is already going to debt payments</li>
-        <li><strong>Loan Amount</strong> — larger loans = higher risk</li>
-        <li><strong>Employment Years</strong> — job stability</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Output &amp; Business Value</h3>
-      <div class="highlight"><p>Model output: "This applicant has a 73% probability of defaulting." → Bank can set threshold: if probability > 60%, reject or request collateral.</p></div>
-      <ul>
-        <li><strong>Cost of False Negative</strong> (approving a defaulter): lose entire loan amount</li>
-        <li><strong>Cost of False Positive</strong> (rejecting a good customer): lose interest income</li>
-        <li>Bank sets threshold based on which mistake is more costly</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s2-code">
-    <div class="card"><h3>Complete Code: Loan Default Prediction</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-<span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd                                       <span class="code-comment"># bring in the pandas as pd toolkit</span>
-<span class="c-kw">from</span> sklearn.linear_model <span class="c-kw">import</span> <span class="c-cls">LogisticRegression</span>       <span class="code-comment"># grab LogisticRegression from sklearn.linear_model</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split      <span class="code-comment"># grab train_test_split from sklearn.model_selection</span>
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>          <span class="code-comment"># grab StandardScaler from sklearn.preprocessing</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> classification_report, confusion_matrix, roc_auc_score <span class="code-comment"># grab classification_report, confusion_matrix, roc_auc_score from sklearn.metrics</span>
-
-np.random.seed(<span class="c-num">42</span>)                                        <span class="code-comment"># lock in a random seed so results are the same every run</span>
-n = <span class="c-num">1000</span>
-data = pd.<span class="c-fn">DataFrame</span>({                                     <span class="code-comment"># create a new table from data</span>
-    <span class="c-str">'income'</span>: np.random.normal(<span class="c-num">60000</span>, <span class="c-num">20000</span>, n), # ← # generate random numbers from normal (Gaussian) distribution
-    <span class="c-str">'credit_score'</span>: np.random.randint(<span class="c-num">300</span>, <span class="c-num">851</span>, n), # ← # generate random integers in a range
-    <span class="c-str">'debt_ratio'</span>: np.random.uniform(<span class="c-num">0.1</span>, <span class="c-num">0.6</span>, n),
-    <span class="c-str">'loan_amount'</span>: np.random.normal(<span class="c-num">200000</span>, <span class="c-num">80000</span>, n), # ← # generate random numbers from normal (Gaussian) distribution
-    <span class="c-str">'defaulted'</span>: np.random.choice([<span class="c-num">0</span>, <span class="c-num">1</span>], n, p=[<span class="c-num">0.75</span>, <span class="c-num">0.25</span>])
-})
-
-X = data[[<span class="c-str">'income'</span>, <span class="c-str">'credit_score'</span>, <span class="c-str">'debt_ratio'</span>, <span class="c-str">'loan_amount'</span>]]
-y = data[<span class="c-str">'defaulted'</span>]
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="c-num">0.2</span>, random_state=<span class="c-num">42</span>) # ← # split data into training set and test set
-
-scaler = <span class="c-cls">StandardScaler</span>()                                 <span class="code-comment"># make all features the same scale (mean 0, spread 1)</span>
-X_train_scaled = scaler.fit_transform(X_train)            <span class="code-comment"># learn AND apply the transformation in one step</span>
-X_test_scaled = scaler.transform(X_test)                  <span class="code-comment"># apply a function but keep the same shape</span>
-
-model = <span class="c-cls">LogisticRegression</span>(C=<span class="c-num">1.0</span>, class_weight=<span class="c-str">'balanced'</span>, max_iter=<span class="c-num">1000</span>, random_state=<span class="c-num">42</span>) <span class="code-comment"># predict yes/no or which category something belongs to</span>
-model.fit(X_train_scaled, y_train)                        <span class="code-comment"># teach the model using training examples</span>
-
-y_prob = model.predict_proba(X_test_scaled)               <span class="code-comment"># get probability scores instead of just the final label</span>
-default_probability = y_prob[:, <span class="c-num">1</span>]
-
-threshold = <span class="c-num">0.4</span>
-y_pred_custom = (default_probability >= threshold).astype(<span class="c-num">int</span>) # ← # convert column to a different data type
-
-<span class="c-fn">print</span>(classification_report(y_test, y_pred_custom)) # ← # precision, recall and F1-score for each class
-roc_auc = roc_auc_score(y_test, default_probability)      <span class="code-comment"># overall quality of rankings (0.5 = random, 1 = perfect)</span>
-<span class="c-fn">print</span>(<span class="c-str">f"ROC-AUC Score: {roc_auc:.3f}"</span>)                    <span class="code-comment"># show this value in the terminal</span>
-
-new_applicant = [[<span class="c-num">45000</span>, <span class="c-num">620</span>, <span class="c-num">0.45</span>, <span class="c-num">250000</span>]]
-new_scaled = scaler.transform(new_applicant)              <span class="code-comment"># apply a function but keep the same shape</span>
-prob = model.predict_proba(new_scaled)[<span class="c-num">0</span>][<span class="c-num">1</span>] # ← # output class probabilities (not just the winning class)
-<span class="c-fn">print</span>(<span class="c-str">f"Default probability: {prob:.1%}"</span>)                 <span class="code-comment"># show this value in the terminal</span>
-</pre></div>
-  </div>
-
-  <div class="tab-content" id="s2-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
+      <p>The sigmoid (also called logistic function) takes any number as input and squashes it to a value between 0 and 1. This is what converts the raw score into a probability.</p>
+      <p><strong>Formula:</strong> σ(z) = 1 / (1 + e⁻ᶻ)    where z = w₁x₁ + w₂x₂ + ... + b</p>
       <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Sigmoid Function</span></td><td>S-shaped curve that squishes any number into 0-1 range. Formula: 1/(1+e⁻ˣ)</td><td>Input 3 → sigmoid → 0.95 (95% confident it's class 1)</td></tr>
-        <tr><td><span class="term-name">Log Loss / Binary Cross-Entropy</span></td><td>The loss function used for training. Penalizes confident wrong predictions very harshly.</td><td>Saying 99% sure when answer is 0 = massive penalty</td></tr>
-        <tr><td><span class="term-name">Decision Threshold</span></td><td>The cutoff probability above which we predict class 1. Default is 0.5 but you can change it.</td><td>Threshold=0.3: predict "fraud" if 30%+ probability</td></tr>
-        <tr><td><span class="term-name">Odds Ratio</span></td><td>The ratio of P(event) to P(not event). Logistic regression coefficients can be converted to odds ratios.</td><td>Odds ratio of 2 for income means doubling income makes default 2x less likely</td></tr>
-        <tr><td><span class="term-name">predict_proba()</span></td><td>Returns probability for each class instead of just 0 or 1.</td><td>[0.32, 0.68] means 32% no-default, 68% default</td></tr>
-        <tr><td><span class="term-name">class_weight='balanced'</span></td><td>When one class is rare, this tells model to pay extra attention to the rare class</td><td>Without it: model learns to always say "not fraud" and gets 90% accuracy but catches 0 frauds</td></tr>
-        <tr><td><span class="term-name">ROC-AUC</span></td><td>Area Under Curve — measures overall ability to distinguish classes at all thresholds. 0.5=random, 1.0=perfect</td><td>AUC=0.87 is a very good fraud detector</td></tr>
-        <tr><td><span class="term-name">Multiclass (Softmax)</span></td><td>For 3+ classes, use softmax instead of sigmoid. Outputs probabilities that sum to 1 across all classes.</td><td>"30% cat, 65% dog, 5% rabbit"</td></tr>
+        <tr><th>z (raw score)</th><th>σ(z) (probability)</th><th>Meaning</th></tr>
+        <tr><td>−10</td><td>≈ 0.00005</td><td>Almost certainly class 0</td></tr>
+        <tr><td>−2</td><td>0.12</td><td>12% chance of class 1</td></tr>
+        <tr><td>0</td><td>0.50</td><td>Completely uncertain — on the decision boundary</td></tr>
+        <tr><td>+2</td><td>0.88</td><td>88% chance of class 1</td></tr>
+        <tr><td>+10</td><td>≈ 0.99995</td><td>Almost certainly class 1</td></tr>
       </table>
     </div>
-  </div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;background:#0f172a;border-radius:12px;">
+  <!-- Class 0 region -->
+  <rect x="40" y="20" width="180" height="160" rx="8" fill="#7f1d1d" opacity=".3"/>
+  <text x="130" y="45" text-anchor="middle" fill="#fca5a5" font-size="11" font-family="sans-serif" font-weight="600">Class 0 Region</text>
+  <text x="130" y="58" text-anchor="middle" fill="#94a3b8" font-size="9"  font-family="sans-serif">P(y=1) &lt; 0.5 → predict 0</text>
+  <!-- Class 1 region -->
+  <rect x="260" y="20" width="180" height="160" rx="8" fill="#064e3b" opacity=".3"/>
+  <text x="350" y="45" text-anchor="middle" fill="#6ee7b7" font-size="11" font-family="sans-serif" font-weight="600">Class 1 Region</text>
+  <text x="350" y="58" text-anchor="middle" fill="#94a3b8" font-size="9"  font-family="sans-serif">P(y=1) ≥ 0.5 → predict 1</text>
+  <!-- Decision boundary -->
+  <line x1="240" y1="10" x2="240" y2="190" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="6,3"/>
+  <text x="240" y="195" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="sans-serif">Decision Boundary</text>
+  <!-- Sample points class 0 -->
+  <circle cx="80"  cy="90" r="6" fill="#ef4444"/><circle cx="120" cy="110" r="6" fill="#ef4444"/>
+  <circle cx="100" cy="130" r="6" fill="#ef4444"/><circle cx="160" cy="80"  r="6" fill="#ef4444"/>
+  <!-- Sample points class 1 -->
+  <circle cx="300" cy="90" r="6" fill="#34d399"/><circle cx="340" cy="110" r="6" fill="#34d399"/>
+  <circle cx="380" cy="80" r="6" fill="#34d399"/><circle cx="360" cy="140" r="6" fill="#34d399"/>
+  <!-- Misclassified point near boundary -->
+  <circle cx="200" cy="100" r="6" fill="#ef4444" stroke="#fbbf24" stroke-width="2"/>
+  <circle cx="275" cy="120" r="6" fill="#34d399" stroke="#fbbf24" stroke-width="2"/>
+  <text x="165" y="170" fill="#fbbf24" font-size="8">← near boundary = uncertain</text>
+  <text x="240" y="8" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="sans-serif" font-weight="600">Binary Classification: 2 Classes Separated by a Line</text>
+</svg></div>
+    <div class="analogy">
+      <div class="label">🎭 Analogy — Email Spam Filter</div>
+      <p>Your email server analyses each incoming email. It checks: does it contain "FREE MONEY"? Does it have 5 exclamation marks? Is it from an unknown sender? Each check produces a score. Logistic Regression combines all these scores into a single probability: "92% chance this is spam." If that probability is above 0.5, it goes to spam. Below 0.5, it goes to inbox. You can adjust the 0.5 threshold — a bank detecting fraud might set it to 0.3 (send to investigation if 30% chance of fraud) to catch more fraud at the cost of more false alarms.</p>
+    </div>
+</div>
+  <div class="tab-content" id="s2-how">
+    <div class="card">
+      <h3>How Logistic Regression Learns</h3>
+      <ol>
+        <li><strong>Start with random weights</strong> w₁, w₂, ..., b</li>
+        <li><strong>Forward pass:</strong> z = w₁x₁ + w₂x₂ + ... + b (linear combination)</li>
+        <li><strong>Apply sigmoid:</strong> p = σ(z) = 1/(1+e⁻ᶻ) → now p is 0 to 1</li>
+        <li><strong>Compute loss</strong> using <em>binary cross-entropy</em>: loss = −[y·log(p) + (1−y)·log(1−p)]</li>
+        <li><strong>Backprop / optimise:</strong> adjust weights to minimise loss</li>
+        <li><strong>Repeat</strong> until loss converges</li>
+      </ol>
+      <div class="highlight"><p><strong>Why NOT use MSE for classification?</strong> MSE with sigmoid creates a non-convex loss surface (many local minima — gradient descent can get stuck). Binary cross-entropy is convex — guaranteed single global minimum.</p></div>
+    </div>
+    <div class="card">
+      <h3>sklearn LogisticRegression — ALL Parameters Explained</h3>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:8px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">LogisticRegression(penalty, C, solver, max_iter, class_weight, multi_class, ...)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>When to change</th></tr>
+          <tr>
+            <td><code>penalty</code></td>
+            <td>Type of regularisation to add. Prevents large weights, reduces overfitting.</td>
+            <td>'l2'</td>
+            <td><strong>'l2':</strong> standard, shrinks all weights. <strong>'l1':</strong> sets some weights to 0 (feature selection). <strong>'elasticnet':</strong> mix of l1+l2. <strong>None:</strong> no regularisation (only if you have lots of data).</td>
+          </tr>
+          <tr>
+            <td><code>C</code></td>
+            <td>Inverse of regularisation strength. C = 1/λ. SMALLER C = MORE regularisation (stronger penalty). LARGER C = LESS regularisation.</td>
+            <td>1.0</td>
+            <td><strong>C=0.01:</strong> heavy regularisation, coefficients very small — use if overfitting. <strong>C=100:</strong> almost no regularisation — use if underfitting. Tune with cross-validation.</td>
+          </tr>
+          <tr>
+            <td><code>solver</code></td>
+            <td>The optimisation algorithm used to find the best weights.</td>
+            <td>'lbfgs'</td>
+            <td><strong>'lbfgs':</strong> best default for most cases. <strong>'liblinear':</strong> fast for small datasets, supports l1. <strong>'saga':</strong> fast for large datasets, supports l1+elasticnet. <strong>'newton-cg':</strong> stable, no l1 support.</td>
+          </tr>
+          <tr>
+            <td><code>max_iter</code></td>
+            <td>Maximum number of iterations for the solver to converge. If you see ConvergenceWarning, increase this.</td>
+            <td>100</td>
+            <td>Increase to 500 or 1000 if you get ConvergenceWarning. Also try scaling your features first — that usually fixes convergence faster.</td>
+          </tr>
+          <tr>
+            <td><code>class_weight</code></td>
+            <td>Handles imbalanced classes. 'balanced' automatically gives more weight to the minority class during training.</td>
+            <td>None</td>
+            <td>Set <strong>'balanced'</strong> when one class has far fewer samples (e.g., 5% fraud, 95% non-fraud). Without this, model might always predict the majority class.</td>
+          </tr>
+          <tr>
+            <td><code>multi_class</code></td>
+            <td>Strategy for multi-class problems (more than 2 classes).</td>
+            <td>'auto'</td>
+            <td><strong>'ovr':</strong> one binary classifier per class. <strong>'multinomial':</strong> true multi-class, needs compatible solver. <strong>'auto':</strong> picks multinomial if possible.</td>
+          </tr>
+          <tr>
+            <td><code>random_state</code></td>
+            <td>Seed for reproducibility of solvers that have randomness (e.g., 'sag', 'saga').</td>
+            <td>None</td>
+            <td>Set to any integer (e.g., 42) for reproducible results.</td>
+          </tr>
+          <tr>
+            <td><code>tol</code></td>
+            <td>Tolerance for stopping criterion. Training stops when the improvement per iteration is smaller than this.</td>
+            <td>1e-4</td>
+            <td>Decrease (e.g., 1e-6) for more precise solution. Increase to speed up training if precision isn't critical.</td>
+          </tr>
+          <tr>
+            <td><code>l1_ratio</code></td>
+            <td>Only used when penalty='elasticnet'. Mix between L1 and L2. 0 = pure L2, 1 = pure L1.</td>
+            <td>None</td>
+            <td>Set between 0 and 1 when using elasticnet. Try 0.5 as starting point.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Evaluation Metrics for Classification</h3>
+      <table class="term-table">
+        <tr><th>Metric</th><th>Formula</th><th>What it means</th><th>When to use</th></tr>
+        <tr><td><strong>Accuracy</strong></td><td>Correct / Total</td><td>% of predictions that are correct</td><td>Only when classes are balanced. Misleading if 95% of data is class 0.</td></tr>
+        <tr><td><strong>Precision</strong></td><td>TP / (TP + FP)</td><td>Of all "fraud" predictions, how many were actually fraud?</td><td>When false positives are costly (blocking innocent customers)</td></tr>
+        <tr><td><strong>Recall</strong></td><td>TP / (TP + FN)</td><td>Of all actual fraud cases, how many did we catch?</td><td>When false negatives are costly (missing real fraud)</td></tr>
+        <tr><td><strong>F1 Score</strong></td><td>2×(P×R)/(P+R)</td><td>Harmonic mean of precision and recall. Balance between the two.</td><td>Imbalanced classes — better single metric than accuracy</td></tr>
+        <tr><td><strong>AUC-ROC</strong></td><td>Area under ROC curve</td><td>How well model ranks positives above negatives. 0.5=random, 1.0=perfect.</td><td>Best overall performance metric; threshold-independent</td></tr>
+        <tr><td><strong>Confusion Matrix</strong></td><td>2×2 grid: TP,FP,FN,TN</td><td>Shows all four types of predictions visually</td><td>Always look at this to understand what errors the model is making</td></tr>
+      </table>
+    </div>
+</div>
+  <div class="tab-content" id="s2-use">
+    <div class="card">
+      <h3>Real-World Applications</h3>
+      <table class="term-table">
+        <tr><th>Industry</th><th>Use Case</th><th>Features</th><th>Output</th></tr>
+        <tr><td>Banking / Fintech</td><td>Credit default prediction</td><td>Income, credit score, debt ratio, payment history, employment</td><td>P(will default) — approve or reject loan</td></tr>
+        <tr><td>E-Commerce</td><td>Customer churn prediction</td><td>Days since last order, order frequency, complaint history, discount usage</td><td>P(will churn in 30 days) — trigger retention campaign</td></tr>
+        <tr><td>Healthcare</td><td>Disease diagnosis</td><td>Age, symptoms, lab values, family history</td><td>P(has disease) — flag for doctor review</td></tr>
+        <tr><td>Insurance</td><td>Fraud detection</td><td>Claim amount, time of claim, location, previous claims</td><td>P(fraudulent) — route to investigation team</td></tr>
+        <tr><td>HR</td><td>Employee attrition</td><td>Tenure, salary band, manager rating, overtime hours, engagement score</td><td>P(will resign in 6 months) — trigger HR intervention</td></tr>
+        <tr><td>Email / Telecom</td><td>Spam detection</td><td>Word frequencies, sender reputation, link count, caps ratio</td><td>P(spam) — move to spam folder if &gt; threshold</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Adjusting the Decision Threshold</h3>
+      <p>The default threshold is 0.5 (predict class 1 if probability &gt;= 0.5). But this isn't always optimal.</p>
+      <table class="term-table">
+        <tr><th>Scenario</th><th>Adjust threshold to</th><th>Effect</th></tr>
+        <tr><td>Fraud detection (missing fraud is very costly)</td><td>Lower (e.g., 0.3)</td><td>Catch more fraud (higher recall) at cost of more false alarms (lower precision)</td></tr>
+        <tr><td>Medical test (false positives cause unnecessary treatment)</td><td>Higher (e.g., 0.7)</td><td>Only flag when very confident (higher precision) but may miss some cases</td></tr>
+        <tr><td>Marketing campaign (email is cheap, false positives ok)</td><td>Lower (e.g., 0.3)</td><td>Contact more potential customers even if some aren't interested</td></tr>
+      </table>
+    </div>
+</div>
+  <div class="tab-content" id="s2-code">
+    <div class="card"><h3>Complete Annotated Code — Churn Prediction</h3></div>
+    <div class="code-block"><pre>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+<span class="c-kw">from</span> sklearn.linear_model    <span class="c-kw">import</span> <span class="c-cls">LogisticRegression</span>
+<span class="c-kw">from</span> sklearn.model_selection  <span class="c-kw">import</span> train_test_split, cross_val_score
+<span class="c-kw">from</span> sklearn.preprocessing   <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>
+<span class="c-kw">from</span> sklearn.metrics         <span class="c-kw">import</span> (classification_report, confusion_matrix,
+                                     roc_auc_score, roc_curve)
+
+<span class="code-comment"># ── 1. SAMPLE DATA ──────────────────────────────────────────────────</span>
+np.random.seed(42)
+n = 1000
+days_since_order   = np.random.exponential(30, n)   <span class="code-comment"># longer gap = higher churn risk</span>
+order_count        = np.random.poisson(8, n)         <span class="code-comment"># more orders = lower churn risk</span>
+complaint_count    = np.random.poisson(1, n)         <span class="code-comment"># more complaints = higher churn</span>
+discount_usage     = np.random.uniform(0, 1, n)      <span class="code-comment"># heavy discount users churn more</span>
+
+<span class="code-comment"># True churn probability (logistic function of features)</span>
+z = (0.05*days_since_order - 0.3*order_count
+     + 1.5*complaint_count + 0.8*discount_usage - 2)
+prob = 1 / (1 + np.exp(-z))
+churn = (np.random.uniform(0, 1, n) &lt; prob).astype(int)
+
+X = np.column_stack([days_since_order, order_count,
+                     complaint_count, discount_usage])
+y = churn
+print(f"Churn rate: {y.mean():.1%}")  <span class="code-comment"># check class balance</span>
+
+<span class="code-comment"># ── 2. SPLIT + SCALE ────────────────────────────────────────────────</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y   <span class="code-comment"># stratify: keeps same churn % in both sets</span>
+)
+scaler = <span class="c-cls">StandardScaler</span>()
+X_train_s = scaler.fit_transform(X_train)
+X_test_s  = scaler.transform(X_test)
+
+<span class="code-comment"># ── 3. TRAIN ────────────────────────────────────────────────────────</span>
+model = <span class="c-cls">LogisticRegression</span>(
+    penalty='l2',           <span class="code-comment"># L2 regularisation — standard choice</span>
+    C=1.0,                  <span class="code-comment"># inverse regularisation strength (higher C = less regularisation)</span>
+    solver='lbfgs',         <span class="code-comment"># best default optimizer for most problems</span>
+    max_iter=1000,          <span class="code-comment"># increase if ConvergenceWarning appears</span>
+    class_weight='balanced',<span class="code-comment"># compensates for class imbalance automatically</span>
+    random_state=42
+)
+model.fit(X_train_s, y_train)
+
+<span class="code-comment"># ── 4. INSPECT LEARNED COEFFICIENTS ────────────────────────────────</span>
+feature_names = ['days_since_order', 'order_count', 'complaints', 'discount_usage']
+for name, coef in zip(feature_names, model.coef_[0]):
+    print(f"  {name:20s}: {coef:+.3f}")
+<span class="code-comment"># Positive coef = increases churn probability. Negative = decreases it.</span>
+
+<span class="code-comment"># ── 5. PREDICT CLASSES AND PROBABILITIES ───────────────────────────</span>
+y_pred       = model.predict(X_test_s)          <span class="code-comment"># class labels: 0 or 1</span>
+y_pred_proba = model.predict_proba(X_test_s)    <span class="code-comment"># probabilities: [[P(0), P(1)], ...]</span>
+churn_proba  = y_pred_proba[:, 1]               <span class="code-comment"># P(churn=1) for each customer</span>
+
+<span class="code-comment"># ── 6. EVALUATE ─────────────────────────────────────────────────────</span>
+print(classification_report(y_test, y_pred,
+      target_names=['Stay', 'Churn']))           <span class="code-comment"># shows precision, recall, F1 per class</span>
+print(f"AUC-ROC: {roc_auc_score(y_test, churn_proba):.3f}")
+<span class="code-comment"># AUC = 0.5 → random classifier. AUC = 1.0 → perfect. AUC = 0.85 → good.</span>
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+<span class="code-comment"># [[TN  FP]   TN = correctly predicted "stay"</span>
+<span class="code-comment">#  [FN  TP]]  FP = predicted "churn" but actually stayed (false alarm)</span>
+<span class="code-comment">#             FN = predicted "stay" but actually churned (missed!)</span>
+<span class="code-comment">#             TP = correctly predicted "churn"</span>
+
+<span class="code-comment"># ── 7. ADJUST THRESHOLD (instead of default 0.5) ───────────────────</span>
+custom_threshold = 0.35                          <span class="code-comment"># flag as churn if &gt;35% chance</span>
+y_pred_custom    = (churn_proba &gt;= custom_threshold).astype(int)
+print(classification_report(y_test, y_pred_custom))
+<span class="code-comment"># Lower threshold → higher recall (catch more churners) but lower precision (more false alarms)</span>
+
+<span class="code-comment"># ── 8. CROSS-VALIDATE ───────────────────────────────────────────────</span>
+cv_auc = cross_val_score(
+    <span class="c-cls">LogisticRegression</span>(C=1.0, max_iter=1000, class_weight='balanced'),
+    X, y, cv=5, scoring='roc_auc'
+)
+print(f"CV AUC: {cv_auc.round(3)} | Mean: {cv_auc.mean():.3f}")
+
+<span class="code-comment"># ── 9. PREDICT FOR ONE NEW CUSTOMER ────────────────────────────────</span>
+new_customer = np.array([[45, 3, 2, 0.8]])     <span class="code-comment"># 45 days since order, 3 orders, 2 complaints, heavy discount</span>
+new_scaled   = scaler.transform(new_customer)
+prob_churn   = model.predict_proba(new_scaled)[0, 1]
+print(f"Churn probability: {prob_churn:.1%}")
+</pre></div>
+</div>
+  <div class="tab-content" id="s2-terms">
+    <div class="card"><h3>Key Terms — Logistic Regression</h3>
+    <table class="term-table">
+      <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
+      <tr><td><span class="term-name">Sigmoid Function</span></td><td>Takes any real number, outputs a value between 0 and 1. Used to convert raw scores into probabilities.</td><td>σ(2) = 0.88 → 88% chance of class 1</td></tr>
+      <tr><td><span class="term-name">Decision Boundary</span></td><td>The line (or curve) that separates class 0 predictions from class 1 predictions. Everything above it = class 1.</td><td>At z=0, σ(0)=0.5 — the decision boundary</td></tr>
+      <tr><td><span class="term-name">Binary Cross-Entropy</span></td><td>Loss function for binary classification. Measures how wrong the probability prediction is. Strongly penalises confident wrong predictions.</td><td>Predicting 0.95 for class 0 gets a very high penalty</td></tr>
+      <tr><td><span class="term-name">C (regularisation)</span></td><td>Inverse regularisation strength. C=0.01 = heavy regularisation. C=100 = almost none. The smaller C, the smaller and more stable the coefficients.</td><td>Model overfitting → try C=0.1</td></tr>
+      <tr><td><span class="term-name">Confusion Matrix</span></td><td>A 2×2 table showing TP, FP, FN, TN — all 4 combinations of predicted vs actual class.</td><td>[[85, 10], [5, 100]] — 85 true negatives, 10 false positives, etc.</td></tr>
+      <tr><td><span class="term-name">Precision</span></td><td>Of all times the model predicted "positive," how often was it right? High precision = few false alarms.</td><td>Precision=0.90: 90% of fraud flags were real fraud</td></tr>
+      <tr><td><span class="term-name">Recall (Sensitivity)</span></td><td>Of all actual positives, how many did the model catch? High recall = few misses.</td><td>Recall=0.75: caught 75% of all actual fraud cases</td></tr>
+      <tr><td><span class="term-name">F1 Score</span></td><td>Harmonic mean of Precision and Recall. Good single metric when both matter and classes are imbalanced.</td><td>F1=0.82: reasonable balance of precision and recall</td></tr>
+      <tr><td><span class="term-name">AUC-ROC</span></td><td>Area Under the ROC Curve. Measures how well the model ranks positives above negatives, regardless of threshold. 0.5=random, 1.0=perfect.</td><td>AUC=0.88: excellent discriminating ability</td></tr>
+      <tr><td><span class="term-name">predict_proba()</span></td><td>Returns probability for each class, not just the class label. Gives you [P(class=0), P(class=1)].</td><td>[[0.18, 0.82]] → 82% probability of class 1</td></tr>
+      <tr><td><span class="term-name">class_weight='balanced'</span></td><td>Automatically adjusts training so the minority class gets more importance. Fixes imbalanced datasets.</td><td>5% fraud, 95% non-fraud → use balanced to prevent model always predicting non-fraud</td></tr>
+      <tr><td><span class="term-name">stratify=y</span></td><td>When splitting data, ensures both train and test sets have the same proportion of each class as the full dataset.</td><td>stratify=y: if 10% churn overall, both train and test also have 10% churn</td></tr>
+      <tr><td><span class="term-name">Multi-class LR</span></td><td>Extends binary LR to 3+ classes using OvR (one class vs all others) or multinomial (all classes at once).</td><td>multi_class='multinomial' for predicting customer segment A/B/C/D</td></tr>
+    </table></div>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -1758,7 +2143,7 @@ prob = model.predict_proba(new_scaled)[<span class="c-num">0</span>][<span class
     <div class="algo-number">3</div>
     <div>
       <div class="algo-title">Decision Tree</div>
-      <div class="algo-subtitle">A flowchart of yes/no questions that arrives at a prediction</div>
+      <div class="algo-subtitle">The only ML algorithm you can draw on paper — asks questions, follows branches, reaches a decision</div>
     </div>
   </div>
   <div class="tab-bar">
@@ -1768,138 +2153,326 @@ prob = model.predict_proba(new_scaled)[<span class="c-num">0</span>][<span class
     <button class="tab-btn" onclick="showTab('s3','code')">💻 Code &amp; Internals</button>
     <button class="tab-btn" onclick="showTab('s3','terms')">📚 Key Terms</button>
   </div>
-
   <div class="tab-content active" id="s3-what">
     <div class="card">
-      <h3>What is a Decision Tree?</h3>
-      <p>A Decision Tree mimics how humans make decisions — through a series of <strong>yes/no questions</strong>. Each question splits the data into groups, and we keep asking questions until we reach a final answer.</p>
+      <h3>What is a Decision Tree? (Plain English)</h3>
+      <p>A Decision Tree is exactly what it sounds like — a tree of decisions. Start at the top (root), answer a yes/no question about a feature, follow the branch that matches your answer, answer the next question, keep going until you reach a leaf at the bottom which gives your prediction.</p>
+      <p>Every branching point asks one question: "Is feature X greater than value V?" or "Is feature X equal to category Y?" The model automatically figures out WHICH questions to ask and in WHAT order — the questions that best separate the data into clean groups.</p>
+      <div class="highlight"><p><strong>Key insight:</strong> Decision Trees are the only ML algorithm you can literally draw on paper and a non-technical person can follow step-by-step to arrive at the same prediction. This makes them the go-to algorithm when explainability is required (banking, healthcare, legal).</p></div>
     </div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 520 290" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;background:#0f172a;border-radius:12px;">
+  <!-- Root node -->
+  <rect x="185" y="12" width="150" height="42" rx="8" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <text x="260" y="29" text-anchor="middle" fill="white"   font-size="10" font-family="sans-serif" font-weight="700">Age &gt; 30?</text>
+  <text x="260" y="46" text-anchor="middle" fill="#bfdbfe" font-size="9"  font-family="sans-serif">Root Node — first split</text>
+  <!-- Branches from root -->
+  <line x1="220" y1="54" x2="130" y2="105" stroke="#475569" stroke-width="1.8"/>
+  <line x1="300" y1="54" x2="390" y2="105" stroke="#475569" stroke-width="1.8"/>
+  <text x="165" y="85" fill="#34d399" font-size="10" font-family="sans-serif">Yes</text>
+  <text x="325" y="85" fill="#f87171" font-size="10" font-family="sans-serif">No</text>
+  <!-- Level 2 left node -->
+  <rect x="55"  y="105" width="150" height="42" rx="8" fill="#7c3aed" stroke="#a78bfa" stroke-width="2"/>
+  <text x="130" y="122" text-anchor="middle" fill="white"   font-size="10" font-family="sans-serif" font-weight="700">Income &gt; 50K?</text>
+  <text x="130" y="138" text-anchor="middle" fill="#ddd6fe" font-size="9"  font-family="sans-serif">Internal Node</text>
+  <!-- Level 2 right node -->
+  <rect x="315" y="105" width="150" height="42" rx="8" fill="#7c3aed" stroke="#a78bfa" stroke-width="2"/>
+  <text x="390" y="122" text-anchor="middle" fill="white"   font-size="10" font-family="sans-serif" font-weight="700">Credit &gt; 700?</text>
+  <text x="390" y="138" text-anchor="middle" fill="#ddd6fe" font-size="9"  font-family="sans-serif">Internal Node</text>
+  <!-- Level 2 branches -->
+  <line x1="100" y1="147" x2="65"  y2="195" stroke="#475569" stroke-width="1.5"/>
+  <line x1="160" y1="147" x2="195" y2="195" stroke="#475569" stroke-width="1.5"/>
+  <line x1="360" y1="147" x2="325" y2="195" stroke="#475569" stroke-width="1.5"/>
+  <line x1="420" y1="147" x2="455" y2="195" stroke="#475569" stroke-width="1.5"/>
+  <text x="74"  y="178" fill="#34d399" font-size="9">Yes</text>
+  <text x="167" y="178" fill="#f87171" font-size="9">No</text>
+  <text x="300" y="178" fill="#34d399" font-size="9">Yes</text>
+  <text x="438" y="178" fill="#f87171" font-size="9">No</text>
+  <!-- Leaf nodes -->
+  <rect x="20"  y="195" width="90" height="38" rx="8" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+  <text x="65"  y="211" text-anchor="middle" fill="white"   font-size="10" font-family="sans-serif" font-weight="700">✅ Approve</text>
+  <text x="65"  y="225" text-anchor="middle" fill="#a7f3d0" font-size="8"  font-family="sans-serif">Leaf: 92% approve</text>
+  <rect x="150" y="195" width="90" height="38" rx="8" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+  <text x="195" y="211" text-anchor="middle" fill="white"   font-size="10" font-family="sans-serif" font-weight="700">❌ Reject</text>
+  <text x="195" y="225" text-anchor="middle" fill="#fecaca" font-size="8"  font-family="sans-serif">Leaf: 78% reject</text>
+  <rect x="280" y="195" width="90" height="38" rx="8" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+  <text x="325" y="211" text-anchor="middle" fill="white"   font-size="10" font-family="sans-serif" font-weight="700">✅ Approve</text>
+  <text x="325" y="225" text-anchor="middle" fill="#a7f3d0" font-size="8"  font-family="sans-serif">Leaf: 85% approve</text>
+  <rect x="410" y="195" width="90" height="38" rx="8" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+  <text x="455" y="211" text-anchor="middle" fill="white"   font-size="10" font-family="sans-serif" font-weight="700">❌ Reject</text>
+  <text x="455" y="225" text-anchor="middle" fill="#fecaca" font-size="8"  font-family="sans-serif">Leaf: 81% reject</text>
+  <!-- Legend -->
+  <text x="260" y="255" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif" font-weight="600">Loan Approval Decision Tree</text>
+  <text x="260" y="270" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">Blue = root/internal nodes (ask questions). Green/Red = leaf nodes (make decision).</text>
+  <text x="260" y="283" text-anchor="middle" fill="#64748b" font-size="9"  font-family="sans-serif">To predict: start at root, answer each question, follow the branch, reach a leaf.</text>
+</svg></div>
     <div class="analogy">
-      <div class="label">🏦 Analogy — Bank Loan Approval</div>
-      <p>Is income &gt; ₹50,000? → YES → Is credit score &gt; 700? → YES → <strong>APPROVE</strong><br>
-      Is income &gt; ₹50,000? → YES → Is credit score &gt; 700? → NO → Is debt ratio &lt; 0.3? → YES → <strong>APPROVE</strong> → NO → <strong>REJECT</strong><br>
-      Is income &gt; ₹50,000? → NO → <strong>REJECT</strong><br>
-      Each question is a "node", the final answer is a "leaf".</p>
+      <div class="label">🎮 Analogy — 20 Questions game</div>
+      <p>In the "20 Questions" game, you try to guess what someone is thinking by asking yes/no questions. A good player asks the most informative questions first: "Is it alive?" eliminates half of all possibilities. Decision Trees do the same thing — they find the question that splits the data most effectively at each step, always asking the single most informative question available.</p>
     </div>
     <div class="card">
-      <h3>Why Decision Trees are Special</h3>
-      <ul>
-        <li><strong>Highly interpretable</strong> — you can literally draw and explain the logic</li>
-        <li><strong>No scaling needed</strong> — features don't need to be normalized</li>
-        <li><strong>Handles mixed data</strong> — works with both numbers and categories</li>
-        <li><strong>Prone to overfitting</strong> — without limits, trees grow too complex and memorize training data</li>
-      </ul>
+      <h3>Classification Tree vs Regression Tree</h3>
+      <table class="term-table">
+        <tr><th>Type</th><th>Predicts</th><th>Leaf node contains</th><th>Example</th></tr>
+        <tr><td><strong>Classification Tree</strong></td><td>A category</td><td>Majority class label (e.g., "Approve" or "Reject")</td><td>Is this loan application approved?</td></tr>
+        <tr><td><strong>Regression Tree</strong></td><td>A number</td><td>Average of all training values in that leaf</td><td>What is this house's price?</td></tr>
+      </table>
+      <p style="margin-top:8px">sklearn's <code>DecisionTreeClassifier</code> for categories, <code>DecisionTreeRegressor</code> for numbers. Same concept, same parameters.</p>
     </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s3-how">
     <div class="card">
-      <h3>How Does the Tree Decide Which Question to Ask First?</h3>
-      <p>At each step, it tests every possible feature and every possible split value, then picks the one that creates the most "pure" groups — groups where most members belong to the same class.</p>
-    </div>
-    <div class="card">
-      <h3>Gini Impurity — Measuring Purity</h3>
-      <p>Gini = 1 − Σ(pᵢ²) where pᵢ is the proportion of each class.</p>
+      <h3>How the Tree Learns: Finding the Best Split</h3>
+      <p>At each node, the tree tries EVERY possible split of EVERY feature and picks the one that produces the "purest" child groups — meaning the child nodes contain mostly one class rather than a mix.</p>
+      <p><strong>Purity is measured by Gini Impurity or Entropy:</strong></p>
       <ul>
-        <li><strong>Gini = 0</strong>: perfectly pure group (all one class) ← what we want</li>
-        <li><strong>Gini = 0.5</strong>: completely mixed group (50% each class)</li>
+        <li><strong>Gini Impurity = 0:</strong> Perfect — all samples in the node are the same class (pure leaf)</li>
+        <li><strong>Gini Impurity = 0.5:</strong> Worst — exactly 50% class 0, 50% class 1 (random, useless)</li>
+        <li><strong>Gini formula:</strong> 1 − Σ(pᵢ²) where pᵢ is the proportion of each class</li>
       </ul>
-      <div class="analogy">
-        <div class="label">🎯 Gini Example</div>
-        <p>After splitting on "income &gt; 50K", left group has 90 malignant, 10 benign tumors. Gini = 1-(0.9²+0.1²) = 1-0.82 = 0.18. That's pretty pure! A better split gives lower Gini.</p>
+      <p>The algorithm picks the split that gives the biggest <strong>Information Gain</strong> = parent Gini − weighted average of children's Gini.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#34d399;font-weight:700;margin:0 0 6px;font-size:12px">Pure Split — Low Gini (Good)</p>
+<svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <rect x="10" y="20" width="75" height="65" rx="6" fill="#1e293b" stroke="#334155"/>
+  <text x="47" y="38" text-anchor="middle" fill="#94a3b8" font-size="8">Left Branch</text>
+  <circle cx="30" cy="60" r="7" fill="#ef4444"/><circle cx="50" cy="55" r="7" fill="#ef4444"/>
+  <circle cx="40" cy="75" r="7" fill="#ef4444"/><circle cx="65" cy="65" r="7" fill="#ef4444"/>
+  <text x="47" y="95" text-anchor="middle" fill="#f87171" font-size="8">All Class 0 ✓</text>
+  <rect x="95" y="20" width="75" height="65" rx="6" fill="#1e293b" stroke="#334155"/>
+  <text x="132" y="38" text-anchor="middle" fill="#94a3b8" font-size="8">Right Branch</text>
+  <circle cx="115" cy="60" r="7" fill="#34d399"/><circle cx="135" cy="55" r="7" fill="#34d399"/>
+  <circle cx="125" cy="75" r="7" fill="#34d399"/><circle cx="155" cy="65" r="7" fill="#34d399"/>
+  <text x="132" y="95" text-anchor="middle" fill="#34d399" font-size="8">All Class 1 ✓</text>
+  <text x="90" y="13" text-anchor="middle" fill="#34d399" font-size="9" font-weight="600">Gini ≈ 0.0 (perfect)</text>
+</svg></div>
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#f87171;font-weight:700;margin:0 0 6px;font-size:12px">Impure Split — High Gini (Bad)</p>
+<svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <rect x="10" y="20" width="75" height="65" rx="6" fill="#1e293b" stroke="#334155"/>
+  <text x="47" y="38" text-anchor="middle" fill="#94a3b8" font-size="8">Left Branch</text>
+  <circle cx="30" cy="60" r="7" fill="#ef4444"/><circle cx="50" cy="55" r="7" fill="#34d399"/>
+  <circle cx="40" cy="75" r="7" fill="#ef4444"/><circle cx="65" cy="65" r="7" fill="#34d399"/>
+  <text x="47" y="95" text-anchor="middle" fill="#fbbf24" font-size="8">Mixed ✗</text>
+  <rect x="95" y="20" width="75" height="65" rx="6" fill="#1e293b" stroke="#334155"/>
+  <text x="132" y="38" text-anchor="middle" fill="#94a3b8" font-size="8">Right Branch</text>
+  <circle cx="115" cy="60" r="7" fill="#34d399"/><circle cx="135" cy="55" r="7" fill="#ef4444"/>
+  <circle cx="125" cy="75" r="7" fill="#34d399"/><circle cx="155" cy="65" r="7" fill="#34d399"/>
+  <text x="132" y="95" text-anchor="middle" fill="#fbbf24" font-size="8">Mixed ✗</text>
+  <text x="90" y="13" text-anchor="middle" fill="#f87171" font-size="9" font-weight="600">Gini ≈ 0.5 (impure)</text>
+</svg></div></div>
+    <div class="card">
+      <h3>sklearn DecisionTreeClassifier — ALL Parameters Explained</h3>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:8px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">DecisionTreeClassifier(criterion, max_depth, min_samples_split, min_samples_leaf, max_features, ...)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>Impact if changed</th></tr>
+          <tr>
+            <td><code>criterion</code></td>
+            <td>How to measure split quality — which function to use to pick the best question at each node.</td>
+            <td>'gini'</td>
+            <td><strong>'gini':</strong> Gini impurity — fast, good default. <strong>'entropy':</strong> information gain — slightly different splits, often similar results. <strong>'log_loss':</strong> same as entropy for classification. Rarely makes a big difference.</td>
+          </tr>
+          <tr>
+            <td><code>max_depth</code></td>
+            <td>Maximum number of levels in the tree. None = grow until pure leaves (very deep = overfitting).</td>
+            <td>None</td>
+            <td><strong>None:</strong> fully grown tree, 100% training accuracy but terrible on new data. <strong>3–5:</strong> shallow, generalises well, highly interpretable. <strong>10+:</strong> complex, may overfit. Start with 3–5, increase if underfitting.</td>
+          </tr>
+          <tr>
+            <td><code>min_samples_split</code></td>
+            <td>Minimum number of samples required to split an internal node. Higher = less splits = simpler tree.</td>
+            <td>2</td>
+            <td><strong>2:</strong> splits even on 2 samples — overfits easily. <strong>10–20:</strong> requires decent sample count before splitting — reduces overfitting. <strong>50+:</strong> very conservative, large datasets.</td>
+          </tr>
+          <tr>
+            <td><code>min_samples_leaf</code></td>
+            <td>Minimum number of samples required to be in a leaf node. Prevents tiny leaves that memorise noise.</td>
+            <td>1</td>
+            <td><strong>1:</strong> leaves can have just 1 sample — overfits. <strong>5:</strong> each leaf must cover at least 5 samples. <strong>20+:</strong> smooth predictions. Tune: 1% of training data is a good starting point.</td>
+          </tr>
+          <tr>
+            <td><code>max_features</code></td>
+            <td>Number of features to consider when looking for the best split at each node.</td>
+            <td>None (use all)</td>
+            <td><strong>None:</strong> considers all features at each split. <strong>'sqrt':</strong> √(n_features) — used in Random Forest. <strong>'log2':</strong> log₂(n_features). <strong>int/float:</strong> exact number or fraction. Reducing adds randomness, can reduce overfitting.</td>
+          </tr>
+          <tr>
+            <td><code>max_leaf_nodes</code></td>
+            <td>Grow tree with at most this many leaf nodes. Alternative way to limit tree size to prevent overfitting.</td>
+            <td>None</td>
+            <td>Set to limit total tree complexity. e.g., max_leaf_nodes=10 gives at most 10 leaf predictions. Useful when you want a fixed-size interpretable tree.</td>
+          </tr>
+          <tr>
+            <td><code>min_impurity_decrease</code></td>
+            <td>Only split a node if the split decreases impurity by at least this amount. Stops trivially small improvements.</td>
+            <td>0.0</td>
+            <td>Increase (e.g., 0.01) to prune out splits that barely help. Reduces overfitting. Similar effect to max_depth but more principled.</td>
+          </tr>
+          <tr>
+            <td><code>class_weight</code></td>
+            <td>Weight assigned to each class. 'balanced' compensates for imbalanced datasets.</td>
+            <td>None</td>
+            <td>Use 'balanced' when one class is rare. The tree will prioritise getting the minority class right.</td>
+          </tr>
+          <tr>
+            <td><code>ccp_alpha</code></td>
+            <td>Complexity parameter for Minimal Cost-Complexity Pruning. Higher = more pruning = simpler tree.</td>
+            <td>0.0</td>
+            <td>Use cross-validation to find optimal ccp_alpha. Start at 0, gradually increase until validation score peaks.</td>
+          </tr>
+          <tr>
+            <td><code>random_state</code></td>
+            <td>Seed for reproducibility. When max_features &lt; n_features, some randomness is involved in feature selection.</td>
+            <td>None</td>
+            <td>Set to 42 or any integer for reproducible results.</td>
+          </tr>
+        </table>
       </div>
     </div>
     <div class="card">
-      <h3>Information Gain — Alternative to Gini</h3>
-      <p>Information Gain measures how much a split <strong>reduces uncertainty</strong> (entropy). Entropy is maximum when classes are 50/50. The split with highest Information Gain is chosen.</p>
+      <h3>Overfitting Problem and Solutions</h3>
+      <p>A fully grown Decision Tree (max_depth=None) memorises every training example. Training accuracy = 100%, but test accuracy is terrible. This is the main weakness of trees.</p>
+      <table class="term-table">
+        <tr><th>Solution</th><th>How to apply</th><th>Effect</th></tr>
+        <tr><td>Limit max_depth</td><td>Set max_depth=3 to max_depth=7</td><td>Simpler tree, less memorisation</td></tr>
+        <tr><td>Set min_samples_leaf</td><td>min_samples_leaf=10 or 20</td><td>Prevents tiny leaf nodes that memorise specific samples</td></tr>
+        <tr><td>Pruning (ccp_alpha)</td><td>Find best ccp_alpha via CV</td><td>Removes branches that don't improve generalisation</td></tr>
+        <tr><td>Use Random Forest instead</td><td>Build 100+ trees and vote</td><td>Eliminates most overfitting — this is the preferred fix</td></tr>
+      </table>
     </div>
     <div class="card">
-      <h3>Stopping Criteria — When to Stop Growing</h3>
-      <ul>
-        <li><strong>max_depth</strong>: don't go deeper than N levels</li>
-        <li><strong>min_samples_split</strong>: need at least N samples to try splitting a node</li>
-        <li><strong>min_samples_leaf</strong>: each leaf must have at least N samples</li>
-        <li><strong>Pure node</strong>: stop when a group is 100% one class</li>
-      </ul>
+      <h3>Feature Importance</h3>
+      <p>After training, you can inspect which features the tree found most useful: <code>model.feature_importances_</code></p>
+      <p>Each feature gets a score between 0 and 1. Higher = more important to the tree's decisions. Sum of all = 1.0.</p>
+      <div class="highlight"><p>Feature importance from trees = how much total impurity decrease a feature caused across all splits. A feature that never gets used = 0.0. The feature at the root node usually has the highest importance.</p></div>
     </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s3-use">
     <div class="card">
-      <h3>🏥 Real Use Case: Tumor Classification</h3>
-      <p>Oncologists want to classify tumors as <strong>malignant (cancerous)</strong> or <strong>benign (harmless)</strong> based on physical measurements from a biopsy. The model must be explainable — doctors need to understand WHY a tumor is classified as malignant.</p>
+      <h3>Real-World Applications</h3>
+      <table class="term-table">
+        <tr><th>Industry</th><th>Use Case</th><th>Why Decision Tree</th></tr>
+        <tr><td>Banking / Lending</td><td>Loan approval decisions</td><td>Regulators require explainable decisions — can show customer exactly why they were rejected</td></tr>
+        <tr><td>Healthcare</td><td>Medical diagnosis support</td><td>Clinical guidelines naturally look like decision trees; doctors can audit the logic</td></tr>
+        <tr><td>Insurance</td><td>Premium pricing rules</td><td>Actuaries review the tree to ensure fairness and regulatory compliance</td></tr>
+        <tr><td>Customer Service</td><td>Issue routing (which team handles which complaint)</td><td>Simple yes/no questions that can be encoded as business rules</td></tr>
+        <tr><td>Manufacturing</td><td>Quality control (pass/fail)</td><td>Factory operators need to understand and trust the decision logic</td></tr>
+        <tr><td>Retail</td><td>Product recommendation category</td><td>First-pass filter before more complex algorithms</td></tr>
+      </table>
     </div>
     <div class="card">
-      <h3>Features Used</h3>
-      <ul>
-        <li><strong>Radius</strong>: mean size of the tumor cell</li>
-        <li><strong>Texture</strong>: variation in gray-scale values</li>
-        <li><strong>Perimeter</strong>: boundary length of tumor</li>
-        <li><strong>Concavity</strong>: how irregular the tumor edges are</li>
-        <li><strong>Symmetry</strong>: how symmetric the cell is</li>
-      </ul>
+      <h3>When to Use vs When to Avoid</h3>
+      <table class="term-table">
+        <tr><th>Use Decision Tree when</th><th>Avoid when</th></tr>
+        <tr><td>Explainability is a hard requirement</td><td>Maximum accuracy is the priority (use Random Forest or XGBoost)</td></tr>
+        <tr><td>Features include a mix of numerical and categorical data</td><td>Data has many continuous features with subtle relationships</td></tr>
+        <tr><td>You need a quick prototype to understand feature importance</td><td>Dataset is very small (overfitting risk is very high)</td></tr>
+        <tr><td>Decision rules need to be turned into business logic (if-else code)</td><td>You need probability calibration (trees give poor probability estimates)</td></tr>
+      </table>
     </div>
-    <div class="card">
-      <h3>Why Decision Tree Here?</h3>
-      <div class="highlight"><p>A doctor can read the tree: "If concavity &gt; 0.12 AND radius &gt; 15mm → classify as malignant." This is life-or-death — the model must be explainable, not a black box.</p></div>
-    </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s3-code">
-    <div class="card"><h3>Complete Code: Tumor Classification</h3></div>
+    <div class="card"><h3>Complete Annotated Code — Loan Approval</h3></div>
     <div class="code-block"><pre>
-<span class="c-kw">from</span> sklearn.datasets <span class="c-kw">import</span> load_breast_cancer -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.tree <span class="c-kw">import</span> <span class="c-cls">DecisionTreeClassifier</span>, export_text, plot_tree -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> accuracy_score, classification_report -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+<span class="c-kw">from</span> sklearn.tree          <span class="c-kw">import</span> <span class="c-cls">DecisionTreeClassifier</span>, export_text, plot_tree
+<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split, cross_val_score
+<span class="c-kw">from</span> sklearn.metrics       <span class="c-kw">import</span> classification_report
+<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt
 
-data = load_breast_cancer()
-X = data.data
-y = data.target
-feature_names = data.feature_names
+<span class="code-comment"># ── 1. CREATE SAMPLE DATA ───────────────────────────────────────────</span>
+np.random.seed(42)
+n = 800
+age         = np.random.randint(20, 65, n)
+income      = np.random.uniform(15000, 150000, n)
+credit      = np.random.randint(400, 850, n)
+debt_ratio  = np.random.uniform(0.1, 0.8, n)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="c-num">0.2</span>, random_state=<span class="c-num">42</span>, stratify=y)
+<span class="code-comment"># Simple rule: approve if (age&gt;30 AND income&gt;50K AND credit&gt;650 AND debt&lt;0.5)</span>
+approved = ((age &gt; 30) &amp; (income &gt; 50000) &amp; (credit &gt; 650) &amp; (debt_ratio &lt; 0.5))
+y = approved.astype(int)
 
+X = np.column_stack([age, income, credit, debt_ratio])
+feature_names = ['age', 'income', 'credit_score', 'debt_ratio']
+
+<span class="code-comment"># ── 2. SPLIT ────────────────────────────────────────────────────────</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+<span class="code-comment"># ── 3. TRAIN — SHALLOW (interpretable) ─────────────────────────────</span>
 tree = <span class="c-cls">DecisionTreeClassifier</span>(
-    criterion=<span class="c-str">'gini'</span>,
-    max_depth=<span class="c-num">5</span>,
-    min_samples_split=<span class="c-num">10</span>,
-    min_samples_leaf=<span class="c-num">5</span>,
-    random_state=<span class="c-num">42</span>
+    criterion='gini',         <span class="code-comment"># measure split quality using Gini impurity</span>
+    max_depth=4,              <span class="code-comment"># max 4 levels deep — keeps tree readable</span>
+    min_samples_split=20,     <span class="code-comment"># need at least 20 samples to split a node</span>
+    min_samples_leaf=10,      <span class="code-comment"># each leaf must have at least 10 samples</span>
+    max_features=None,        <span class="code-comment"># consider all features at each split</span>
+    class_weight='balanced',  <span class="code-comment"># handle class imbalance</span>
+    random_state=42,
+    ccp_alpha=0.0             <span class="code-comment"># no post-pruning (handled by max_depth here)</span>
 )
 tree.fit(X_train, y_train)
 
+<span class="code-comment"># ── 4. PRINT THE TREE AS TEXT ───────────────────────────────────────</span>
+print(export_text(tree, feature_names=feature_names))
+<span class="code-comment"># This prints the entire decision tree in human-readable text format</span>
+<span class="code-comment"># You can show this to a business stakeholder and they can follow it</span>
+
+<span class="code-comment"># ── 5. EVALUATE ─────────────────────────────────────────────────────</span>
 y_pred = tree.predict(X_test)
-<span class="c-fn">print</span>(<span class="c-str">f"Accuracy: {accuracy_score(y_test, y_pred):.3f}"</span>)
-<span class="c-fn">print</span>(classification_report(y_test, y_pred, target_names=[<span class="c-str">'Malignant'</span>, <span class="c-str">'Benign'</span>]))
+print(classification_report(y_test, y_pred, target_names=['Reject', 'Approve']))
 
-importances = tree.feature_importances_
-top_features = sorted(zip(feature_names, importances), key=<span class="c-kw">lambda</span> x: -x[<span class="c-num">1</span>])[:5]
-<span class="c-fn">print</span>(<span class="c-str">"\nTop 5 Most Important Features:"</span>)
-<span class="c-kw">for</span> name, imp <span class="c-kw">in</span> top_features:
-    <span class="c-fn">print</span>(<span class="c-str">f"  {name}: {imp:.3f}"</span>)
+<span class="code-comment"># ── 6. FEATURE IMPORTANCE ───────────────────────────────────────────</span>
+importances = tree.feature_importances_             <span class="code-comment"># array, one per feature, sums to 1</span>
+for name, imp in sorted(zip(feature_names, importances), key=lambda x: -x[1]):
+    bar = '█' * int(imp * 40)
+    print(f"  {name:15s}: {imp:.3f}  {bar}")
 
-<span class="c-fn">print</span>(export_text(tree, feature_names=list(feature_names)))
+<span class="code-comment"># ── 7. VISUALISE TREE (requires matplotlib) ─────────────────────────</span>
+<span class="code-comment"># plt.figure(figsize=(16, 8))</span>
+<span class="code-comment"># plot_tree(tree, feature_names=feature_names, class_names=['Reject','Approve'],</span>
+<span class="code-comment">#           filled=True, rounded=True, fontsize=10)</span>
+<span class="code-comment"># plt.savefig('decision_tree.png', dpi=150, bbox_inches='tight')</span>
+
+<span class="code-comment"># ── 8. CROSS-VALIDATE ───────────────────────────────────────────────</span>
+cv_scores = cross_val_score(tree, X, y, cv=5, scoring='f1')
+print(f"CV F1: {cv_scores.round(3)} | Mean: {cv_scores.mean():.3f}")
+
+<span class="code-comment"># ── 9. PREDICT SINGLE APPLICANT ────────────────────────────────────</span>
+applicant = np.array([[35, 75000, 720, 0.35]])     <span class="code-comment"># age=35, income=75K, credit=720, debt=35%</span>
+decision = tree.predict(applicant)
+confidence = tree.predict_proba(applicant)
+print(f"Decision: {'Approve' if decision[0]==1 else 'Reject'}")
+print(f"Confidence: {confidence[0].max():.1%}")
+
+<span class="code-comment"># ── 10. FIND BEST max_depth VIA CROSS-VALIDATION ───────────────────</span>
+for depth in [2, 3, 4, 5, 6, 8, 10, None]:
+    t = <span class="c-cls">DecisionTreeClassifier</span>(max_depth=depth, random_state=42)
+    score = cross_val_score(t, X, y, cv=5, scoring='f1').mean()
+    print(f"max_depth={str(depth):5s}: CV F1={score:.3f}")
+<span class="code-comment"># Pick the depth with highest CV F1 — that's your optimal max_depth</span>
 </pre></div>
-  </div>
-
+</div>
   <div class="tab-content" id="s3-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Node</span></td><td>A decision point in the tree — contains a question and splits data into two branches</td><td>"Is tumor radius &gt; 15mm?"</td></tr>
-        <tr><td><span class="term-name">Leaf</span></td><td>A terminal node — no more questions, just a final prediction</td><td>"Malignant (92% confidence)"</td></tr>
-        <tr><td><span class="term-name">Depth</span></td><td>Number of levels in the tree. Deeper = more complex = more likely to overfit</td><td>depth=3 means at most 3 questions before final answer</td></tr>
-        <tr><td><span class="term-name">Gini Impurity</span></td><td>Measure of disorder in a group. 0=all same class (pure), 0.5=totally mixed. We minimize this.</td><td>Group of 9 malignant, 1 benign: Gini=0.18 (good)</td></tr>
-        <tr><td><span class="term-name">Information Gain</span></td><td>How much a split reduces entropy (disorder). Higher = better split.</td><td>Splitting on concavity reduces entropy by 0.35 bits</td></tr>
-        <tr><td><span class="term-name">Pruning</span></td><td>Cutting branches that don't improve accuracy on validation data. Prevents overfit.</td><td>Post-pruning: remove nodes that add &lt;1% accuracy</td></tr>
-        <tr><td><span class="term-name">Entropy</span></td><td>Alternative impurity measure. Maximum (1.0) when 50/50 split, minimum (0) when pure.</td><td>Used with criterion='entropy' in sklearn</td></tr>
-        <tr><td><span class="term-name">feature_importances_</span></td><td>How much each feature contributed to the splits.</td><td>concavity: 0.45, radius: 0.32, texture: 0.12...</td></tr>
-      </table>
-    </div>
-  </div>
+    <div class="card"><h3>Key Terms — Decision Tree</h3>
+    <table class="term-table">
+      <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
+      <tr><td><span class="term-name">Root Node</span></td><td>The top of the tree. The very first question asked. The feature here has the highest information gain.</td><td>"Age &gt; 30?" — splits the whole dataset first</td></tr>
+      <tr><td><span class="term-name">Internal Node</span></td><td>Any node that's not a root or leaf. It asks a question and has child nodes below it.</td><td>"Income &gt; 50K?" — after passing the age check</td></tr>
+      <tr><td><span class="term-name">Leaf Node</span></td><td>The bottom of the tree. No more questions. Contains the final prediction or class probability.</td><td>"Approve (92% confidence)" — final answer</td></tr>
+      <tr><td><span class="term-name">Branch / Edge</span></td><td>The connection between nodes. Labeled Yes/No or the condition that was satisfied.</td><td>Taking the "Yes" branch after "Age &gt; 30?"</td></tr>
+      <tr><td><span class="term-name">Depth</span></td><td>Number of levels from root to the deepest leaf. max_depth controls this.</td><td>max_depth=3: at most 3 questions before a decision</td></tr>
+      <tr><td><span class="term-name">Gini Impurity</span></td><td>Measure of how "mixed" a node's samples are. 0 = all same class (pure), 0.5 = 50/50 split (most mixed).</td><td>Node with 90% approve, 10% reject → Gini = 0.18</td></tr>
+      <tr><td><span class="term-name">Entropy</span></td><td>Alternative purity measure from information theory. Similar to Gini but computed differently.</td><td>Entropy = −Σ pᵢ log₂(pᵢ)</td></tr>
+      <tr><td><span class="term-name">Information Gain</span></td><td>How much purity improves after a split. Parent impurity − weighted average of children's impurity. Pick the split with highest gain.</td><td>Splitting on credit score reduces Gini from 0.4 to 0.1 → gain = 0.3</td></tr>
+      <tr><td><span class="term-name">Pruning</span></td><td>Removing branches/nodes from a grown tree to make it simpler and reduce overfitting.</td><td>ccp_alpha=0.01 removes branches that don't justify their complexity</td></tr>
+      <tr><td><span class="term-name">Feature Importance</span></td><td>How much each feature contributed to reducing impurity across all splits in the tree.</td><td>feature_importances_ = [0.4, 0.3, 0.2, 0.1] — first feature most important</td></tr>
+      <tr><td><span class="term-name">Overfitting in Trees</span></td><td>A fully grown tree memorises every training sample. Fix by limiting depth, min_samples_leaf, or using Random Forest.</td><td>Train acc=100%, test acc=62% → classic tree overfitting</td></tr>
+    </table></div>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -1910,7 +2483,7 @@ top_features = sorted(zip(feature_names, importances), key=<span class="c-kw">la
     <div class="algo-number">4</div>
     <div>
       <div class="algo-title">Random Forest</div>
-      <div class="algo-subtitle">Wisdom of crowds — 500 trees vote together for a better answer</div>
+      <div class="algo-subtitle">Hundreds of diverse Decision Trees voting together — fixes overfitting, beats single trees consistently</div>
     </div>
   </div>
   <div class="tab-bar">
@@ -1920,139 +2493,307 @@ top_features = sorted(zip(feature_names, importances), key=<span class="c-kw">la
     <button class="tab-btn" onclick="showTab('s4','code')">💻 Code &amp; Internals</button>
     <button class="tab-btn" onclick="showTab('s4','terms')">📚 Key Terms</button>
   </div>
-
   <div class="tab-content active" id="s4-what">
     <div class="card">
-      <h3>The Problem with One Tree</h3>
-      <p>A single Decision Tree is unstable — change a few training examples and the whole tree might look completely different. It also tends to <strong>overfit</strong>: memorize training data but fail on new data.</p>
+      <h3>What is a Random Forest? (Plain English)</h3>
+      <p>A Random Forest is simply a large collection of Decision Trees that vote together. Instead of building one big tree that memorises training data, you build hundreds of smaller, different trees and let them all vote on the answer. The majority vote becomes the final prediction.</p>
+      <p>The "random" part comes from two sources of randomness deliberately injected to make trees different from each other:</p>
+      <ol>
+        <li><strong>Bootstrap sampling:</strong> each tree is trained on a randomly-drawn-with-replacement subset of the data (different rows)</li>
+        <li><strong>Random feature selection:</strong> at each split, each tree only considers a random subset of features (different columns)</li>
+      </ol>
+      <p>These two randomness sources ensure the trees are not all the same. Different trees make different errors. When they vote together, errors cancel out. This is the core insight behind why Random Forests work so well.</p>
+      <div class="highlight"><p><strong>One-liner:</strong> Random Forest = many diverse Decision Trees + majority voting = much better generalisation than any single tree.</p></div>
     </div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;background:#0f172a;border-radius:12px;">
+  <!-- 3 trees -->
+  <!-- Tree 1 -->
+  <rect x="20" y="20" width="120" height="110" rx="8" fill="#1e293b" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="80" y="38" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="700">Tree 1</text>
+  <text x="80" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">(trained on</text>
+  <text x="80" y="63" text-anchor="middle" fill="#94a3b8" font-size="8">bootstrap sample)</text>
+  <rect x="35" y="75" width="90" height="30" rx="5" fill="#065f46" stroke="#34d399" stroke-width="1.5"/>
+  <text x="80" y="94" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700">✅ Approve</text>
+  <!-- Tree 2 -->
+  <rect x="200" y="20" width="120" height="110" rx="8" fill="#1e293b" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="260" y="38" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="700">Tree 2</text>
+  <text x="260" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">(different sample,</text>
+  <text x="260" y="63" text-anchor="middle" fill="#94a3b8" font-size="8">different features)</text>
+  <rect x="215" y="75" width="90" height="30" rx="5" fill="#065f46" stroke="#34d399" stroke-width="1.5"/>
+  <text x="260" y="94" text-anchor="middle" fill="#34d399" font-size="11" font-weight="700">✅ Approve</text>
+  <!-- Tree 3 -->
+  <rect x="380" y="20" width="120" height="110" rx="8" fill="#1e293b" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="440" y="38" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="700">Tree 3</text>
+  <text x="440" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">(yet another</text>
+  <text x="440" y="63" text-anchor="middle" fill="#94a3b8" font-size="8">random subset)</text>
+  <rect x="395" y="75" width="90" height="30" rx="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <text x="440" y="94" text-anchor="middle" fill="#f87171" font-size="11" font-weight="700">❌ Reject</text>
+  <!-- Arrows to voting box -->
+  <line x1="80"  y1="130" x2="220" y2="165" stroke="#475569" stroke-width="1.5"/>
+  <line x1="260" y1="130" x2="260" y2="165" stroke="#475569" stroke-width="1.5"/>
+  <line x1="440" y1="130" x2="300" y2="165" stroke="#475569" stroke-width="1.5"/>
+  <!-- Voting box -->
+  <rect x="180" y="165" width="160" height="40" rx="8" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <text x="260" y="181" text-anchor="middle" fill="white"   font-size="10" font-weight="700">Majority Vote</text>
+  <text x="260" y="197" text-anchor="middle" fill="#bfdbfe" font-size="9">2 Approve vs 1 Reject</text>
+  <!-- Final arrow -->
+  <!-- Label -->
+  <text x="260" y="214" text-anchor="middle" fill="#34d399" font-size="10" font-weight="700">→ Final: Approve ✅</text>
+  <text x="260" y="10"  text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Random Forest: n_estimators trees each trained on random subsets → majority vote</text>
+</svg></div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;background:#0f172a;border-radius:12px;">
+  <!-- Original dataset -->
+  <rect x="10" y="30" width="140" height="120" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="80" y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="600">Original Data</text>
+  <text x="80" y="62" text-anchor="middle" fill="#64748b" font-size="9">1000 rows</text>
+  <circle cx="35" cy="85" r="5" fill="#60a5fa"/><text x="46" cy="89" fill="#e2e8f0" font-size="8" y="89">Row 1</text>
+  <circle cx="35" cy="102" r="5" fill="#60a5fa"/><text x="46" y="106" fill="#e2e8f0" font-size="8">Row 2</text>
+  <circle cx="35" cy="119" r="5" fill="#60a5fa"/><text x="46" y="123" fill="#e2e8f0" font-size="8">Row 3</text>
+  <circle cx="35" cy="136" r="5" fill="#60a5fa"/><text x="46" y="140" fill="#e2e8f0" font-size="8">…</text>
+  <!-- Arrow -->
+  <line x1="150" y1="90" x2="175" y2="90" stroke="#475569" stroke-width="1.5"/>
+  <path d="M 175 86 L 182 90 L 175 94 Z" fill="#475569"/>
+  <!-- Bootstrap samples -->
+  <rect x="185" y="15" width="130" height="70" rx="6" fill="#1e293b" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="250" y="32" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="600">Bootstrap Sample 1</text>
+  <text x="250" y="46" text-anchor="middle" fill="#64748b" font-size="8">1000 rows (with repeats)</text>
+  <text x="250" y="60" text-anchor="middle" fill="#64748b" font-size="8">Row 1, Row 1, Row 5, Row 2…</text>
+  <text x="250" y="73" text-anchor="middle" fill="#94a3b8" font-size="8">~37% original rows not included</text>
+  <rect x="185" y="100" width="130" height="70" rx="6" fill="#1e293b" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="250" y="117" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="600">Bootstrap Sample 2</text>
+  <text x="250" y="131" text-anchor="middle" fill="#64748b" font-size="8">Different random sample</text>
+  <text x="250" y="145" text-anchor="middle" fill="#64748b" font-size="8">Row 3, Row 7, Row 3, Row 9…</text>
+  <text x="250" y="158" text-anchor="middle" fill="#94a3b8" font-size="8">Different 37% left out</text>
+  <!-- Arrow to trees -->
+  <line x1="315" y1="50" x2="345" y2="50" stroke="#475569" stroke-width="1.5"/>
+  <line x1="315" y1="135" x2="345" y2="135" stroke="#475569" stroke-width="1.5"/>
+  <path d="M 345 46 L 352 50 L 345 54 Z" fill="#475569"/>
+  <path d="M 345 131 L 352 135 L 345 139 Z" fill="#475569"/>
+  <rect x="355" y="30" width="110" height="40" rx="6" fill="#065f46" stroke="#34d399" stroke-width="1.5"/>
+  <text x="410" y="54" text-anchor="middle" fill="#34d399" font-size="10" font-weight="600">Tree 1 trained</text>
+  <rect x="355" y="115" width="110" height="40" rx="6" fill="#065f46" stroke="#34d399" stroke-width="1.5"/>
+  <text x="410" y="139" text-anchor="middle" fill="#34d399" font-size="10" font-weight="600">Tree 2 trained</text>
+  <text x="240" y="175" text-anchor="middle" fill="#64748b" font-size="9">Bootstrap: randomly sample WITH replacement — each tree sees different data</text>
+</svg></div>
     <div class="analogy">
-      <div class="label">👥 Analogy — The Wisdom of Crowds</div>
-      <p>Instead of asking one expert (who might be wrong), you ask 500 people. Each person has slightly different knowledge and perspective. The majority vote is almost always better than any single expert. This is Random Forest: 500 decision trees, each slightly different, voting together.</p>
+      <div class="label">🗳️ Analogy — Crowd Wisdom vs One Expert</div>
+      <p>Would you rather ask one doctor for a diagnosis, or ask 500 doctors and go with the majority opinion? The single doctor might be brilliant but might also have a blind spot. The 500 doctors will disagree on edge cases, but on the clear-cut cases they'll mostly agree, and on uncertain cases their diverse knowledge averages out to a more reliable answer. Random Forest is the 500-doctor approach.</p>
     </div>
-    <div class="card">
-      <h3>Key Innovation: Randomness at Two Levels</h3>
-      <ul>
-        <li><strong>Random rows:</strong> Each tree trains on a random 63% sample of the data (with replacement)</li>
-        <li><strong>Random features:</strong> At each split, only a random subset of features is considered (default: √n_features)</li>
-      </ul>
-      <div class="highlight"><p>This double randomness ensures the 500 trees are different from each other. If all trees were identical, voting wouldn't help! Diversity is the key.</p></div>
-    </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s4-how">
     <div class="card">
-      <h3>Bagging: Bootstrap Aggregating</h3>
-      <p>The technical term for Random Forest's approach is <strong>bagging</strong>.</p>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Step 1</div><div class="step-txt">Draw random 63% sample WITH replacement (some rows appear multiple times)</div></div>
-        <div class="flow-step"><div class="step-num">Step 2</div><div class="step-txt">Build a full Decision Tree on this sample, but at each split only consider √n random features</div></div>
-        <div class="flow-step"><div class="step-num">Step 3</div><div class="step-txt">Repeat 500 times → 500 different trees</div></div>
-        <div class="flow-step"><div class="step-num">Step 4</div><div class="step-txt">For new data: run it through all 500 trees. Majority vote (classification) or average (regression)</div></div>
+      <h3>The Training Process (Step by Step)</h3>
+      <ol>
+        <li>For each of the n_estimators trees:</li>
+        <li style="margin-left:20px"><strong>Bootstrap:</strong> draw a random sample (with replacement) of training data — same size as original</li>
+        <li style="margin-left:20px"><strong>Grow tree:</strong> at EACH split, randomly pick max_features features and find the best split among ONLY those features</li>
+        <li style="margin-left:20px"><strong>Grow fully:</strong> each tree grows until min_samples_leaf is reached (no pruning needed — diversity handles overfitting)</li>
+        <li>For prediction, pass new data through ALL trees. Classification: majority vote. Regression: average prediction.</li>
+      </ol>
+      <div class="highlight"><p>The ~37% of training rows NOT included in each bootstrap sample = "Out-of-Bag" (OOB) samples. These can be used as a free validation set. Set oob_score=True to get an OOB accuracy estimate without needing a separate validation split.</p></div>
+    </div>
+    <div class="card">
+      <h3>sklearn RandomForestClassifier — ALL Parameters Explained</h3>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:8px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">RandomForestClassifier(n_estimators, max_depth, max_features, min_samples_leaf, bootstrap, oob_score, ...)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>Impact if changed</th></tr>
+          <tr>
+            <td><code>n_estimators</code></td>
+            <td>Number of trees in the forest. More trees = better, more stable predictions, but slower training.</td>
+            <td>100</td>
+            <td><strong>10:</strong> fast but noisy, variance is high. <strong>100:</strong> good default. <strong>500+:</strong> marginal improvement after ~200 trees, much slower. Rule: increase until validation score stabilises.</td>
+          </tr>
+          <tr>
+            <td><code>max_depth</code></td>
+            <td>Maximum depth of each individual tree. None = grow fully. With Random Forest, full trees are OK because variance is controlled by the ensemble.</td>
+            <td>None</td>
+            <td>None is usually fine. Limit (e.g., 10–20) if RAM is a constraint with very large datasets. Unlike single trees, deep trees in RF rarely overfit badly.</td>
+          </tr>
+          <tr>
+            <td><code>max_features</code></td>
+            <td>Number of features to consider at each split. This is the key randomness parameter — it ensures trees are different from each other.</td>
+            <td>'sqrt'</td>
+            <td><strong>'sqrt':</strong> √(n_features) — best for classification. <strong>'log2':</strong> log₂(n_features). <strong>None:</strong> uses all features — trees become correlated, less diverse, worse ensemble. <strong>0.5:</strong> use 50% of features. Never use None in Random Forest.</td>
+          </tr>
+          <tr>
+            <td><code>min_samples_leaf</code></td>
+            <td>Minimum number of samples in a leaf node. Larger = smoother predictions, less memorisation.</td>
+            <td>1</td>
+            <td><strong>1:</strong> each leaf can hold 1 sample — fine for RF. <strong>2–5:</strong> slightly smoother. Only change if you see poor performance or have very noisy data.</td>
+          </tr>
+          <tr>
+            <td><code>min_samples_split</code></td>
+            <td>Minimum samples needed to split a node.</td>
+            <td>2</td>
+            <td>Rarely need to change for RF. Useful for very large, noisy datasets where you want coarser splits.</td>
+          </tr>
+          <tr>
+            <td><code>bootstrap</code></td>
+            <td>Whether to use bootstrap sampling (sampling with replacement). If False, each tree trains on the full dataset — trees become more correlated, worse ensemble.</td>
+            <td>True</td>
+            <td>Almost always True. Setting False removes the diversity mechanism — defeats the purpose of Random Forest.</td>
+          </tr>
+          <tr>
+            <td><code>oob_score</code></td>
+            <td>Whether to compute out-of-bag validation score. The ~37% of data not used for each tree is used to validate that tree. Gives a free accuracy estimate.</td>
+            <td>False</td>
+            <td>Set True to get model.oob_score_ — a cross-validation estimate for free, with no extra computation. Very useful when training data is limited.</td>
+          </tr>
+          <tr>
+            <td><code>n_jobs</code></td>
+            <td>Number of CPU cores to use. -1 = all cores. Trees can be built in parallel.</td>
+            <td>None (1 core)</td>
+            <td>Set -1 always — RF with 100+ trees is massively parallel. Training time drops proportionally to number of cores.</td>
+          </tr>
+          <tr>
+            <td><code>max_samples</code></td>
+            <td>Number/fraction of samples to draw for each bootstrap sample. Default = same size as training set.</td>
+            <td>None</td>
+            <td>Set to 0.8 or 0.7 for faster training with large datasets. Slightly less accurate but much quicker.</td>
+          </tr>
+          <tr>
+            <td><code>class_weight</code></td>
+            <td>Handle class imbalance. 'balanced' adjusts weights based on class frequency.</td>
+            <td>None</td>
+            <td>Use 'balanced' for imbalanced datasets (e.g., fraud detection with 2% fraud).</td>
+          </tr>
+          <tr>
+            <td><code>random_state</code></td>
+            <td>Seed for reproducibility of bootstrap sampling and feature selection.</td>
+            <td>None</td>
+            <td>Set to integer (e.g., 42) for reproducible results in experiments.</td>
+          </tr>
+        </table>
       </div>
     </div>
     <div class="card">
-      <h3>Out-of-Bag (OOB) Score — Free Validation!</h3>
-      <p>When tree #47 trains on 63% of the data, the remaining 37% was never seen by tree #47. We can validate tree #47 on those unseen rows — for free!</p>
-      <div class="highlight"><p>OOB score is essentially a free cross-validation. If OOB score ≈ test score, your model generalizes well. No need to hold out a separate validation set!</p></div>
+      <h3>Random Forest vs Decision Tree — Why RF Wins</h3>
+      <table class="term-table">
+        <tr><th>Property</th><th>Decision Tree</th><th>Random Forest</th></tr>
+        <tr><td>Overfitting</td><td>Severe — memorises training data</td><td>Much less — diversity between trees cancels out memorisation</td></tr>
+        <tr><td>Accuracy</td><td>Moderate</td><td>Usually much higher (often top performer on tabular data)</td></tr>
+        <tr><td>Interpretability</td><td>High — you can print and read the tree</td><td>Low — 100+ trees can't be read manually (black box)</td></tr>
+        <tr><td>Training speed</td><td>Very fast</td><td>Moderate — 100× a single tree, but parallelisable</td></tr>
+        <tr><td>Feature importance</td><td>Available</td><td>Available and more stable (averaged across trees)</td></tr>
+        <tr><td>Sensitivity to noisy features</td><td>High — may use irrelevant features</td><td>Low — random feature selection dilutes noisy features</td></tr>
+      </table>
     </div>
-    <div class="card">
-      <h3>Feature Importance</h3>
-      <p>Random Forest naturally tells you which features matter most. It tracks how much each feature reduces impurity (Gini) across all trees and all splits. Higher score = more important feature.</p>
-    </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s4-use">
     <div class="card">
-      <h3>💳 Real Use Case: Credit Card Fraud Detection</h3>
-      <p>Banks process millions of transactions daily. Most are legitimate, but ~0.1% are fraudulent. The challenge: catch fraud instantly (in milliseconds) without blocking legitimate customers.</p>
+      <h3>Real-World Applications</h3>
+      <table class="term-table">
+        <tr><th>Industry</th><th>Use Case</th><th>Why RF</th></tr>
+        <tr><td>Banking</td><td>Credit scoring, fraud detection</td><td>Handles mixed feature types well; robust to outliers; great AUC scores</td></tr>
+        <tr><td>Healthcare</td><td>Patient risk stratification</td><td>Works with messy, incomplete medical data; stable feature importances for clinical insight</td></tr>
+        <tr><td>Retail</td><td>Customer churn, next purchase prediction</td><td>Handles large feature sets; no need for feature scaling; interpretable importances</td></tr>
+        <tr><td>Manufacturing</td><td>Defect detection, predictive maintenance</td><td>Robust to sensor noise; handles high-dimensional sensor data well</td></tr>
+        <tr><td>Marketing</td><td>Lead scoring, conversion prediction</td><td>Good probability estimates; fast inference for real-time scoring</td></tr>
+        <tr><td>Cybersecurity</td><td>Intrusion detection, malware classification</td><td>Fast, parallel, handles thousands of binary features</td></tr>
+      </table>
     </div>
-    <div class="card">
-      <h3>Why Random Forest Works Well Here</h3>
-      <ul>
-        <li><strong>Handles imbalance:</strong> With class_weight='balanced', it pays attention to rare fraud cases</li>
-        <li><strong>Non-linear patterns:</strong> Fraud often involves unusual combinations (e.g., large purchase at 3am in a foreign country)</li>
-        <li><strong>Feature importance:</strong> Tells security team which transaction features are red flags</li>
-        <li><strong>Robust:</strong> Fraudsters can fool one tree but not 500 trees voting together</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Features That Signal Fraud</h3>
-      <ul>
-        <li>Transaction amount vs customer's typical amount</li>
-        <li>Location: is this country different from usual?</li>
-        <li>Time: unusual hour for this customer?</li>
-        <li>Merchant category: sudden change in purchase type?</li>
-        <li>Velocity: multiple transactions within seconds?</li>
-      </ul>
-    </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s4-code">
-    <div class="card"><h3>Complete Code: Fraud Detection</h3></div>
+    <div class="card"><h3>Complete Annotated Code — Customer Churn with Random Forest</h3></div>
     <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">from</span> sklearn.ensemble <span class="c-kw">import</span> <span class="c-cls">RandomForestClassifier</span> -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> classification_report, roc_auc_score -- specify the source table <span class="code-comment">-- the table to read from</span>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+<span class="c-kw">from</span> sklearn.ensemble      <span class="c-kw">import</span> <span class="c-cls">RandomForestClassifier</span>
+<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split, cross_val_score
+<span class="c-kw">from</span> sklearn.metrics       <span class="c-kw">import</span> classification_report, roc_auc_score
 
-np.random.seed(<span class="c-num">42</span>)
-n = <span class="c-num">10000</span>
-data = pd.<span class="c-fn">DataFrame</span>({
-    <span class="c-str">'amount'</span>: np.random.exponential(<span class="c-num">100</span>, n),
-    <span class="c-str">'hour'</span>: np.random.randint(<span class="c-num">0</span>, <span class="c-num">24</span>, n),
-    <span class="c-str">'foreign'</span>: np.random.choice([<span class="c-num">0</span>,<span class="c-num">1</span>], n, p=[<span class="c-num">0.9</span>,<span class="c-num">0.1</span>]),
-    <span class="c-str">'velocity'</span>: np.random.poisson(<span class="c-num">2</span>, n),
-    <span class="c-str">'fraud'</span>: np.random.choice([<span class="c-num">0</span>,<span class="c-num">1</span>], n, p=[<span class="c-num">0.99</span>,<span class="c-num">0.01</span>])
-})
+<span class="code-comment"># ── 1. DATA ─────────────────────────────────────────────────────────</span>
+np.random.seed(42)
+n = 2000
+tenure        = np.random.uniform(0, 60, n)
+monthly_spend = np.random.uniform(500, 5000, n)
+complaints    = np.random.poisson(0.5, n)
+support_calls = np.random.poisson(2, n)
+discount_pct  = np.random.uniform(0, 0.5, n)
 
-X = data.drop(<span class="c-str">'fraud'</span>, axis=<span class="c-num">1</span>)
-y = data[<span class="c-str">'fraud'</span>]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="c-num">0.2</span>, random_state=<span class="c-num">42</span>)
+z = (-0.05*tenure + 0.0001*monthly_spend + 0.8*complaints
+     + 0.3*support_calls + 1.5*discount_pct - 1)
+churn = (np.random.uniform(0,1,n) &lt; 1/(1+np.exp(-z))).astype(int)
 
+X = np.column_stack([tenure, monthly_spend, complaints,
+                     support_calls, discount_pct])
+feature_names = ['tenure', 'monthly_spend', 'complaints',
+                 'support_calls', 'discount_pct']
+y = churn
+
+<span class="code-comment"># ── 2. SPLIT ────────────────────────────────────────────────────────</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+<span class="code-comment"># Note: Random Forest does NOT need feature scaling — trees use thresholds, not distances</span>
+
+<span class="code-comment"># ── 3. TRAIN ────────────────────────────────────────────────────────</span>
 rf = <span class="c-cls">RandomForestClassifier</span>(
-    n_estimators=<span class="c-num">300</span>,
-    max_depth=<span class="c-num">10</span>,
-    max_features=<span class="c-str">'sqrt'</span>,
-    class_weight=<span class="c-str">'balanced'</span>,
-    oob_score=<span class="c-cls">True</span>,
-    n_jobs=<span class="c-num">-1</span>,
-    random_state=<span class="c-num">42</span>
+    n_estimators=200,        <span class="code-comment"># 200 trees — more stable than default 100, still fast</span>
+    max_depth=None,          <span class="code-comment"># grow trees fully — RF handles overfitting via diversity</span>
+    max_features='sqrt',     <span class="code-comment"># √5 ≈ 2 features per split — key randomness parameter</span>
+    min_samples_leaf=2,      <span class="code-comment"># each leaf needs at least 2 samples</span>
+    bootstrap=True,          <span class="code-comment"># use bootstrap sampling — creates tree diversity</span>
+    oob_score=True,          <span class="code-comment"># compute free out-of-bag validation score</span>
+    class_weight='balanced', <span class="code-comment"># handle class imbalance</span>
+    n_jobs=-1,               <span class="code-comment"># use ALL CPU cores — trees train in parallel</span>
+    random_state=42
 )
 rf.fit(X_train, y_train)
 
-<span class="c-fn">print</span>(<span class="c-str">f"OOB Score: {rf.oob_score_:.3f}"</span>)
+<span class="code-comment"># ── 4. OOB SCORE (free cross-validation estimate) ───────────────────</span>
+print(f"OOB Accuracy: {rf.oob_score_:.3f}")
+<span class="code-comment"># This is computed using the ~37% of samples each tree didn't see</span>
+<span class="code-comment"># Very close to cross-validation score — no extra computation needed</span>
 
+<span class="code-comment"># ── 5. EVALUATE ─────────────────────────────────────────────────────</span>
 y_pred = rf.predict(X_test)
-y_prob = rf.predict_proba(X_test)[:, <span class="c-num">1</span>]
-<span class="c-fn">print</span>(classification_report(y_test, y_pred))
-<span class="c-fn">print</span>(<span class="c-str">f"ROC-AUC: {roc_auc_score(y_test, y_prob):.3f}"</span>)
+y_proba = rf.predict_proba(X_test)[:, 1]   <span class="code-comment"># probability of churning</span>
+print(classification_report(y_test, y_pred, target_names=['Stay', 'Churn']))
+print(f"AUC-ROC: {roc_auc_score(y_test, y_proba):.3f}")
 
-importances = pd.<span class="c-cls">Series</span>(rf.feature_importances_, index=X.columns) -- speed up lookups on this column <span class="code-comment">-- the condition that links the two tables</span>
-importances.sort_values().plot(kind=<span class="c-str">'barh'</span>, color=<span class="c-str">'#e63946'</span>)
-plt.title(<span class="c-str">'Feature Importance in Fraud Detection'</span>)
-plt.tight_layout()
-plt.show()
+<span class="code-comment"># ── 6. FEATURE IMPORTANCE ───────────────────────────────────────────</span>
+print("
+Feature Importances (averaged across all 200 trees):")
+importances = rf.feature_importances_       <span class="code-comment"># average impurity decrease per feature</span>
+indices = np.argsort(importances)[::-1]     <span class="code-comment"># sort descending</span>
+for i in indices:
+    bar = '█' * int(importances[i] * 50)
+    print(f"  {feature_names[i]:15s}: {importances[i]:.3f}  {bar}")
+
+<span class="code-comment"># ── 7. INSPECT INDIVIDUAL TREES ─────────────────────────────────────</span>
+print(f"
+Forest has {len(rf.estimators_)} trees")  <span class="code-comment"># rf.estimators_ = list of DecisionTreeClassifier objects</span>
+first_tree = rf.estimators_[0]
+print(f"First tree depth: {first_tree.get_depth()}")
+print(f"First tree leaves: {first_tree.get_n_leaves()}")
+
+<span class="code-comment"># ── 8. TUNE n_estimators (find when accuracy plateaus) ─────────────</span>
+for n_trees in [10, 50, 100, 200, 500]:
+    m = <span class="c-cls">RandomForestClassifier</span>(n_estimators=n_trees, n_jobs=-1, random_state=42)
+    score = cross_val_score(m, X, y, cv=5, scoring='roc_auc').mean()
+    print(f"n_estimators={n_trees:4d}: AUC={score:.3f}")
+<span class="code-comment"># Pick n_estimators where score stops improving significantly</span>
 </pre></div>
-  </div>
-
+</div>
   <div class="tab-content" id="s4-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Bagging</span></td><td>Bootstrap Aggregating — train many models on different random samples and combine their predictions</td><td>Random Forest is bagging applied to Decision Trees</td></tr>
-        <tr><td><span class="term-name">Bootstrap Sample</span></td><td>Random sample WITH replacement — some rows appear multiple times, ~37% of rows never appear</td><td>From 1000 rows, one tree might train on rows: 5,5,12,87,12,200,...</td></tr>
-        <tr><td><span class="term-name">OOB Score</span></td><td>Out-of-Bag score — the ~37% of rows not used by each tree serve as its personal validation set</td><td>OOB=0.94 means 94% accuracy on unseen data — free cross-validation</td></tr>
-        <tr><td><span class="term-name">Feature Importance</span></td><td>How much each feature contributes to reducing impurity across all trees and all splits</td><td>amount: 0.42, velocity: 0.28, foreign: 0.18, hour: 0.12</td></tr>
-        <tr><td><span class="term-name">n_estimators</span></td><td>Number of trees to build. More trees = more stable predictions but slower. 100-500 is typical.</td><td>n_estimators=300: builds 300 different trees</td></tr>
-        <tr><td><span class="term-name">max_features='sqrt'</span></td><td>At each node, only consider √(total features) random features. Creates diversity between trees.</td><td>With 16 features: considers 4 random features at each split</td></tr>
-        <tr><td><span class="term-name">Ensemble</span></td><td>Combining multiple models to get better predictions than any single model.</td><td>500 trees ensemble beats 1 perfect tree almost always</td></tr>
-      </table>
-    </div>
-  </div>
+    <div class="card"><h3>Key Terms — Random Forest</h3>
+    <table class="term-table">
+      <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
+      <tr><td><span class="term-name">Ensemble</span></td><td>A collection of models whose predictions are combined. "Ensemble methods" = any technique that builds multiple models.</td><td>Random Forest = ensemble of 100–500 Decision Trees</td></tr>
+      <tr><td><span class="term-name">Bootstrap Sampling</span></td><td>Random sampling WITH replacement. Same row can be drawn multiple times. Each tree gets a slightly different version of the training data.</td><td>From 1000 rows, draw 1000 rows randomly — row 5 appears 3 times, row 17 appears 0 times</td></tr>
+      <tr><td><span class="term-name">Out-of-Bag (OOB)</span></td><td>The ~37% of training rows NOT included in a tree's bootstrap sample. Used to validate that tree for free — no separate val set needed.</td><td>oob_score_=0.87 → model achieves 87% accuracy on its own OOB samples</td></tr>
+      <tr><td><span class="term-name">max_features</span></td><td>Number of features considered at each split. The key source of tree diversity. 'sqrt' = standard for classification.</td><td>20 features: max_features='sqrt' → consider only √20 ≈ 4 features per split</td></tr>
+      <tr><td><span class="term-name">Feature Importance</span></td><td>Average impurity decrease caused by splits on each feature, averaged across all trees. More stable than single-tree importances.</td><td>tenure=0.35 → 35% of total impurity reduction came from tenure splits</td></tr>
+      <tr><td><span class="term-name">Bagging</span></td><td>Bootstrap Aggregating — the general technique: train many models on bootstrap samples, aggregate results. Random Forest is bagging applied to Decision Trees.</td><td>Random Forest = bagging + random feature selection</td></tr>
+      <tr><td><span class="term-name">Variance Reduction</span></td><td>Averaging many diverse model predictions reduces variance (instability) compared to any single model. Why RF generalises better than one tree.</td><td>Single tree: huge variance (changes a lot with different training data). RF: stable across different samples.</td></tr>
+      <tr><td><span class="term-name">n_estimators</span></td><td>How many trees to build. More = better accuracy + more stable importances, but more compute time. Diminishing returns after ~200.</td><td>200 trees usually better than 100, rarely need more than 500</td></tr>
+      <tr><td><span class="term-name">No scaling needed</span></td><td>Trees split on thresholds ("is x &gt; 5?"), not distances. Scaling features doesn't change where the threshold falls.</td><td>Unlike SVM or KNN, you don't need to StandardScaler before Random Forest</td></tr>
+      <tr><td><span class="term-name">Permutation Importance</span></td><td>Alternative to built-in importance: randomly shuffle one feature's values and measure how much accuracy drops. More reliable than built-in Gini importance.</td><td>from sklearn.inspection import permutation_importance</td></tr>
+    </table></div>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════

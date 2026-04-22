@@ -14,8 +14,9 @@ body{background:#fafaf9;color:#1e293b;font-family:'Inter',sans-serif;display:fle
 
 /* ── SIDEBAR ──────────────────────────────────────────────────────── */
 #sidebar{width:252px;background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);
-  position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;
-  border-right:1px solid rgba(255,255,255,.05);box-shadow:4px 0 24px rgba(0,0,0,.18);}
+  position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:999;
+  border-right:1px solid rgba(255,255,255,.05);box-shadow:4px 0 24px rgba(0,0,0,.18);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);}
 #sidebar::-webkit-scrollbar{width:3px;}
 #sidebar::-webkit-scrollbar-thumb{background:#e63946;border-radius:2px;}
 
@@ -212,13 +213,7 @@ code:not(pre code){background:#eff6ff;color:#1d4ed8;padding:1px 5px;border-radiu
 #main::-webkit-scrollbar{width:5px;}
 #main::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
 
-@media(max-width:768px){
-  #sidebar{transform:translateX(-252px);}
-  #main{margin-left:0;width:100%;}
-  .tab-bar{padding:0 16px;}
-  .tab-content,.special-section,.phase-content{padding:16px;}
-  .algo-header,.special-header,.phase-header{padding:16px;}
-}
+/* old 768px MQ removed */
 
 
 /* ══ EXTRA NAV + UTILITY ════════════════════════════════════════════ */
@@ -703,7 +698,7 @@ html, body {
   top: 0; left: 0;
   width: 220px !important;
   height: 100vh !important;
-  z-index: 100 !important;
+  z-index: 999 !important;
   overflow-y: auto !important;
   box-shadow: 2px 0 12px rgba(0,0,0,.15) !important;
 }
@@ -959,14 +954,10 @@ html, body {
     transform: translateX(-100%);
     transition: transform .28s cubic-bezier(.4,0,.2,1);
     width: 280px !important;
-    z-index: 200;
+    z-index: 999 !important;
   }
   #sidebar.open {
     transform: translateX(0);
-  }
-  #sidebar.open ~ #sidebar-overlay,
-  body.sidebar-open #sidebar-overlay {
-    display: block;
   }
 
   /* Main content: full width, top padding for hamburger */

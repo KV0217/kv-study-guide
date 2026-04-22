@@ -19254,6 +19254,44 @@ model.fit(df)  # df must have 'ds' (date) and 'y' (value) columns</pre>
 <button class="tab-btn " onclick="showTab('adv-timeseries','eval')">Choosing &amp; Evaluating</button>
 </div>
   <div id="adv-timeseries-what" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">ARIMA Workflow — End to End</text>
+  <defs><marker id="arrTS" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#7c3aed"/></marker></defs>
+  <!-- boxes -->
+  <rect x="10" y="35" width="90" height="45" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="55" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">1. Plot</text>
+  <text x="55" y="70" text-anchor="middle" font-size="9" fill="#374151">Visualize trend</text>
+  <text x="55" y="82" text-anchor="middle" font-size="9" fill="#374151">&amp; seasonality</text>
+  <line x1="100" y1="57" x2="120" y2="57" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrTS)"/>
+  <rect x="120" y="35" width="90" height="45" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="165" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#15803d">2. ADF Test</text>
+  <text x="165" y="70" text-anchor="middle" font-size="9" fill="#374151">Check stationarity</text>
+  <text x="165" y="82" text-anchor="middle" font-size="9" fill="#374151">p&lt;0.05 = OK</text>
+  <line x1="210" y1="57" x2="230" y2="57" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrTS)"/>
+  <rect x="230" y="35" width="90" height="45" rx="6" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="275" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#a16207">3. Difference</text>
+  <text x="275" y="70" text-anchor="middle" font-size="9" fill="#374151">If non-stationary</text>
+  <text x="275" y="82" text-anchor="middle" font-size="9" fill="#374151">diff(1) or diff(12)</text>
+  <line x1="320" y1="57" x2="340" y2="57" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrTS)"/>
+  <rect x="340" y="35" width="90" height="45" rx="6" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="385" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#7e22ce">4. ACF/PACF</text>
+  <text x="385" y="70" text-anchor="middle" font-size="9" fill="#374151">Find p, q</text>
+  <text x="385" y="82" text-anchor="middle" font-size="9" fill="#374151">from cutoffs</text>
+  <line x1="430" y1="57" x2="450" y2="57" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrTS)"/>
+  <rect x="450" y="35" width="90" height="45" rx="6" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="495" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#c2410c">5. Fit ARIMA</text>
+  <text x="495" y="70" text-anchor="middle" font-size="9" fill="#374151">ARIMA(p,d,q)</text>
+  <text x="495" y="82" text-anchor="middle" font-size="9" fill="#374151">check residuals</text>
+  <line x1="540" y1="57" x2="560" y2="57" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrTS)"/>
+  <rect x="560" y="35" width="50" height="45" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="585" y="58" text-anchor="middle" font-size="10" font-weight="bold" fill="#065f46">6.</text>
+  <text x="585" y="72" text-anchor="middle" font-size="9" fill="#065f46">Forecast</text>
+  <text x="310" y="140" text-anchor="middle" font-size="10" fill="#6b7280" font-style="italic">Residuals should look like white noise (no pattern). If ACF of residuals has structure → adjust p or q.</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>What is Time Series?</b><br>
 A time series is simply a list of values collected over time -- one measurement per time step.
@@ -19429,6 +19467,58 @@ Spike at lags 1-2 -&gt; p=2</p>
 <button class="tab-btn " onclick="showTab('adv-deeplearning','rnn')">RNNs / LSTMs</button>
 </div>
   <div id="adv-deeplearning-basics" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Neural Network — Layer by Layer</text>
+  <!-- Input layer -->
+  <text x="70" y="38" text-anchor="middle" font-size="10" fill="#374151">Input Layer</text>
+  <circle cx="70" cy="65" r="14" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="70" y="69" text-anchor="middle" font-size="9" fill="#1d4ed8">x₁</text>
+  <circle cx="70" cy="105" r="14" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="70" y="109" text-anchor="middle" font-size="9" fill="#1d4ed8">x₂</text>
+  <circle cx="70" cy="145" r="14" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="70" y="149" text-anchor="middle" font-size="9" fill="#1d4ed8">x₃</text>
+  <circle cx="70" cy="185" r="14" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="70" y="189" text-anchor="middle" font-size="9" fill="#1d4ed8">x₄</text>
+  <!-- Hidden layer 1 -->
+  <text x="220" y="38" text-anchor="middle" font-size="10" fill="#374151">Hidden 1 (ReLU)</text>
+  <circle cx="220" cy="75" r="14" fill="#e9d5ff" stroke="#a855f7" stroke-width="1.5"/>
+  <circle cx="220" cy="115" r="14" fill="#e9d5ff" stroke="#a855f7" stroke-width="1.5"/>
+  <circle cx="220" cy="155" r="14" fill="#e9d5ff" stroke="#a855f7" stroke-width="1.5"/>
+  <circle cx="220" cy="195" r="14" fill="#e9d5ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="220" y="218" text-anchor="middle" font-size="9" fill="#6b7280">64 neurons</text>
+  <!-- connections input→h1 (sample) -->
+  <line x1="84" y1="65" x2="206" y2="75" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <line x1="84" y1="65" x2="206" y2="115" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <line x1="84" y1="105" x2="206" y2="75" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <line x1="84" y1="145" x2="206" y2="155" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <line x1="84" y1="185" x2="206" y2="195" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <!-- Hidden layer 2 -->
+  <text x="370" y="38" text-anchor="middle" font-size="10" fill="#374151">Hidden 2 + Dropout</text>
+  <circle cx="370" cy="85" r="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <circle cx="370" cy="125" r="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <circle cx="370" cy="165" r="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <circle cx="375" cy="202" r="12" fill="#fee2e2" stroke="#f87171" stroke-width="1.5" stroke-dasharray="3,2" opacity=".5"/>
+  <text x="375" y="206" text-anchor="middle" font-size="8" fill="#dc2626">off</text>
+  <text x="370" y="226" text-anchor="middle" font-size="9" fill="#6b7280">32 neurons (30% dropout)</text>
+  <!-- connections h1→h2 -->
+  <line x1="234" y1="75" x2="356" y2="85" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <line x1="234" y1="115" x2="356" y2="125" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <line x1="234" y1="155" x2="356" y2="165" stroke="#94a3b8" stroke-width=".5" opacity=".5"/>
+  <line x1="234" y1="195" x2="356" y2="85" stroke="#94a3b8" stroke-width=".5" opacity=".3"/>
+  <!-- Output -->
+  <text x="530" y="38" text-anchor="middle" font-size="10" fill="#374151">Output (Sigmoid)</text>
+  <circle cx="530" cy="125" r="18" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="530" y="122" text-anchor="middle" font-size="9" fill="#065f46">ŷ</text>
+  <text x="530" y="135" text-anchor="middle" font-size="8" fill="#065f46">0–1</text>
+  <line x1="384" y1="85" x2="512" y2="125" stroke="#94a3b8" stroke-width=".8" opacity=".6"/>
+  <line x1="384" y1="125" x2="512" y2="125" stroke="#94a3b8" stroke-width=".8" opacity=".6"/>
+  <line x1="384" y1="165" x2="512" y2="125" stroke="#94a3b8" stroke-width=".8" opacity=".6"/>
+  <text x="310" y="238" text-anchor="middle" font-size="10" fill="#6b7280" font-style="italic">BatchNorm stabilizes activations. Dropout randomly turns off neurons during training to prevent overfitting.</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>What is Deep Learning?</b><br>
 Deep Learning = Machine Learning using Neural Networks with MANY layers.<br>
@@ -19623,6 +19713,49 @@ Simplified version of LSTM with only 2 gates:<br>
 <button class="tab-btn " onclick="showTab('adv-transformers','arch')">Architecture</button>
 </div>
   <div id="adv-transformers-attn" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Self-Attention — How Each Token Attends to Every Other Token</text>
+  <!-- sentence tokens -->
+  <rect x="20" y="32" width="60" height="28" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="50" y="51" text-anchor="middle" font-size="11" fill="#1d4ed8">The</text>
+  <rect x="90" y="32" width="60" height="28" rx="5" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="120" y="51" text-anchor="middle" font-size="11" fill="#065f46">cat</text>
+  <rect x="160" y="32" width="60" height="28" rx="5" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+  <text x="190" y="51" text-anchor="middle" font-size="11" fill="#a16207">sat</text>
+  <rect x="230" y="32" width="60" height="28" rx="5" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="260" y="51" text-anchor="middle" font-size="11" fill="#7e22ce">on</text>
+  <rect x="300" y="32" width="60" height="28" rx="5" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="330" y="51" text-anchor="middle" font-size="11" fill="#c2410c">the</text>
+  <rect x="370" y="32" width="60" height="28" rx="5" fill="#fee2e2" stroke="#f87171" stroke-width="1.5"/>
+  <text x="400" y="51" text-anchor="middle" font-size="11" fill="#dc2626">mat</text>
+  <!-- attention arrows from "sat" to others -->
+  <text x="190" y="80" text-anchor="middle" font-size="9" fill="#a16207">Query: "sat" asks everyone</text>
+  <path d="M190,60 C190,90 50,90 50,62" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="100" y="105" text-anchor="middle" font-size="8" fill="#3b82f6">0.05</text>
+  <path d="M190,60 C190,85 120,85 120,62" fill="none" stroke="#10b981" stroke-width="2.5"/>
+  <text x="155" y="90" text-anchor="middle" font-size="9" font-weight="bold" fill="#10b981">0.72 ← "cat" (subject!)</text>
+  <path d="M190,60 L190,62" fill="none" stroke="#a16207" stroke-width="1.5"/>
+  <path d="M190,60 C190,90 260,90 260,62" fill="none" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="245" y="105" text-anchor="middle" font-size="8" fill="#a855f7">0.08</text>
+  <path d="M190,60 C190,95 330,95 330,62" fill="none" stroke="#fb923c" stroke-width="1.2" stroke-dasharray="4,2"/>
+  <text x="270" y="110" text-anchor="middle" font-size="8" fill="#fb923c">0.06</text>
+  <path d="M190,60 C190,100 400,100 400,62" fill="none" stroke="#f87171" stroke-width="1.5"/>
+  <text x="340" y="112" text-anchor="middle" font-size="9" fill="#f87171">0.09 ← "mat" (location)</text>
+  <!-- Q K V explanation -->
+  <rect x="460" y="30" width="150" height="130" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="535" y="50" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e293b">Q · K · V</text>
+  <text x="535" y="68" text-anchor="middle" font-size="10" fill="#dc2626">Q = Query</text>
+  <text x="535" y="83" text-anchor="middle" font-size="9" fill="#374151">"What am I looking for?"</text>
+  <text x="535" y="103" text-anchor="middle" font-size="10" fill="#059669">K = Key</text>
+  <text x="535" y="118" text-anchor="middle" font-size="9" fill="#374151">"What info do I have?"</text>
+  <text x="535" y="138" text-anchor="middle" font-size="10" fill="#2563eb">V = Value</text>
+  <text x="535" y="153" text-anchor="middle" font-size="9" fill="#374151">"What do I return?"</text>
+  <text x="310" y="185" text-anchor="middle" font-size="10" fill="#6b7280" font-style="italic">Attention scores = softmax(Q·Kᵀ / √d_k) · V — each token attends to ALL others simultaneously (parallelizable)</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>The Problem Transformers Solved</b><br>
 RNNs process text word-by-word in order. This is SLOW (can't parallelize) and forgets
@@ -19734,6 +19867,52 @@ print(cls_embedding.shape)                            # torch.Size([1, 768])
   <div class="tab-bar"><button class="tab-btn active" onclick="showTab('adv-bert','what')">What is BERT?</button>
 </div>
   <div id="adv-bert-what" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">BERT: Pre-training → Fine-tuning → Your Task</text>
+  <!-- Pre-training -->
+  <rect x="10" y="30" width="185" height="160" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="102" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">1. Pre-training</text>
+  <text x="102" y="68" text-anchor="middle" font-size="10" fill="#374151">800M+ words from BooksCorpus</text>
+  <text x="102" y="84" text-anchor="middle" font-size="10" fill="#374151">+ Wikipedia (unsupervised)</text>
+  <rect x="25" y="93" width="155" height="28" rx="5" fill="#dbeafe"/>
+  <text x="102" y="108" text-anchor="middle" font-size="9" fill="#1d4ed8">Task 1: Masked LM (15%)</text>
+  <text x="102" y="121" text-anchor="middle" font-size="9" fill="#374151">The [MASK] sat on the mat</text>
+  <rect x="25" y="130" width="155" height="28" rx="5" fill="#dbeafe"/>
+  <text x="102" y="145" text-anchor="middle" font-size="9" fill="#1d4ed8">Task 2: Next Sentence Pred.</text>
+  <text x="102" y="158" text-anchor="middle" font-size="9" fill="#374151">IsNext? → YES/NO</text>
+  <text x="102" y="178" text-anchor="middle" font-size="10" fill="#374151">110M or 340M parameters</text>
+  <!-- arrow -->
+  <text x="215" y="112" text-anchor="middle" font-size="20" fill="#7c3aed">→</text>
+  <!-- Fine-tuning -->
+  <rect x="230" y="30" width="165" height="160" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="2"/>
+  <text x="312" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#7e22ce">2. Fine-tuning</text>
+  <text x="312" y="68" text-anchor="middle" font-size="10" fill="#374151">Your labeled data</text>
+  <text x="312" y="84" text-anchor="middle" font-size="10" fill="#374151">(even 1,000 examples works!)</text>
+  <rect x="245" y="93" width="135" height="28" rx="5" fill="#e9d5ff"/>
+  <text x="312" y="108" text-anchor="middle" font-size="9" fill="#7e22ce">Add task head</text>
+  <text x="312" y="121" text-anchor="middle" font-size="9" fill="#374151">[CLS] → Dense → Softmax</text>
+  <rect x="245" y="130" width="135" height="28" rx="5" fill="#e9d5ff"/>
+  <text x="312" y="145" text-anchor="middle" font-size="9" fill="#7e22ce">Train all layers</text>
+  <text x="312" y="158" text-anchor="middle" font-size="9" fill="#374151">lr=2e-5, 3-5 epochs</text>
+  <text x="312" y="178" text-anchor="middle" font-size="10" fill="#374151">Freeze early layers if &lt;1K rows</text>
+  <!-- arrow -->
+  <text x="415" y="112" text-anchor="middle" font-size="20" fill="#7c3aed">→</text>
+  <!-- Your Tasks -->
+  <rect x="430" y="30" width="178" height="160" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+  <text x="519" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#15803d">3. Your Task</text>
+  <text x="519" y="70" text-anchor="middle" font-size="10" fill="#374151">Sequence Classification:</text>
+  <text x="519" y="84" text-anchor="middle" font-size="9" fill="#374151">Sentiment, spam, topic</text>
+  <text x="519" y="100" text-anchor="middle" font-size="10" fill="#374151">Named Entity Recognition:</text>
+  <text x="519" y="114" text-anchor="middle" font-size="9" fill="#374151">Person/Org/Location tags</text>
+  <text x="519" y="130" text-anchor="middle" font-size="10" fill="#374151">Question Answering:</text>
+  <text x="519" y="144" text-anchor="middle" font-size="9" fill="#374151">Find answer span in text</text>
+  <text x="519" y="164" text-anchor="middle" font-size="9" fill="#374151">via HuggingFace Transformers</text>
+  <text x="519" y="178" text-anchor="middle" font-size="9" fill="#374151">in &lt;20 lines of code</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>What is BERT?</b><br>
 <b>B</b>idirectional <b>E</b>ncoder <b>R</b>epresentations from <b>T</b>ransformers (Google, 2018).<br>
@@ -19826,6 +20005,68 @@ for epoch in range(3):                             # loop over data 3 times
   <div class="tab-bar"><button class="tab-btn active" onclick="showTab('adv-genai','what')">How GenAI Works</button>
 </div>
   <div id="adv-genai-what" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Generative AI — Taxonomy of Models</text>
+  <!-- LLM -->
+  <rect x="10" y="28" width="115" height="145" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="67" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">LLMs</text>
+  <text x="67" y="64" text-anchor="middle" font-size="9" fill="#374151">GPT-4, Claude, Gemini</text>
+  <line x1="20" y1="70" x2="115" y2="70" stroke="#dbeafe" stroke-width="1"/>
+  <text x="67" y="85" text-anchor="middle" font-size="9" fill="#374151">Text generation</text>
+  <text x="67" y="99" text-anchor="middle" font-size="9" fill="#374151">Question answering</text>
+  <text x="67" y="113" text-anchor="middle" font-size="9" fill="#374151">Code generation</text>
+  <text x="67" y="127" text-anchor="middle" font-size="9" fill="#374151">Summarisation</text>
+  <text x="67" y="145" text-anchor="middle" font-size="9" font-weight="bold" fill="#1d4ed8">Transformer-based</text>
+  <text x="67" y="162" text-anchor="middle" font-size="9" fill="#374151">decoder-only</text>
+  <!-- Diffusion -->
+  <rect x="140" y="28" width="115" height="145" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="197" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#7e22ce">Diffusion</text>
+  <text x="197" y="64" text-anchor="middle" font-size="9" fill="#374151">DALL-E, Stable Diffusion</text>
+  <line x1="150" y1="70" x2="245" y2="70" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="197" y="85" text-anchor="middle" font-size="9" fill="#374151">Image generation</text>
+  <text x="197" y="99" text-anchor="middle" font-size="9" fill="#374151">Text-to-image</text>
+  <text x="197" y="113" text-anchor="middle" font-size="9" fill="#374151">Image editing</text>
+  <text x="197" y="127" text-anchor="middle" font-size="9" fill="#374151">Video generation</text>
+  <text x="197" y="145" text-anchor="middle" font-size="9" font-weight="bold" fill="#7e22ce">Add noise → denoise</text>
+  <text x="197" y="162" text-anchor="middle" font-size="9" fill="#374151">iteratively</text>
+  <!-- GANs -->
+  <rect x="270" y="28" width="115" height="145" rx="8" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+  <text x="327" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">GANs</text>
+  <text x="327" y="64" text-anchor="middle" font-size="9" fill="#374151">StyleGAN, CycleGAN</text>
+  <line x1="280" y1="70" x2="375" y2="70" stroke="#fef9c3" stroke-width="1"/>
+  <text x="327" y="85" text-anchor="middle" font-size="9" fill="#374151">Face generation</text>
+  <text x="327" y="99" text-anchor="middle" font-size="9" fill="#374151">Style transfer</text>
+  <text x="327" y="113" text-anchor="middle" font-size="9" fill="#374151">Data augmentation</text>
+  <text x="327" y="127" text-anchor="middle" font-size="9" fill="#374151">Super-resolution</text>
+  <text x="327" y="145" text-anchor="middle" font-size="9" font-weight="bold" fill="#a16207">Generator vs</text>
+  <text x="327" y="162" text-anchor="middle" font-size="9" fill="#374151">Discriminator game</text>
+  <!-- VAE -->
+  <rect x="400" y="28" width="105" height="145" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="452" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">VAE</text>
+  <text x="452" y="64" text-anchor="middle" font-size="9" fill="#374151">Variational Autoenc.</text>
+  <line x1="410" y1="70" x2="495" y2="70" stroke="#dcfce7" stroke-width="1"/>
+  <text x="452" y="85" text-anchor="middle" font-size="9" fill="#374151">Anomaly detection</text>
+  <text x="452" y="99" text-anchor="middle" font-size="9" fill="#374151">Latent space</text>
+  <text x="452" y="113" text-anchor="middle" font-size="9" fill="#374151">interpolation</text>
+  <text x="452" y="127" text-anchor="middle" font-size="9" fill="#374151">Data synthesis</text>
+  <text x="452" y="145" text-anchor="middle" font-size="9" font-weight="bold" fill="#15803d">Encode → sample</text>
+  <text x="452" y="162" text-anchor="middle" font-size="9" fill="#374151">→ decode</text>
+  <!-- Multimodal -->
+  <rect x="518" y="28" width="92" height="145" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="564" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Multi-modal</text>
+  <text x="564" y="64" text-anchor="middle" font-size="9" fill="#374151">GPT-4V, Gemini</text>
+  <line x1="528" y1="70" x2="600" y2="70" stroke="#ffedd5" stroke-width="1"/>
+  <text x="564" y="85" text-anchor="middle" font-size="9" fill="#374151">Image + Text</text>
+  <text x="564" y="99" text-anchor="middle" font-size="9" fill="#374151">Audio + Text</text>
+  <text x="564" y="113" text-anchor="middle" font-size="9" fill="#374151">Video Q&amp;A</text>
+  <text x="564" y="127" text-anchor="middle" font-size="9" fill="#374151">Visual coding</text>
+  <text x="564" y="145" text-anchor="middle" font-size="9" font-weight="bold" fill="#c2410c">Multiple modality</text>
+  <text x="564" y="162" text-anchor="middle" font-size="9" fill="#374151">encoders</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>What is Generative AI?</b><br>
 Discriminative AI answers "what category?" (spam or not?).
@@ -19900,6 +20141,59 @@ image.save("generated.png")                        # save the generated image to
   <div class="tab-bar"><button class="tab-btn active" onclick="showTab('adv-llms','what')">LLMs Explained</button>
 </div>
   <div id="adv-llms-what" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">LLM Usage Patterns — When to Use Each Approach</text>
+  <!-- Prompt Engineering -->
+  <rect x="10" y="28" width="135" height="150" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="77" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">Prompt Engineering</text>
+  <text x="77" y="64" text-anchor="middle" font-size="9" fill="#374151">Zero-shot / Few-shot</text>
+  <line x1="20" y1="71" x2="135" y2="71" stroke="#dbeafe" stroke-width="1"/>
+  <text x="77" y="86" text-anchor="middle" font-size="9" fill="#059669">✓ No training needed</text>
+  <text x="77" y="100" text-anchor="middle" font-size="9" fill="#059669">✓ Fast to prototype</text>
+  <text x="77" y="114" text-anchor="middle" font-size="9" fill="#374151">Use: general tasks,</text>
+  <text x="77" y="128" text-anchor="middle" font-size="9" fill="#374151">quick classification,</text>
+  <text x="77" y="142" text-anchor="middle" font-size="9" fill="#374151">summarization</text>
+  <text x="77" y="165" text-anchor="middle" font-size="9" font-weight="bold" fill="#1d4ed8">Cost: API calls only</text>
+  <!-- RAG -->
+  <rect x="158" y="28" width="135" height="150" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="225" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">RAG</text>
+  <text x="225" y="64" text-anchor="middle" font-size="9" fill="#374151">Retrieval Augmented Gen.</text>
+  <line x1="168" y1="71" x2="283" y2="71" stroke="#dcfce7" stroke-width="1"/>
+  <text x="225" y="86" text-anchor="middle" font-size="9" fill="#059669">✓ Uses your private docs</text>
+  <text x="225" y="100" text-anchor="middle" font-size="9" fill="#059669">✓ No hallucinations on facts</text>
+  <text x="225" y="114" text-anchor="middle" font-size="9" fill="#374151">Use: internal knowledge</text>
+  <text x="225" y="128" text-anchor="middle" font-size="9" fill="#374151">base, customer support,</text>
+  <text x="225" y="142" text-anchor="middle" font-size="9" fill="#374151">document Q&amp;A</text>
+  <text x="225" y="165" text-anchor="middle" font-size="9" font-weight="bold" fill="#15803d">Cost: vector DB + calls</text>
+  <!-- Fine-tuning -->
+  <rect x="306" y="28" width="135" height="150" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="373" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">Fine-tuning</text>
+  <text x="373" y="64" text-anchor="middle" font-size="9" fill="#374151">LoRA / QLoRA / SFT</text>
+  <line x1="316" y1="71" x2="431" y2="71" stroke="#fef9c3" stroke-width="1"/>
+  <text x="373" y="86" text-anchor="middle" font-size="9" fill="#059669">✓ Domain-specific behavior</text>
+  <text x="373" y="100" text-anchor="middle" font-size="9" fill="#059669">✓ Custom style/format</text>
+  <text x="373" y="114" text-anchor="middle" font-size="9" fill="#dc2626">✗ Needs labeled data</text>
+  <text x="373" y="128" text-anchor="middle" font-size="9" fill="#374151">Use: medical/legal text,</text>
+  <text x="373" y="142" text-anchor="middle" font-size="9" fill="#374151">code generation,</text>
+  <text x="373" y="156" text-anchor="middle" font-size="9" fill="#374151">tone matching</text>
+  <text x="373" y="172" text-anchor="middle" font-size="9" font-weight="bold" fill="#a16207">Cost: GPU compute</text>
+  <!-- Agents -->
+  <rect x="454" y="28" width="155" height="150" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="531" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#7e22ce">LLM Agents</text>
+  <text x="531" y="64" text-anchor="middle" font-size="9" fill="#374151">ReAct / Tool use</text>
+  <line x1="464" y1="71" x2="599" y2="71" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="531" y="86" text-anchor="middle" font-size="9" fill="#059669">✓ Multi-step reasoning</text>
+  <text x="531" y="100" text-anchor="middle" font-size="9" fill="#059669">✓ Calls tools/APIs/code</text>
+  <text x="531" y="114" text-anchor="middle" font-size="9" fill="#dc2626">✗ Unpredictable paths</text>
+  <text x="531" y="128" text-anchor="middle" font-size="9" fill="#374151">Use: research, automation,</text>
+  <text x="531" y="142" text-anchor="middle" font-size="9" fill="#374151">data pipelines,</text>
+  <text x="531" y="156" text-anchor="middle" font-size="9" fill="#374151">complex workflows</text>
+  <text x="531" y="172" text-anchor="middle" font-size="9" font-weight="bold" fill="#7e22ce">Cost: many API calls</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>What is an LLM?</b><br>
 A <b>Large Language Model</b> is a massive Transformer (decoder-only) trained to predict the next word
@@ -20005,6 +20299,46 @@ answer = qa_chain.run("What is our refund policy?") # ask question -- gets answe
 <button class="tab-btn " onclick="showTab('adv-mlops','cicd')">CI/CD &amp; Registry</button>
 </div>
   <div id="adv-mlops-what" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">MLOps Pipeline — Code to Production</text>
+  <defs><marker id="arrM" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#7c3aed"/></marker></defs>
+  <rect x="10" y="35" width="80" height="50" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="50" y="57" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">Data</text>
+  <text x="50" y="70" text-anchor="middle" font-size="9" fill="#374151">Versioning</text>
+  <text x="50" y="83" text-anchor="middle" font-size="9" fill="#374151">DVC / S3</text>
+  <line x1="90" y1="60" x2="108" y2="60" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrM)"/>
+  <rect x="108" y="35" width="80" height="50" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="148" y="57" text-anchor="middle" font-size="10" font-weight="bold" fill="#15803d">Train</text>
+  <text x="148" y="70" text-anchor="middle" font-size="9" fill="#374151">Experiment</text>
+  <text x="148" y="83" text-anchor="middle" font-size="9" fill="#374151">MLflow / W&amp;B</text>
+  <line x1="188" y1="60" x2="206" y2="60" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrM)"/>
+  <rect x="206" y="35" width="80" height="50" rx="6" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="246" y="57" text-anchor="middle" font-size="10" font-weight="bold" fill="#a16207">Evaluate</text>
+  <text x="246" y="70" text-anchor="middle" font-size="9" fill="#374151">AUC, RMSE</text>
+  <text x="246" y="83" text-anchor="middle" font-size="9" fill="#374151">Threshold tuning</text>
+  <line x1="286" y1="60" x2="304" y2="60" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrM)"/>
+  <rect x="304" y="35" width="80" height="50" rx="6" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="344" y="57" text-anchor="middle" font-size="10" font-weight="bold" fill="#7e22ce">Register</text>
+  <text x="344" y="70" text-anchor="middle" font-size="9" fill="#374151">Model Registry</text>
+  <text x="344" y="83" text-anchor="middle" font-size="9" fill="#374151">MLflow / AWS</text>
+  <line x1="384" y1="60" x2="402" y2="60" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrM)"/>
+  <rect x="402" y="35" width="80" height="50" rx="6" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="442" y="57" text-anchor="middle" font-size="10" font-weight="bold" fill="#c2410c">Deploy</text>
+  <text x="442" y="70" text-anchor="middle" font-size="9" fill="#374151">Docker + FastAPI</text>
+  <text x="442" y="83" text-anchor="middle" font-size="9" fill="#374151">Kubernetes/EC2</text>
+  <line x1="482" y1="60" x2="500" y2="60" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arrM)"/>
+  <rect x="500" y="35" width="115" height="50" rx="6" fill="#fee2e2" stroke="#f87171" stroke-width="1.5"/>
+  <text x="557" y="57" text-anchor="middle" font-size="10" font-weight="bold" fill="#dc2626">Monitor</text>
+  <text x="557" y="70" text-anchor="middle" font-size="9" fill="#374151">Data drift (Evidently)</text>
+  <text x="557" y="83" text-anchor="middle" font-size="9" fill="#374151">Latency, accuracy</text>
+  <!-- feedback arrow back -->
+  <path d="M557,85 C557,130 50,130 50,85" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrM)"/>
+  <text x="310" y="148" text-anchor="middle" font-size="9" fill="#7c3aed">Drift detected → retrigger training pipeline (CI/CD)</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>What is MLOps?</b><br>
 MLOps = ML + DevOps. Getting models out of Jupyter notebooks and into
@@ -20158,6 +20492,35 @@ State transitions: None -&gt; Staging -&gt; Production -&gt; Archived<br><br>
 <button class="tab-btn " onclick="showTab('adv-snowflake','roles')">Roles &amp; Cost Control</button>
 </div>
   <div id="adv-snowflake-what" class="tab-content active" style="padding-bottom:24px">
+
+<div style="margin:12px 0">
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Snowflake 3-Layer Architecture</text>
+  <!-- Cloud Services -->
+  <rect x="10" y="28" width="595" height="45" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="310" y="47" text-anchor="middle" font-size="11" font-weight="bold" fill="#075985">Cloud Services Layer — Query parsing · Optimiser · Metadata · Auth · Transactions</text>
+  <text x="310" y="64" text-anchor="middle" font-size="9" fill="#374151">No user management needed — Snowflake handles it. Shared across all warehouses.</text>
+  <!-- Compute -->
+  <text x="310" y="92" text-anchor="middle" font-size="11" font-weight="bold" fill="#374151">Compute Layer — Virtual Warehouses (VW) — scale up/out independently</text>
+  <rect x="15" y="97" width="120" height="40" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="75" y="116" text-anchor="middle" font-size="10" font-weight="bold" fill="#92400e">Analytics VW</text>
+  <text x="75" y="129" text-anchor="middle" font-size="9" fill="#374151">BI dashboards</text>
+  <rect x="148" y="97" width="120" height="40" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="208" y="116" text-anchor="middle" font-size="10" font-weight="bold" fill="#92400e">Data Science VW</text>
+  <text x="208" y="129" text-anchor="middle" font-size="9" fill="#374151">ML training queries</text>
+  <rect x="281" y="97" width="120" height="40" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="341" y="116" text-anchor="middle" font-size="10" font-weight="bold" fill="#92400e">ETL VW</text>
+  <text x="341" y="129" text-anchor="middle" font-size="9" fill="#374151">Snowpipe loading</text>
+  <rect x="414" y="97" width="120" height="40" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="474" y="116" text-anchor="middle" font-size="10" font-weight="bold" fill="#065f46">Auto-suspend</text>
+  <text x="474" y="129" text-anchor="middle" font-size="9" fill="#374151">No queries = pause = $0</text>
+  <!-- Storage -->
+  <rect x="10" y="150" width="595" height="40" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="310" y="169" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">Storage Layer — Micro-partitions (16–512 MB compressed columnar) · S3/Azure/GCS</text>
+  <text x="310" y="183" text-anchor="middle" font-size="9" fill="#374151">Immutable files with metadata → Time Travel (90 days) · Zero-copy cloning · Data sharing</text>
+</svg>
+</div>
+
 <div style="background:#fff7ed;border-left:4px solid #f97316;border-radius:8px;padding:14px 16px;margin:10px 0;font-size:13px;line-height:1.7">
 <b>What is Snowflake?</b><br>
 Snowflake is a cloud data warehouse -- a database built for ANALYTICS at massive scale.

@@ -9080,206 +9080,394 @@ df_long = df.melt(id_vars=['id','name'],                 <span class="code-comme
 
   </div>
 </div>
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      DS PHASE 4 — Feature Engineering
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p4">
   <div class="phase-header">
     <h2>Phase 4 — Feature Engineering</h2>
   </div>
   <div class="phase-content">
 
+    <!-- INTRO -->
     <div class="topic-card">
-      <h3>Encoding Categorical Features</h3>
+      <h3>What is Feature Engineering? The Mental Model</h3>
+      <p style="line-height:1.7">A model can only learn from numbers. Feature engineering is the art of converting raw data into number-forms that make the model's job easier. It has three parts: <strong>encoding</strong> (converting categories to numbers), <strong>scaling</strong> (putting numbers on the same range), and <strong>transformation/creation</strong> (building new columns that capture domain knowledge). Feature engineering is where 90% of real-world model improvement comes from — not from choosing a fancier algorithm.</p>
+    </div>
+
+    <!-- ENCODING -->
+    <div class="topic-card">
+      <h3>Encoding Categorical Features — Decision Guide</h3>
+      <p style="line-height:1.7">The wrong encoding can silently hurt your model. One-hot encoding on a high-cardinality column (e.g. 50,000 product IDs) creates 50,000 new columns — slow to train and prone to overfitting. Target encoding replaces each category with the mean target value, but must be done inside cross-validation folds to avoid data leakage. The flowchart below shows which method to pick.</p>
+      <svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <defs>
+    <marker id="arrE" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <text x="310" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Categorical Encoding — Which Method to Use?</text>
+  <!-- root -->
+  <rect x="200" y="35" width="220" height="36" rx="18" fill="#7c3aed" opacity=".15" stroke="#7c3aed" stroke-width="2"/>
+  <text x="310" y="57" text-anchor="middle" font-size="12" fill="#7c3aed" font-weight="bold">Is there a natural order?</text>
+  <!-- YES branch -->
+  <line x1="250" y1="71" x2="130" y2="115" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrE)"/>
+  <text x="165" y="100" text-anchor="middle" font-size="10" fill="#059669">YES (Low/Med/High)</text>
+  <rect x="40" y="115" width="180" height="50" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="130" y="135" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">Ordinal Encoding</text>
+  <text x="130" y="152" text-anchor="middle" font-size="10" fill="#374151">Low=0, Med=1, High=2</text>
+  <!-- NO branch -->
+  <line x1="370" y1="71" x2="490" y2="115" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrE)"/>
+  <text x="455" y="100" text-anchor="middle" font-size="10" fill="#dc2626">NO (nominal)</text>
+  <rect x="390" y="115" width="200" height="36" rx="18" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="490" y="137" text-anchor="middle" font-size="12" fill="#c2410c">How many unique values?</text>
+  <!-- ≤ 10 -->
+  <line x1="440" y1="151" x2="320" y2="210" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrE)"/>
+  <text x="355" y="188" text-anchor="middle" font-size="10" fill="#64748b">≤ 10 unique</text>
+  <rect x="215" y="210" width="200" height="50" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="315" y="230" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">One-Hot Encoding</text>
+  <text x="315" y="247" text-anchor="middle" font-size="10" fill="#374151">pd.get_dummies(drop_first=True)</text>
+  <!-- > 10, is it a tree model? -->
+  <line x1="540" y1="151" x2="540" y2="210" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrE)"/>
+  <text x="570" y="188" text-anchor="middle" font-size="10" fill="#64748b">&gt; 10</text>
+  <rect x="430" y="210" width="175" height="36" rx="18" fill="#fdf4ff" stroke="#c084fc" stroke-width="1.5"/>
+  <text x="517" y="232" text-anchor="middle" font-size="11" fill="#7e22ce">Tree model?</text>
+  <!-- YES tree -->
+  <line x1="475" y1="246" x2="395" y2="295" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrE)"/>
+  <text x="415" y="278" text-anchor="middle" font-size="10" fill="#64748b">YES</text>
+  <rect x="305" y="295" width="175" height="50" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="392" y="315" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400e">Label / Target Enc.</text>
+  <text x="392" y="332" text-anchor="middle" font-size="10" fill="#374151">Trees handle integers natively</text>
+  <!-- NO tree -->
+  <line x1="560" y1="246" x2="580" y2="295" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrE)"/>
+  <text x="587" y="278" text-anchor="middle" font-size="10" fill="#64748b">NO (linear)</text>
+  <rect x="490" y="295" width="115" height="50" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="547" y="315" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400e">Target Enc.</text>
+  <text x="547" y="332" text-anchor="middle" font-size="10" fill="#374151">+ CV to avoid leakage</text>
+  <!-- binary label -->
+  <line x1="130" y1="165" x2="130" y2="225" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrE)"/>
+  <text x="152" y="200" text-anchor="start" font-size="10" fill="#64748b">Binary?</text>
+  <rect x="40" y="225" width="175" height="50" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="127" y="245" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">Label Encoding OK</text>
+  <text x="127" y="262" text-anchor="middle" font-size="10" fill="#374151">0/1 — no ordering implied</text>
+</svg>
       <div class="code-block"><pre>
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, OneHotEncoder # ← # import LabelEncoder, OrdinalEncoder, OneHotEncoder from sklearn.preprocessing
-from category_encoders import TargetEncoder               <span class="code-comment"># grab TargetEncoder from category_encoders</span>
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder, OneHotEncoder
+from category_encoders import TargetEncoder
+import pandas as pd
 
-# Label Encoding — for ordinal or tree-based models
-le = LabelEncoder()                                       <span class="code-comment"># convert text categories to numbers like 0, 1, 2</span>
-df['gender_enc'] = le.fit_transform(df['gender'])         <span class="code-comment"># learn AND apply the transformation in one step</span>
+# ── Binary variables (2 unique values) ────────────────────────────────────────
+le = LabelEncoder()
+df['gender_enc'] = le.fit_transform(df['gender'])          # Male=0, Female=1
 
-# Ordinal Encoding — when order matters
-oe = OrdinalEncoder(categories=[['Low','Medium','High']])
-df['education_enc'] = oe.fit_transform(df[['education']]) # ← # fit then transform in one step (use only on training data)
+# ── Ordinal encoding (order matters) ──────────────────────────────────────────
+oe = OrdinalEncoder(categories=[['Low', 'Medium', 'High']])  # explicit order!
+df['education_enc'] = oe.fit_transform(df[['education']])   # Low=0, Med=1, High=2
 
-# One-Hot Encoding — for nominal categories (<10 unique)
-df = pd.get_dummies(df, columns=['city','payment_method'], drop_first=True) # ← # one-hot encode categorical columns into binary columns
+# ── One-hot encoding (no order, &lt;15 unique values) ─────────────────────────────
+df = pd.get_dummies(df, columns=['city', 'payment_method'],
+                    drop_first=True)   # drop one column to avoid multicollinearity
 
-# Target Encoding — for high-cardinality (many unique values)
-# ALWAYS use cross-validation to avoid leakage!
+# ── Target encoding (high cardinality: product_id, zip_code) ──────────────────
+# CRITICAL: wrap in cross-val to prevent leakage
+from sklearn.model_selection import KFold
 te = TargetEncoder(cols=['product_id'])
-df['product_id_enc'] = te.fit_transform(df['product_id'], df['target']) # ← # fit then transform in one step (use only on training data)
+# Safe usage: fit on train fold only, transform validation fold
+X_train['product_enc'] = te.fit_transform(X_train['product_id'], y_train)
+X_val['product_enc']   = te.transform(X_val['product_id'])  # transform only!
 
-# Frequency Encoding — replace category with its frequency
-freq_map = df['city'].value_counts() / len(df)            <span class="code-comment"># count how many times each value appears</span>
-df['city_freq'] = df['city'].map(freq_map)                <span class="code-comment"># swap each value using a lookup or function</span>
+# ── Frequency encoding (quick, no target needed) ──────────────────────────────
+freq_map = df['city'].value_counts() / len(df)              # fraction of rows with each city
+df['city_freq'] = df['city'].map(freq_map)                  # replace city name with its frequency
 </pre></div>
       <table class="term-table">
-        <tr><th>Method</th><th>Use When</th><th>Cardinality</th></tr>
-        <tr><td>Label</td><td>Tree-based models, binary</td><td>Any</td></tr>
-        <tr><td>One-Hot</td><td>Linear models, no order</td><td>&lt;15 unique</td></tr>
-        <tr><td>Target</td><td>High-cardinality (city, product)</td><td>&gt;15 unique</td></tr>
-        <tr><td>Frequency</td><td>Quick, no target needed</td><td>Any</td></tr>
-        <tr><td>Ordinal</td><td>Ordered categories (Low/Med/High)</td><td>Any</td></tr>
+        <tr><th>Method</th><th>Use When</th><th>Cardinality</th><th>Leakage Risk?</th></tr>
+        <tr><td>Label Encoding</td><td>Tree models, binary cols</td><td>Any</td><td>No</td></tr>
+        <tr><td>Ordinal Encoding</td><td>Ordered categories (Low/Med/High)</td><td>Any</td><td>No</td></tr>
+        <tr><td>One-Hot</td><td>Linear models, no natural order</td><td>&lt;15 unique</td><td>No</td></tr>
+        <tr><td>Target Encoding</td><td>High-cardinality, strong relationship with target</td><td>&gt;15 unique</td><td>YES — use CV!</td></tr>
+        <tr><td>Frequency Encoding</td><td>Quick, no target needed</td><td>Any</td><td>No</td></tr>
       </table>
     </div>
 
+    <!-- SCALING -->
     <div class="topic-card">
-      <h3>Scaling &amp; Normalization</h3>
+      <h3>Scaling &amp; Normalization — Visualised</h3>
+      <p style="line-height:1.7">Distance-based models (KNN, SVM) and gradient-based models (linear regression, neural networks) are severely affected by features on different scales. If salary (0–200,000) and age (18–65) are both used raw, salary dominates every distance calculation simply because its numbers are larger. Scaling puts all features on equal footing. Tree-based models (Random Forest, XGBoost) split by threshold comparisons and are <em>completely unaffected</em> by scaling.</p>
+      <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Feature Scaling — What Each Method Does to Your Data</text>
+  <!-- Original -->
+  <rect x="15" y="32" width="130" height="185" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="80" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#1e293b">Original</text>
+  <text x="80" y="68" text-anchor="middle" font-size="9" fill="#6b7280">Salary (₹)</text>
+  <!-- bars -->
+  <rect x="35" y="100" width="20" height="80" fill="#94a3b8"/>
+  <rect x="60" y="130" width="20" height="50" fill="#94a3b8"/>
+  <rect x="85" y="75" width="20" height="105" fill="#94a3b8"/>
+  <rect x="110" y="145" width="20" height="35" fill="#94a3b8"/>
+  <line x1="25" y1="183" x2="140" y2="183" stroke="#374151" stroke-width="1"/>
+  <text x="80" y="198" text-anchor="middle" font-size="9" fill="#6b7280">20K – 2L range</text>
+  <text x="80" y="212" text-anchor="middle" font-size="9" fill="#dc2626">KNN/SVM breaks</text>
+  <text x="80" y="225" text-anchor="middle" font-size="9" fill="#dc2626">large range dominates</text>
+  <!-- Standard Scaler -->
+  <rect x="158" y="32" width="130" height="185" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="223" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">StandardScaler</text>
+  <text x="223" y="68" text-anchor="middle" font-size="9" fill="#6b7280">(x − μ) / σ</text>
+  <!-- bars balanced around 0 -->
+  <rect x="175" y="125" width="20" height="55" fill="#3b82f6"/>
+  <rect x="200" y="138" width="20" height="42" fill="#3b82f6"/>
+  <rect x="225" y="103" width="20" height="80" fill="#3b82f6"/>
+  <rect x="250" y="148" width="20" height="32" fill="#3b82f6"/>
+  <line x1="168" y1="183" x2="278" y2="183" stroke="#374151" stroke-width="1"/>
+  <text x="223" y="198" text-anchor="middle" font-size="9" fill="#374151">Mean=0, Std=1</text>
+  <text x="223" y="212" text-anchor="middle" font-size="9" fill="#059669">Best for: linear models</text>
+  <text x="223" y="225" text-anchor="middle" font-size="9" fill="#059669">SVM, KNN, neural nets</text>
+  <!-- MinMax Scaler -->
+  <rect x="301" y="32" width="130" height="185" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="366" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">MinMaxScaler</text>
+  <text x="366" y="68" text-anchor="middle" font-size="9" fill="#6b7280">(x − min) / (max − min)</text>
+  <!-- bars from 0 to 1 -->
+  <rect x="318" y="120" width="20" height="63" fill="#22c55e"/>
+  <rect x="343" y="140" width="20" height="43" fill="#22c55e"/>
+  <rect x="368" y="90" width="20" height="93" fill="#22c55e"/>
+  <rect x="393" y="155" width="20" height="28" fill="#22c55e"/>
+  <line x1="311" y1="183" x2="421" y2="183" stroke="#374151" stroke-width="1"/>
+  <text x="366" y="198" text-anchor="middle" font-size="9" fill="#374151">Bounded [0, 1]</text>
+  <text x="366" y="212" text-anchor="middle" font-size="9" fill="#059669">Best for: image pixels</text>
+  <text x="366" y="225" text-anchor="middle" font-size="9" fill="#059669">neural nets, bounded range</text>
+  <!-- Robust Scaler -->
+  <rect x="444" y="32" width="162" height="185" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="525" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">RobustScaler</text>
+  <text x="525" y="68" text-anchor="middle" font-size="9" fill="#6b7280">(x − median) / IQR</text>
+  <!-- bars with outlier point -->
+  <rect x="458" y="120" width="20" height="63" fill="#eab308"/>
+  <rect x="483" y="140" width="20" height="43" fill="#eab308"/>
+  <rect x="508" y="90" width="20" height="93" fill="#eab308"/>
+  <rect x="533" y="155" width="20" height="28" fill="#eab308"/>
+  <circle cx="570" cy="60" r="8" fill="#dc2626" opacity=".7"/>
+  <text x="570" y="64" text-anchor="middle" font-size="8" fill="white">!</text>
+  <line x1="454" y1="183" x2="594" y2="183" stroke="#374151" stroke-width="1"/>
+  <text x="525" y="198" text-anchor="middle" font-size="9" fill="#374151">Outlier-robust</text>
+  <text x="525" y="212" text-anchor="middle" font-size="9" fill="#059669">Best for: data with</text>
+  <text x="525" y="225" text-anchor="middle" font-size="9" fill="#059669">outliers you can't remove</text>
+  <!-- warning note -->
+  <text x="310" y="248" text-anchor="middle" font-size="10" font-style="italic" fill="#dc2626">Warning: Tree-based models (Random Forest, XGBoost) do NOT need scaling — they split by thresholds, not distances.</text>
+</svg>
       <div class="code-block"><pre>
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler # ← # import StandardScaler, MinMaxScaler, RobustScaler from sklearn.preprocessing
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
+from sklearn.pipeline import Pipeline
 
-# StandardScaler: z = (x - mean) / std → mean=0, std=1
-# Use for: linear models, SVM, KNN, neural networks
-scaler = StandardScaler()                                 <span class="code-comment"># make all features the same scale (mean 0, spread 1)</span>
+# ── CRITICAL RULE: fit ONLY on training data ────────────────────────────────
+scaler = StandardScaler()                                  # mean=0, std=1 after transformation
+X_train_scaled = scaler.fit_transform(X_train)             # learn mean/std FROM train, then apply
+X_test_scaled  = scaler.transform(X_test)                  # apply same learned params to test
+# NEVER: scaler.fit_transform(X_test) — this would leak test distribution into train
 
-# MinMaxScaler: x = (x - min) / (max - min) → range [0,1]
-# Use for: when you need bounded range, image pixels
-scaler = MinMaxScaler()                                   <span class="code-comment"># squish all values to fit between 0 and 1</span>
+# ── Best practice: use Pipelines to avoid leakage automatically ───────────────
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
 
-# RobustScaler: uses median and IQR → outlier-resistant
-# Use for: data with outliers you can't remove
-scaler = RobustScaler()
+pipe = Pipeline([
+    ('scaler', StandardScaler()),         # step 1: scale features
+    ('model',  LogisticRegression())      # step 2: fit model on scaled features
+])
+pipe.fit(X_train, y_train)               # internally: scaler fits on X_train, then model fits
+# Pipeline ensures test data is NEVER seen during fit step
 
-# CRITICAL: Fit on train only, transform both
-X_train_scaled = scaler.fit_transform(X_train)  # fit+transform
-X_test_scaled  = scaler.transform(X_test)        # transform only
-# If you fit on test data → data leakage → inflated scores!
+# ── Choosing the right scaler ─────────────────────────────────────────────────
+# StandardScaler: linear/logistic regression, SVM, KNN, neural nets, PCA
+# MinMaxScaler:   image data, when you need 0-1 range, autoencoder inputs
+# RobustScaler:   when outliers exist and you can't remove them
+# No scaling:     Random Forest, XGBoost, LightGBM, Decision Trees
 </pre></div>
-      <div class="warn-box">Never fit scaler on test data. Only transform test data using the scaler fitted on training data.</div>
     </div>
 
+    <!-- TRANSFORMATIONS -->
     <div class="topic-card">
       <h3>Transformations for Skewed Data</h3>
+      <p style="line-height:1.7">Linear models assume features are roughly normally distributed. Right-skewed features (income, house price, sales amount) have extreme values that disproportionately influence coefficients. Log-transforming pulls the long tail in and makes the distribution more symmetric. The rule: check skewness after EDA — if |skewness| &gt; 1.0, apply a transformation.</p>
       <div class="code-block"><pre>
-import numpy as np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-from scipy import stats                                   <span class="code-comment"># grab stats from scipy</span>
-from sklearn.preprocessing import PowerTransformer        <span class="code-comment"># grab PowerTransformer from sklearn.preprocessing</span>
+import numpy as np
+from scipy import stats
+from sklearn.preprocessing import PowerTransformer
 
-# Log transform (right-skewed data like income, sales)
-df['log_income'] = np.log1p(df['income'])  # log1p = log(1+x), handles 0
+# ── Log transform (most common — right-skewed data like income, sales) ─────────
+df['log_income'] = np.log1p(df['income'])   # log(1+x): handles 0 values safely
+# log(0) = -infinity! Always use log1p when data can contain zeros
 
-# Box-Cox (positive values only)
-df['boxcox'], lambda_ = stats.boxcox(df['income'] + 1)
+# ── Box-Cox transform (positive values only) ──────────────────────────────────
+df['boxcox_income'], lambda_ = stats.boxcox(df['income'] + 1)  # +1 to handle zeros
+print(f"Optimal lambda: {lambda_:.3f}")  # lambda≈0 → log; lambda≈1 → no transform
 
-# Yeo-Johnson (handles negatives too) — recommended
+# ── Yeo-Johnson transform (recommended — handles negative values too) ──────────
 pt = PowerTransformer(method='yeo-johnson', standardize=True)
-df['income_transformed'] = pt.fit_transform(df[['income']]) # ← # fit then transform in one step (use only on training data)
+df['income_transformed'] = pt.fit_transform(df[['income']])
 
-# Check skewness before and after
-print(f"Before: {df['income'].skew():.3f}")               <span class="code-comment"># show this value in the terminal</span>
-print(f"After:  {df['income_transformed'].skew():.3f}") # ← # print output to console
-</pre></div>
-      <div class="note-box">Rule: If |skewness| &gt; 0.5 → apply transformation. If &gt; 1.0 → log-transform. Check skewness after and confirm it's in [-0.5, 0.5].</div>
-    </div>
-
-    <div class="topic-card">
-      <h3>Creating New Features</h3>
-      <div class="code-block"><pre>
-# Date features
-df['day_of_week']  = df['date'].dt.dayofweek              <span class="code-comment"># pull date parts like year or month from this column</span>
-df['is_weekend']   = (df['date'].dt.dayofweek >= 5).astype(int) # ← # convert column to a different data type
-df['month']        = df['date'].dt.month                  <span class="code-comment"># pull date parts like year or month from this column</span>
-df['quarter']      = df['date'].dt.quarter                <span class="code-comment"># pull date parts like year or month from this column</span>
-df['days_since_signup'] = (pd.Timestamp.now() - df['signup_date']).dt.days # ← # datetime accessor — extract date parts (year, month etc.)
-
-# Cyclical encoding (month 12 and 1 are close!)
-df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
-
-# Interaction features
-df['charge_per_tenure']  = df['MonthlyCharges'] / (df['tenure'] + 1)
-df['total_per_contract'] = df['TotalCharges'] / df['tenure']
-df['services_x_charge']  = df['num_services'] * df['MonthlyCharges']
-
-# Binning (discretize continuous)
-df['age_group'] = pd.cut(df['age'], bins=[0,25,35,50,100], # ← # bin continuous values into discrete intervals (age groups etc.)
-                          labels=['Young','Mid','Senior','Elder'])
-df['income_quartile'] = pd.qcut(df['income'], q=4,
-                                  labels=['Q1','Q2','Q3','Q4'])
-
-# Aggregation features (for group-level context)
-dept_stats = df.groupby('dept')['salary'].agg(['mean','std','max']) # ← # split data into groups by column value
-dept_stats.columns = ['dept_salary_mean','dept_salary_std','dept_salary_max']
-df = df.merge(dept_stats, on='dept', how='left')          <span class="code-comment"># join another table on a matching column</span>
-df['salary_vs_dept_avg'] = df['salary'] - df['dept_salary_mean']
-
-# Text features
-df['text_length']    = df['review'].str.len()             <span class="code-comment"># work with text in this column</span>
-df['word_count']     = df['review'].str.split().str.len() # ← # string accessor — apply string methods to a column
-df['has_exclamation']= df['review'].str.contains('!').astype(int) # ← # convert column to a different data type
+# ── Check improvement ─────────────────────────────────────────────────────────
+print(f"Before transform: skew = {df['income'].skew():.3f}")
+print(f"After transform:  skew = {df['income_transformed'].skew():.3f}")
+# Goal: |skew| < 0.5 for "roughly normal"
+# If |skew| < 1.5 and dataset is large: transformation may not be needed for trees
 </pre></div>
     </div>
 
+    <!-- FEATURE CREATION -->
     <div class="topic-card">
-      <h3>Feature Selection</h3>
+      <h3>Creating New Features — Domain Knowledge in Code</h3>
+      <p style="line-height:1.7">The best features come from domain knowledge, not automated tools. A feature like <em>average monthly charge = total charges / tenure</em> directly captures price pressure that a model couldn't derive by looking at those columns separately. Date features (day of week, is_weekend, month) let models learn time-based patterns without seeing the raw timestamp. Interaction features (feature_a × feature_b) let linear models capture non-linear relationships.</p>
       <div class="code-block"><pre>
-from sklearn.feature_selection import SelectKBest, f_classif, RFE -- specify the source table <span class="code-comment">-- the table to read from</span>
-from sklearn.ensemble import RandomForestClassifier       <span class="code-comment">-- the table to read from</span>
-import shap
+import pandas as pd
+import numpy as np
 
-# Filter method: correlation
-corr_with_target = df.corr()['target'].abs().sort_values(ascending=False)
-drop_cols = corr_with_target[corr_with_target < 0.05].index.tolist() -- speed up lookups on this column <span class="code-comment">-- the condition that links the two tables</span>
+# ── Date/time features ─────────────────────────────────────────────────────────
+df['day_of_week']  = df['date'].dt.dayofweek              # 0=Monday, 6=Sunday
+df['is_weekend']   = (df['date'].dt.dayofweek >= 5).astype(int)  # 1 if Sat/Sun
+df['month']        = df['date'].dt.month                  # 1–12
+df['quarter']      = df['date'].dt.quarter                # 1–4
+df['is_month_end'] = df['date'].dt.is_month_end.astype(int)  # spike at end of month?
+df['hour']         = df['datetime'].dt.hour               # for intraday patterns
+df['year']         = df['date'].dt.year
 
-# Filter: multicollinearity check
-corr_matrix = df.corr().abs()
-upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)) -- filter rows — only keep rows matching this condition <span class="code-comment">-- keep only rows that meet this condition</span>
-to_drop = [col for col in upper.columns if any(upper[col] > 0.95)]
+# ── Ratio and interaction features ────────────────────────────────────────────
+df['charge_per_tenure']   = df['TotalCharges'] / (df['tenure'] + 1)  # avg monthly spend
+df['service_count']       = df[service_cols].sum(axis=1)   # how many services subscribed
+df['charge_per_service']  = df['MonthlyCharges'] / (df['service_count'] + 1)
 
-# SelectKBest (statistical test)
-selector = SelectKBest(f_classif, k=15)
-X_new = selector.fit_transform(X, y)
-selected_features = X.columns[selector.get_support()].tolist()
+# ── Lag features for time series in tabular models ────────────────────────────
+df_sorted = df.sort_values('date')
+df_sorted['sales_lag1']  = df_sorted['sales'].shift(1)    # value from yesterday
+df_sorted['sales_lag7']  = df_sorted['sales'].shift(7)    # value from 7 days ago
+df_sorted['sales_lag30'] = df_sorted['sales'].shift(30)   # value from last month
 
-# Embedded: Random Forest importance
+# ── Rolling window aggregations ───────────────────────────────────────────────
+df_sorted['rolling_mean_7']  = df_sorted['sales'].rolling(7).mean()   # 7-day moving avg
+df_sorted['rolling_std_7']   = df_sorted['sales'].rolling(7).std()    # 7-day volatility
+df_sorted['rolling_max_30']  = df_sorted['sales'].rolling(30).max()   # 30-day peak
+
+# ── Binning continuous variables ──────────────────────────────────────────────
+df['age_group'] = pd.cut(df['age'],
+                          bins=[0, 25, 35, 50, 65, 100],
+                          labels=['18-25', '26-35', '36-50', '51-65', '65+'])
+# Useful when the relationship is non-linear (young and old have similar churn for diff reasons)
+</pre></div>
+    </div>
+
+    <!-- FEATURE SELECTION -->
+    <div class="topic-card">
+      <h3>Feature Selection — Removing What Doesn't Help</h3>
+      <p style="line-height:1.7">More features is not always better. Irrelevant features add noise, slow training, and increase overfitting risk. Feature selection reduces the feature space to only what actually helps the model. There are three families of methods — choose based on your dataset size and computation budget.</p>
+      <svg viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Feature Selection Methods — When to Use Each</text>
+  <!-- Filter -->
+  <rect x="15" y="30" width="180" height="180" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="105" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">Filter Methods</text>
+  <text x="105" y="70" text-anchor="middle" font-size="10" fill="#374151">Model-independent</text>
+  <text x="105" y="90" text-anchor="middle" font-size="10" fill="#374151">• Correlation with target</text>
+  <text x="105" y="108" text-anchor="middle" font-size="10" fill="#374151">• Chi-square test</text>
+  <text x="105" y="126" text-anchor="middle" font-size="10" fill="#374151">• Mutual information</text>
+  <text x="105" y="144" text-anchor="middle" font-size="10" fill="#374151">• Variance threshold</text>
+  <text x="105" y="165" text-anchor="middle" font-size="10" fill="#059669">+ Fast, no model needed</text>
+  <text x="105" y="180" text-anchor="middle" font-size="10" fill="#dc2626">− Ignores feature interactions</text>
+  <text x="105" y="196" text-anchor="middle" font-size="10" fill="#374151">Use: quick first pass</text>
+  <!-- Wrapper -->
+  <rect x="215" y="30" width="190" height="180" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="310" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#15803d">Wrapper Methods</text>
+  <text x="310" y="70" text-anchor="middle" font-size="10" fill="#374151">Uses model as evaluator</text>
+  <text x="310" y="90" text-anchor="middle" font-size="10" fill="#374151">• Forward selection</text>
+  <text x="310" y="108" text-anchor="middle" font-size="10" fill="#374151">• Backward elimination</text>
+  <text x="310" y="126" text-anchor="middle" font-size="10" fill="#374151">• RFE (sklearn)</text>
+  <text x="310" y="144" text-anchor="middle" font-size="10" fill="#374151">• Recursive feature elim.</text>
+  <text x="310" y="165" text-anchor="middle" font-size="10" fill="#059669">+ Considers interactions</text>
+  <text x="310" y="180" text-anchor="middle" font-size="10" fill="#dc2626">− Computationally expensive</text>
+  <text x="310" y="196" text-anchor="middle" font-size="10" fill="#374151">Use: small/medium datasets</text>
+  <!-- Embedded -->
+  <rect x="425" y="30" width="180" height="180" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="515" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#a16207">Embedded Methods</text>
+  <text x="515" y="70" text-anchor="middle" font-size="10" fill="#374151">Feature selection during training</text>
+  <text x="515" y="90" text-anchor="middle" font-size="10" fill="#374151">• L1 Lasso (zero weights)</text>
+  <text x="515" y="108" text-anchor="middle" font-size="10" fill="#374151">• Tree feature importance</text>
+  <text x="515" y="126" text-anchor="middle" font-size="10" fill="#374151">• XGBoost feature_importances_</text>
+  <text x="515" y="144" text-anchor="middle" font-size="10" fill="#374151">• SHAP values</text>
+  <text x="515" y="165" text-anchor="middle" font-size="10" fill="#059669">+ Best of both worlds</text>
+  <text x="515" y="180" text-anchor="middle" font-size="10" fill="#059669">+ Works with any scale</text>
+  <text x="515" y="196" text-anchor="middle" font-size="10" fill="#374151">Use: production pipelines</text>
+</svg>
+      <div class="code-block"><pre>
+from sklearn.feature_selection import (SelectKBest, mutual_info_classif,
+                                        RFE, SelectFromModel)
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+
+# ── Filter method: mutual information (model-free) ────────────────────────────
+selector = SelectKBest(mutual_info_classif, k=20)   # keep top 20 features
+X_new = selector.fit_transform(X_train, y_train)
+selected_features = X_train.columns[selector.get_support()].tolist()
+print("Top features:", selected_features)
+
+# ── Wrapper method: RFE (Recursive Feature Elimination) ───────────────────────
+# Trains model, removes weakest feature, repeats until k features remain
+rfe = RFE(estimator=RandomForestClassifier(n_estimators=50, random_state=42),
+          n_features_to_select=15)
+rfe.fit(X_train, y_train)
+selected_rfe = X_train.columns[rfe.support_].tolist()
+
+# ── Embedded method: tree feature importances ─────────────────────────────────
 rf = RandomForestClassifier(n_estimators=100, random_state=42)
 rf.fit(X_train, y_train)
-importances = pd.Series(rf.feature_importances_, index=X_train.columns) -- speed up lookups on this column <span class="code-comment">-- the condition that links the two tables</span>
-top_features = importances.sort_values(ascending=False).head(20).index -- speed up lookups on this column <span class="code-comment">-- the condition that links the two tables</span>
+importances = pd.Series(rf.feature_importances_, index=X_train.columns)
+top_15 = importances.nlargest(15).index.tolist()   # keep top 15 features
 
-# SHAP values (model-agnostic)
-explainer = shap.TreeExplainer(xgb_model)
+# ── SHAP values (most trustworthy feature importance) ─────────────────────────
+import shap
+explainer   = shap.TreeExplainer(rf)
 shap_values = explainer.shap_values(X_test)
-shap.summary_plot(shap_values, X_test, plot_type="bar")
+shap.summary_plot(shap_values[1], X_test, plot_type="bar")   # classification: class 1
+# SHAP shows DIRECTION of impact, not just magnitude — much more useful than importances_
+
+# ── Drop near-zero variance features (useless columns) ────────────────────────
+from sklearn.feature_selection import VarianceThreshold
+vt = VarianceThreshold(threshold=0.01)   # remove columns where 99%+ rows have same value
+X_filtered = vt.fit_transform(X_train)
 </pre></div>
+      <div class="note-box"><strong>Interview answer for "How do you handle 200 features?":</strong> "First I'd check variance — drop near-zero variance features. Then correlation — if two features correlate &gt;0.9, keep the one that correlates more with target. Then fit a Random Forest and look at feature importances to shortlist the top 30–40. Finally, use SHAP values on the model to confirm which features are actually driving predictions, not just correlated with the target."</div>
     </div>
 
+    <!-- IMPUTATION -->
     <div class="topic-card">
-      <h3>Imbalanced Data</h3>
+      <h3>Handling Missing Data</h3>
       <div class="code-block"><pre>
-from imblearn.over_sampling import SMOTE, ADASYN          <span class="code-comment"># grab SMOTE, ADASYN from imblearn.over_sampling</span>
-from imblearn.under_sampling import RandomUnderSampler # ← # import RandomUnderSampler from imblearn.under_sampling
-from imblearn.pipeline import Pipeline as ImbPipeline     <span class="code-comment"># grab Pipeline as ImbPipeline from imblearn.pipeline</span>
+import pandas as pd
+import numpy as np
+from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.experimental import enable_iterative_imputer  # needed for IterativeImputer
+from sklearn.impute import IterativeImputer
 
-print(y.value_counts(normalize=True))                     <span class="code-comment"># count how many times each value appears</span>
-# If minority class < 20% → handle imbalance
+# ── Step 1: assess missing values ─────────────────────────────────────────────
+missing_pct = df.isnull().mean() * 100
+print(missing_pct[missing_pct &gt; 0].sort_values(ascending=False))
 
-# SMOTE (Synthetic Minority Oversampling)
-smote = SMOTE(sampling_strategy=0.5, k_neighbors=5, random_state=42)
-X_res, y_res = smote.fit_resample(X_train, y_train)
+# ── Decision rules ────────────────────────────────────────────────────────────
+# &lt;5% missing: impute with median (numeric) or mode (categorical)
+# 5-30% missing: impute + add binary flag column to let model know value was missing
+# &gt;30% missing: investigate why. Maybe drop column. Never impute blindly.
 
-# Combined over+under sampling
-pipeline = ImbPipeline([                                  <span class="code-comment"># chain preprocessing + model steps into one object</span>
-    ('over',  SMOTE(sampling_strategy=0.3)),
-    ('under', RandomUnderSampler(sampling_strategy=0.7))
-])
-X_res, y_res = pipeline.fit_resample(X_train, y_train)
+# ── Simple imputation ─────────────────────────────────────────────────────────
+for col in df.select_dtypes('float64').columns:
+    if df[col].isnull().mean() &lt; 0.05:
+        df[col].fillna(df[col].median(), inplace=True)   # median: robust to outliers
+    elif df[col].isnull().mean() &lt; 0.30:
+        df[f'{col}_was_missing'] = df[col].isnull().astype(int)   # flag first!
+        df[col].fillna(df[col].median(), inplace=True)
 
-# Class weights (no resampling needed)
-from sklearn.utils.class_weight import compute_class_weight # ← # import compute_class_weight from sklearn.utils.class_weight
-weights = compute_class_weight('balanced', classes=np.unique(y), y=y) # ← # unique values (and optionally their counts)
-class_weight_dict = dict(zip(np.unique(y), weights))      <span class="code-comment"># list of unique values (no repeats)</span>
-model = XGBClassifier(scale_pos_weight=weights[0]/weights[1]) # ← # XGBoost: fast gradient boosting, handles missing values
+# ── KNN imputation (uses similar rows to guess missing value) ─────────────────
+knn_imp = KNNImputer(n_neighbors=5)          # find 5 most similar rows, average their values
+X_imputed = knn_imp.fit_transform(X_train)   # fit on train only, transform both
+
+# ── MICE / Iterative imputation (best for MAR data) ───────────────────────────
+# Treats each column as a regression target using the other columns
+iter_imp = IterativeImputer(max_iter=10, random_state=42)
+X_imputed = iter_imp.fit_transform(X_train)
 </pre></div>
-      <table class="term-table">
-        <tr><th>Method</th><th>Pro</th><th>Con</th></tr>
-        <tr><td>SMOTE</td><td>Creates realistic synthetic samples</td><td>Can overfit boundary region</td></tr>
-        <tr><td>Class weights</td><td>No data change, simple</td><td>Less aggressive correction</td></tr>
-        <tr><td>Undersampling</td><td>Faster training</td><td>Loses majority class information</td></tr>
-        <tr><td>ADASYN</td><td>Focuses on hard-to-classify samples</td><td>Can amplify noise</td></tr>
-      </table>
+      <div class="warn-box"><strong>Golden rule:</strong> Always fit imputers on training data only, then transform both train and test. Never impute test data statistics — that's data leakage. Use sklearn Pipelines to enforce this automatically.</div>
     </div>
 
   </div>
@@ -11112,150 +11300,385 @@ stack.fit(X_train, y_train)                               <span class="code-comm
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      DS PHASE 15 — Time Series Deep Dive
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p15">
   <div class="phase-header">
     <h2>Phase 15 — Time Series Deep Dive</h2>
   </div>
   <div class="phase-content">
 
+    <!-- INTRO -->
     <div class="topic-card">
-      <h3>Stationarity — The Foundation</h3>
-      <div class="note-box">A time series is <strong>stationary</strong> if its statistical properties (mean, variance, autocorrelation) do not change over time. Most classical models (ARIMA) require stationarity.</div>
+      <h3>Time Series vs Regular Data — The Key Difference</h3>
+      <p style="line-height:1.7">In regular ML, shuffling your data is fine — each row is independent. In time series, <strong>order matters</strong>. Today's sales depend on yesterday's sales, last week's promotion, and last year's same-week performance. Shuffling destroys this dependency. This single difference changes everything: how you split data (must use TimeSeriesSplit), how you create features (lag features, rolling windows), and which models you choose.</p>
+      <p style="line-height:1.7">Every time series is made of three hidden components: a long-term <strong>trend</strong> (slowly rising or falling direction), a <strong>seasonal</strong> pattern (repeating cycle at a fixed frequency — weekly, monthly, yearly), and <strong>residual noise</strong> (random variation that can't be explained). Understanding which component drives your series determines your modelling approach.</p>
+      <svg viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Time Series Decomposition — 3 Hidden Components</text>
+  <!-- OBSERVED -->
+  <text x="60" y="50" font-size="11" font-weight="bold" fill="#374151">Observed = Trend × Seasonal × Residual</text>
+  <polyline points="70,100 100,85 130,75 160,80 190,65 220,60 250,68 280,55 310,50 340,60 370,52 400,75 430,65 460,55 490,62 520,50 550,48" fill="none" stroke="#7c3aed" stroke-width="2"/>
+  <text x="565" y="55" font-size="10" fill="#7c3aed">Observed</text>
+  <line x1="60" y1="115" x2="570" y2="115" stroke="#e2e8f0" stroke-width="1"/>
+  <!-- TREND -->
+  <text x="60" y="135" font-size="11" font-weight="bold" fill="#2563eb">1. Trend — long-term direction</text>
+  <polyline points="70,175 130,168 190,160 250,153 310,146 370,140 430,133 490,126 550,120" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="565" y="125" font-size="10" fill="#2563eb">↑ upward</text>
+  <text x="180" y="192" text-anchor="middle" font-size="9" fill="#6b7280">Revenue growing year over year</text>
+  <line x1="60" y1="205" x2="570" y2="205" stroke="#e2e8f0" stroke-width="1"/>
+  <!-- SEASONALITY -->
+  <text x="60" y="225" font-size="11" font-weight="bold" fill="#059669">2. Seasonality — repeating periodic pattern</text>
+  <polyline points="70,255 87,242 104,252 121,260 138,246 155,240 172,250 189,258 206,244 223,238 240,248 257,256 274,242 291,236 308,246 325,254 342,240 359,234 376,244 393,252 410,238 427,232 444,242 461,250 478,236 495,230 512,240 529,248 546,234" fill="none" stroke="#059669" stroke-width="2"/>
+  <text x="565" y="248" font-size="10" fill="#059669">↕ cycle</text>
+  <text x="250" y="273" text-anchor="middle" font-size="9" fill="#6b7280">Monthly/quarterly sales patterns</text>
+  <line x1="60" y1="285" x2="570" y2="285" stroke="#e2e8f0" stroke-width="1"/>
+  <!-- RESIDUAL -->
+  <text x="60" y="305" font-size="11" font-weight="bold" fill="#dc2626">3. Residual (Noise) — random unexplained variation</text>
+  <polyline points="70,322 100,318 130,325 160,320 190,326 220,317 250,323 280,319 310,325 340,321 370,318 400,324 430,320 460,326 490,319 520,323 550,317" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="565" y="322" font-size="10" fill="#dc2626">~ noise</text>
+</svg>
+    </div>
+
+    <!-- STATIONARITY -->
+    <div class="topic-card">
+      <h3>Stationarity — The Foundation of Classical Models</h3>
+      <p style="line-height:1.7">A time series is <strong>stationary</strong> if its mean and variance stay constant over time. Most classical models (ARIMA) require stationarity because they model the relationship between values at different lags — those relationships are only stable when the distribution is stable. A trending series is non-stationary — its mean changes. A seasonal series without differencing is also non-stationary.</p>
       <div class="code-block"><pre>
-import pandas as pd                                       <span class="code-comment"># bring in the pandas as pd toolkit</span>
-import numpy as np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
+import pandas as pd, numpy as np
 import matplotlib.pyplot as plt
-from statsmodels.tsa.stattools import adfuller            <span class="code-comment"># grab adfuller from statsmodels.tsa.stattools</span>
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf # ← # import plot_acf, plot_pacf from statsmodels.graphics.tsaplots
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
-# ── Visual check ──
-df['sales'].plot(figsize=(12,4), title='Sales over time')
-df['sales'].rolling(12).mean().plot(label='12-month rolling mean') # ← # sliding window for moving average / rolling statistics
-df['sales'].rolling(12).std().plot(label='12-month rolling std') # ← # sliding window for moving average / rolling statistics
-plt.legend(); plt.show()                                  <span class="code-comment"># display the chart</span>
-# If rolling mean/std change over time → non-stationary
+# ── Visual check for stationarity ─────────────────────────────────────────────
+fig, axes = plt.subplots(3, 1, figsize=(12, 8))
+df['sales'].plot(ax=axes[0], title='Raw series')
+df['sales'].rolling(12).mean().plot(ax=axes[0], label='12-month mean')
+df['sales'].rolling(12).std().plot(ax=axes[1], title='Rolling std dev (should be flat if stationary)')
+df['sales'].diff(1).plot(ax=axes[2], title='After 1st differencing')
+plt.tight_layout(); plt.show()
+# If rolling mean/std drift → non-stationary
 
-# ── ADF Test (Augmented Dickey-Fuller) ──
-# H0: series has unit root (non-stationary)
+# ── ADF Test (Augmented Dickey-Fuller) ────────────────────────────────────────
+# H0: series has a unit root → non-stationary
 # H1: series is stationary
-result = adfuller(df['sales'].dropna())                   <span class="code-comment"># delete rows that have missing values</span>
-print(f"ADF Statistic: {result[0]:.4f}")                  <span class="code-comment"># show this value in the terminal</span>
-print(f"p-value:       {result[1]:.4f}")                  <span class="code-comment"># show this value in the terminal</span>
+result = adfuller(df['sales'].dropna())
+print(f"ADF Statistic: {result[0]:.4f}")
+print(f"p-value:       {result[1]:.4f}")
+print(f"Critical values: {result[4]}")
 
-if result[1] < 0.05:                                      <span class="code-comment"># only run the next block if this is True</span>
-    print("STATIONARY — proceed with ARIMA")              <span class="code-comment"># show this value in the terminal</span>
-else:                                                     <span class="code-comment"># if nothing matched above, do this instead</span>
-    print("NON-STATIONARY — apply differencing")          <span class="code-comment"># show this value in the terminal</span>
+if result[1] &lt; 0.05:
+    print("STATIONARY — p &lt; 0.05, reject H0")
+else:
+    print("NON-STATIONARY — apply differencing")
+
+# ── Making a series stationary ────────────────────────────────────────────────
+df['sales_diff1'] = df['sales'].diff(1)           # removes linear trend (d=1)
+df['sales_diff2'] = df['sales'].diff(1).diff(1)   # removes quadratic trend (d=2, rarely needed)
+df['sales_sdiff'] = df['sales'].diff(12)          # seasonal differencing (removes annual cycle)
+df['log_sales']   = np.log1p(df['sales'])         # log transform to stabilize variance
+df['log_diff']    = df['log_sales'].diff(1)        # log + diff: most common for financial data
 </pre></div>
       <table class="term-table">
-        <tr><th>ADF p-value</th><th>Conclusion</th><th>Action</th></tr>
-        <tr><td>p &lt; 0.05</td><td>Stationary (reject H0)</td><td>Proceed with ARIMA(p,0,q)</td></tr>
-        <tr><td>p &gt; 0.05</td><td>Non-stationary</td><td>Difference the series (d=1 or d=2)</td></tr>
+        <tr><th>ADF p-value</th><th>Interpretation</th><th>Action</th></tr>
+        <tr><td>p &lt; 0.05</td><td>Stationary (reject H₀)</td><td>Use ARIMA with d=0</td></tr>
+        <tr><td>p &gt; 0.05</td><td>Non-stationary</td><td>Apply d=1 differencing, re-test</td></tr>
+        <tr><td>After d=1, still p &gt; 0.05</td><td>Still non-stationary</td><td>Try d=2, or log-transform first</td></tr>
       </table>
     </div>
 
-    <div class="topic-card">
-      <h3>Making a Series Stationary &amp; Decomposition</h3>
-      <div class="code-block"><pre>
-# ── 1st order differencing (removes trend) ──
-df['sales_diff1'] = df['sales'].diff(1)                   <span class="code-comment"># difference from the previous row</span>
-result = adfuller(df['sales_diff1'].dropna())             <span class="code-comment"># delete rows that have missing values</span>
-print(f"After 1st diff — p={result[1]:.4f}")  # usually <0.05 after 1 diff
-
-# ── Seasonal differencing (removes seasonality) ──
-df['sales_sdiff'] = df['sales'].diff(12)  # 12 = seasonal period (monthly data)
-
-# ── Log transform (stabilizes variance) ──
-df['log_sales'] = np.log1p(df['sales'])                   <span class="code-comment"># log(1+x) — same as log but safe when x=0</span>
-df['log_diff']  = df['log_sales'].diff(1)                 <span class="code-comment"># difference from the previous row</span>
-
-# Decompose series into trend + seasonal + residual
-from statsmodels.tsa.seasonal import seasonal_decompose # ← # import seasonal_decompose from statsmodels.tsa.seasonal
-decomp = seasonal_decompose(df['sales'], model='multiplicative', period=12) # ← # decompose time series into trend + seasonal + residual
-decomp.plot()
-plt.tight_layout(); plt.show()                            <span class="code-comment"># display the chart</span>
-</pre></div>
-    </div>
-
+    <!-- ACF PACF -->
     <div class="topic-card">
       <h3>ACF &amp; PACF — Choosing ARIMA Parameters</h3>
-      <div class="note-box"><strong>ACF</strong> (AutoCorrelation Function): correlation of series with its own lags.<br><strong>PACF</strong> (Partial ACF): correlation at lag k after removing effects of shorter lags.</div>
+      <p style="line-height:1.7"><strong>ACF</strong> (AutoCorrelation Function) measures how much the series correlates with itself at each lag — e.g. does today's value correlate with yesterday's? With last week's? The <strong>PACF</strong> (Partial ACF) shows correlation at each lag <em>after removing</em> the effects of shorter lags — it isolates the "direct" relationship. Together they reveal which ARIMA order to use.</p>
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">ACF &amp; PACF Patterns — How to Choose ARIMA(p, d, q)</text>
+  <!-- AR pattern: ACF decays, PACF cuts off -->
+  <rect x="15" y="32" width="280" height="115" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="155" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">AR(p) — AutoRegressive</text>
+  <text x="35" y="70" font-size="9" fill="#374151">ACF: gradually decays</text>
+  <!-- ACF bars decaying -->
+  <rect x="35" y="72" width="10" height="35" fill="#3b82f6"/>
+  <rect x="50" y="82" width="10" height="25" fill="#3b82f6"/>
+  <rect x="65" y="88" width="10" height="19" fill="#3b82f6"/>
+  <rect x="80" y="93" width="10" height="14" fill="#3b82f6"/>
+  <rect x="95" y="96" width="10" height="11" fill="#3b82f6"/>
+  <rect x="110" y="99" width="10" height="8" fill="#3b82f6"/>
+  <line x1="30" y1="107" x2="135" y2="107" stroke="#374151" stroke-width="1"/>
+  <text x="155" y="80" text-anchor="middle" font-size="9" fill="#374151">PACF: sharp cut-off at lag p</text>
+  <!-- PACF bars sharp cutoff -->
+  <rect x="175" y="72" width="10" height="35" fill="#7c3aed"/>
+  <rect x="190" y="72" width="10" height="32" fill="#7c3aed"/>
+  <rect x="205" y="102" width="10" height="5" fill="#7c3aed" opacity=".4"/>
+  <rect x="220" y="103" width="10" height="4" fill="#7c3aed" opacity=".3"/>
+  <rect x="235" y="104" width="10" height="3" fill="#7c3aed" opacity=".2"/>
+  <rect x="250" y="104" width="10" height="3" fill="#7c3aed" opacity=".2"/>
+  <line x1="170" y1="107" x2="275" y2="107" stroke="#374151" stroke-width="1"/>
+  <text x="155" y="128" text-anchor="middle" font-size="10" fill="#374151">PACF cuts off at lag 2 → use AR(2)</text>
+  <text x="155" y="143" text-anchor="middle" font-size="9" fill="#374151">Series depends on its own 2 most recent values</text>
+  <!-- MA pattern: ACF cuts off, PACF decays -->
+  <rect x="325" y="32" width="280" height="115" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="465" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">MA(q) — Moving Average</text>
+  <text x="345" y="70" font-size="9" fill="#374151">ACF: sharp cut-off at lag q</text>
+  <rect x="345" y="72" width="10" height="35" fill="#22c55e"/>
+  <rect x="360" y="72" width="10" height="30" fill="#22c55e"/>
+  <rect x="375" y="72" width="10" height="28" fill="#22c55e"/>
+  <rect x="390" y="103" width="10" height="4" fill="#22c55e" opacity=".3"/>
+  <rect x="405" y="104" width="10" height="3" fill="#22c55e" opacity=".2"/>
+  <rect x="420" y="104" width="10" height="3" fill="#22c55e" opacity=".2"/>
+  <line x1="340" y1="107" x2="445" y2="107" stroke="#374151" stroke-width="1"/>
+  <text x="465" y="80" text-anchor="middle" font-size="9" fill="#374151">PACF: gradually decays</text>
+  <rect x="478" y="72" width="10" height="35" fill="#7c3aed"/>
+  <rect x="493" y="82" width="10" height="25" fill="#7c3aed"/>
+  <rect x="508" y="88" width="10" height="19" fill="#7c3aed"/>
+  <rect x="523" y="93" width="10" height="14" fill="#7c3aed"/>
+  <rect x="538" y="96" width="10" height="11" fill="#7c3aed"/>
+  <line x1="472" y1="107" x2="560" y2="107" stroke="#374151" stroke-width="1"/>
+  <text x="465" y="128" text-anchor="middle" font-size="10" fill="#374151">ACF cuts off at lag 3 → use MA(3)</text>
+  <text x="465" y="143" text-anchor="middle" font-size="9" fill="#374151">Series depends on 3 most recent error terms</text>
+  <!-- quick guide -->
+  <rect x="15" y="162" width="590" height="95" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="310" y="182" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e293b">ARIMA(p, d, q) — Full Parameter Guide</text>
+  <text x="80" y="202" text-anchor="middle" font-size="11" font-weight="bold" fill="#2563eb">p (AR order)</text>
+  <text x="310" y="202" text-anchor="middle" font-size="11" font-weight="bold" fill="#16a34a">d (differencing)</text>
+  <text x="535" y="202" text-anchor="middle" font-size="11" font-weight="bold" fill="#7c3aed">q (MA order)</text>
+  <text x="80" y="218" text-anchor="middle" font-size="10" fill="#374151">Where PACF cuts off</text>
+  <text x="310" y="218" text-anchor="middle" font-size="10" fill="#374151">ADF test: p&gt;0.05 → d=1</text>
+  <text x="535" y="218" text-anchor="middle" font-size="10" fill="#374151">Where ACF cuts off</text>
+  <text x="80" y="234" text-anchor="middle" font-size="10" fill="#6b7280">"Lags of series itself"</text>
+  <text x="310" y="234" text-anchor="middle" font-size="10" fill="#6b7280">d=2 if still non-stationary</text>
+  <text x="535" y="234" text-anchor="middle" font-size="10" fill="#6b7280">"Lags of error terms"</text>
+  <text x="310" y="250" text-anchor="middle" font-size="10" font-style="italic" fill="#7c3aed">Both ACF and PACF decay slowly → need more differencing first (increase d)</text>
+</svg>
       <div class="code-block"><pre>
-fig, axes = plt.subplots(1, 2, figsize=(14,4))            <span class="code-comment"># create a figure with one or more chart panels</span>
-plot_acf(df['sales_diff1'].dropna(),  lags=30, ax=axes[0]) # ← # remove rows (or columns) containing NaN values
-plot_pacf(df['sales_diff1'].dropna(), lags=30, ax=axes[1]) # ← # remove rows (or columns) containing NaN values
-plt.tight_layout(); plt.show()                            <span class="code-comment"># display the chart</span>
-</pre></div>
-      <table class="term-table">
-        <tr><th>Pattern in ACF</th><th>Pattern in PACF</th><th>Model</th><th>Parameter</th></tr>
-        <tr><td>Exponential decay / sine wave</td><td>Cuts off after lag p</td><td>AR(p)</td><td>p = where PACF cuts off</td></tr>
-        <tr><td>Cuts off after lag q</td><td>Exponential decay</td><td>MA(q)</td><td>q = where ACF cuts off</td></tr>
-        <tr><td>Both decay slowly</td><td>Both decay slowly</td><td>ARMA(p,q)</td><td>Try small values of both</td></tr>
-        <tr><td>No decay (or slow)</td><td>—</td><td>Need differencing first</td><td>d = 1</td></tr>
-      </table>
-      <div class="code-block"><pre>
-# ── ARIMA Model ──  ARIMA(p, d, q)
-# p = AR order (lags of y), d = differencing order, q = MA order (lags of errors)
-from statsmodels.tsa.arima.model import ARIMA             <span class="code-comment"># grab ARIMA from statsmodels.tsa.arima.model</span>
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import matplotlib.pyplot as plt
 
-model = ARIMA(df['sales'], order=(2, 1, 1))  # p=2, d=1, q=1
-result = model.fit()                                      <span class="code-comment"># learn patterns from this data</span>
-print(result.summary())                                   <span class="code-comment"># show this value in the terminal</span>
+# ── Always run ACF/PACF on the stationary (differenced) series ─────────────────
+fig, axes = plt.subplots(1, 2, figsize=(14, 4))
+plot_acf( df['sales_diff1'].dropna(), lags=30, ax=axes[0],
+          alpha=0.05)   # blue shaded area = 95% confidence band; bars outside = significant
+plot_pacf(df['sales_diff1'].dropna(), lags=30, ax=axes[1], alpha=0.05)
+plt.tight_layout()
+plt.show()
 
-forecast = result.forecast(steps=12)                      <span class="code-comment"># predict future values using the fitted model</span>
-conf_int = result.get_forecast(steps=12).conf_int()
+# ── Reading the plots ─────────────────────────────────────────────────────────
+# ACF cuts off at lag 2, PACF decays → MA(2): q=2
+# PACF cuts off at lag 3, ACF decays → AR(3): p=3
+# Both decay gradually → ARMA: try small values of both p and q
+# Use AIC/BIC to compare candidate models — lower is better
 
-# Auto-ARIMA (finds best p,d,q automatically)
-import pmdarima as pm                                     <span class="code-comment"># bring in the pmdarima as pm toolkit</span>
-auto_model = pm.auto_arima(df['sales'], seasonal=True, m=12,
-                             stepwise=True, information_criterion='aic',
-                             error_action='ignore', suppress_warnings=True)
-print(auto_model.summary())                               <span class="code-comment"># show this value in the terminal</span>
+from statsmodels.tsa.arima.model import ARIMA
+
+# ── Fit ARIMA ─────────────────────────────────────────────────────────────────
+model  = ARIMA(df['sales'], order=(2, 1, 1))  # p=2, d=1, q=1
+result = model.fit()
+print(result.summary())                        # shows AIC, BIC, coefficients, p-values
+
+# Forecast next 12 periods with 95% confidence interval
+forecast_obj = result.get_forecast(steps=12)
+forecast_mean = forecast_obj.predicted_mean
+conf_int      = forecast_obj.conf_int(alpha=0.05)  # 95% CI
+
+# ── Auto-ARIMA (let the algorithm find best p,d,q) ────────────────────────────
+import pmdarima as pm
+auto_model = pm.auto_arima(
+    df['sales'],
+    seasonal=True, m=12,              # m=12 for monthly data with yearly seasonality
+    stepwise=True,                    # grid search with early stopping (faster)
+    information_criterion='aic',      # minimize AIC (penalizes complexity)
+    test='adf',                       # auto-determine d using ADF test
+    error_action='ignore',
+    suppress_warnings=True
+)
+print(f"Best order: ARIMA{auto_model.order} × {auto_model.seasonal_order}")
 </pre></div>
     </div>
 
+    <!-- DECOMPOSITION -->
     <div class="topic-card">
-      <h3>Time Series Models Comparison</h3>
-      <table class="term-table">
-        <tr><th>Model</th><th>Best For</th><th>Handles Seasonality?</th><th>Explainable?</th></tr>
-        <tr><td>ARIMA</td><td>Stationary series, short-term</td><td>No (use SARIMA)</td><td>Yes</td></tr>
-        <tr><td>SARIMA</td><td>Seasonal patterns</td><td>Yes</td><td>Yes</td></tr>
-        <tr><td>Prophet</td><td>Business data with holidays/trends, missing values OK</td><td>Yes (auto)</td><td>Yes (components)</td></tr>
-        <tr><td>LSTM</td><td>Complex non-linear patterns, long sequences</td><td>Yes (learned)</td><td>No (black box)</td></tr>
-        <tr><td>XGBoost + lags</td><td>Tabular features + time context, multiple series</td><td>With feature engineering</td><td>Partial (SHAP)</td></tr>
-      </table>
+      <h3>Decomposition — Separating Signal from Noise</h3>
       <div class="code-block"><pre>
-# ── Prophet (recommended for business data) ──
-from prophet import Prophet                               <span class="code-comment"># grab Prophet from prophet</span>
+from statsmodels.tsa.seasonal import seasonal_decompose, STL
+import matplotlib.pyplot as plt
 
-df_prophet = df[['date','sales']].rename(columns={'date':'ds','sales':'y'}) # ← # rename column or index labels
+# ── Additive decomposition: series = Trend + Seasonal + Residual ──────────────
+# Use when: seasonal amplitude is CONSTANT over time (doesn't grow with trend)
+decomp_add = seasonal_decompose(df['sales'], model='additive', period=12)
 
+# ── Multiplicative decomposition: series = Trend × Seasonal × Residual ────────
+# Use when: seasonal amplitude GROWS proportionally with trend level
+decomp_mul = seasonal_decompose(df['sales'], model='multiplicative', period=12)
+decomp_mul.plot()
+plt.tight_layout()
+plt.show()
+
+# ── STL decomposition (more robust, handles anomalies) ────────────────────────
+stl = STL(df['sales'], period=12, robust=True)   # robust=True ignores outliers
+res = stl.fit()
+res.plot()
+
+# Extract components:
+trend    = res.trend      # slowly-changing direction
+seasonal = res.seasonal   # repeating periodic pattern
+residual = res.resid      # what's left — should be random noise
+
+# If residual has structure (ACF shows significant lags) → you missed something
+# If seasonal component has sub-patterns → consider higher frequency
+</pre></div>
+    </div>
+
+    <!-- PROPHET -->
+    <div class="topic-card">
+      <h3>Prophet — The Business-Friendly Forecasting Tool</h3>
+      <p style="line-height:1.7">Prophet was built at Meta for business forecasting. It handles multiple seasonalities automatically, works well with missing values, and lets you add holiday effects. The model decomposes into trend + yearly seasonality + weekly seasonality + holidays + custom seasonalities. It is not great for very short series (&lt;2 years) or highly irregular data, but is excellent for retail, web traffic, and operational metrics.</p>
+      <div class="code-block"><pre>
+from prophet import Prophet
+import pandas as pd
+
+# ── Data must have exactly two columns: 'ds' (date) and 'y' (value) ────────────
+df_prophet = df[['date', 'sales']].rename(columns={'date': 'ds', 'y': 'sales'})
+# Wait — the rename is: {'date': 'ds', 'sales': 'y'}
+df_prophet = df[['date', 'sales']].rename(columns={'date': 'ds', 'sales': 'y'})
+
+# ── Configure and fit ─────────────────────────────────────────────────────────
 model = Prophet(
-    seasonality_mode='multiplicative',  # use when amplitude grows with level
+    seasonality_mode='multiplicative',   # use 'additive' if amplitude is stable
     yearly_seasonality=True,
     weekly_seasonality=True,
-    changepoint_prior_scale=0.1,        # flexibility of trend; higher=more flexible
-    seasonality_prior_scale=10          # strength of seasonality
+    daily_seasonality=False,             # enable only for sub-daily data
+    changepoint_prior_scale=0.1,         # flexibility of trend changepoints
+    # lower=smoother trend, higher=more flexible (risk of overfitting trend)
+    seasonality_prior_scale=10,          # strength of seasonality regularization
 )
-model.add_country_holidays(country_name='IN')  # Indian holidays
-model.fit(df_prophet)                                     <span class="code-comment"># learn patterns from this data</span>
+model.add_country_holidays(country_name='IN')   # adds Indian public holidays as regressors
+model.fit(df_prophet)
 
-future   = model.make_future_dataframe(periods=90)
-forecast = model.predict(future)                          <span class="code-comment"># use the trained model to make guesses</span>
+# ── Forecast ──────────────────────────────────────────────────────────────────
+future   = model.make_future_dataframe(periods=90, freq='D')   # 90 days ahead
+forecast = model.predict(future)
+# forecast['yhat'] = predicted value
+# forecast['yhat_lower'], forecast['yhat_upper'] = 80% CI
 
-# Components plot: trend + weekly + yearly seasonality
+# ── Plot components: trend + weekly + yearly ───────────────────────────────────
+model.plot(forecast)
 model.plot_components(forecast)
-plt.show()                                                <span class="code-comment"># display the chart</span>
+plt.show()
 
-# ── Evaluation ──
-from prophet.diagnostics import cross_validation, performance_metrics # ← # import cross_validation, performance_metrics from prophet.diagnostics
-df_cv = cross_validation(model, initial='365 days', period='90 days', horizon='90 days')
+# ── Cross-validation evaluation ───────────────────────────────────────────────
+from prophet.diagnostics import cross_validation, performance_metrics
+df_cv   = cross_validation(model, initial='365 days', period='90 days', horizon='90 days')
 df_perf = performance_metrics(df_cv)
-print(df_perf[['horizon','mape','rmse']].tail())          <span class="code-comment"># show the last 5 rows</span>
+print(df_perf[['horizon', 'mape', 'rmse', 'mae']].tail())
+# MAPE < 10% = excellent; < 20% = acceptable for business forecasting
 </pre></div>
+    </div>
+
+    <!-- MODEL COMPARISON -->
+    <div class="topic-card">
+      <h3>Choosing the Right Time Series Model</h3>
+      <svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Time Series Model Comparison — When to Use Each</text>
+  <!-- ARIMA -->
+  <rect x="10" y="28" width="115" height="165" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="67" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">ARIMA</text>
+  <text x="67" y="66" text-anchor="middle" font-size="9" fill="#374151">Classical stats</text>
+  <line x1="20" y1="73" x2="115" y2="73" stroke="#dbeafe" stroke-width="1"/>
+  <text x="67" y="88" text-anchor="middle" font-size="9" fill="#374151">✓ Single series</text>
+  <text x="67" y="104" text-anchor="middle" font-size="9" fill="#374151">✓ Explainable</text>
+  <text x="67" y="120" text-anchor="middle" font-size="9" fill="#374151">✓ Short horizon</text>
+  <text x="67" y="136" text-anchor="middle" font-size="9" fill="#dc2626">✗ No seasonality</text>
+  <text x="67" y="152" text-anchor="middle" font-size="9" fill="#dc2626">✗ Manual params</text>
+  <text x="67" y="168" text-anchor="middle" font-size="9" fill="#dc2626">✗ Needs stationarity</text>
+  <text x="67" y="185" text-anchor="middle" font-size="9" fill="#6b7280">→ Use SARIMA for seasonal</text>
+  <!-- Prophet -->
+  <rect x="133" y="28" width="115" height="165" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="190" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Prophet</text>
+  <text x="190" y="66" text-anchor="middle" font-size="9" fill="#374151">Facebook / Meta</text>
+  <line x1="143" y1="73" x2="238" y2="73" stroke="#dcfce7" stroke-width="1"/>
+  <text x="190" y="88" text-anchor="middle" font-size="9" fill="#374151">✓ Auto-seasonal</text>
+  <text x="190" y="104" text-anchor="middle" font-size="9" fill="#374151">✓ Holiday effects</text>
+  <text x="190" y="120" text-anchor="middle" font-size="9" fill="#374151">✓ Missing values OK</text>
+  <text x="190" y="136" text-anchor="middle" font-size="9" fill="#374151">✓ Business-friendly</text>
+  <text x="190" y="152" text-anchor="middle" font-size="9" fill="#dc2626">✗ Complex patterns</text>
+  <text x="190" y="168" text-anchor="middle" font-size="9" fill="#dc2626">✗ Many time series</text>
+  <text x="190" y="185" text-anchor="middle" font-size="9" fill="#6b7280">→ Best for retail/ops</text>
+  <!-- LSTM -->
+  <rect x="256" y="28" width="115" height="165" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="313" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#7e22ce">LSTM</text>
+  <text x="313" y="66" text-anchor="middle" font-size="9" fill="#374151">Deep learning</text>
+  <line x1="266" y1="73" x2="361" y2="73" stroke="#f3e8ff" stroke-width="1"/>
+  <text x="313" y="88" text-anchor="middle" font-size="9" fill="#374151">✓ Complex patterns</text>
+  <text x="313" y="104" text-anchor="middle" font-size="9" fill="#374151">✓ Long sequences</text>
+  <text x="313" y="120" text-anchor="middle" font-size="9" fill="#374151">✓ Multi-variate</text>
+  <text x="313" y="136" text-anchor="middle" font-size="9" fill="#dc2626">✗ Needs lots of data</text>
+  <text x="313" y="152" text-anchor="middle" font-size="9" fill="#dc2626">✗ Not explainable</text>
+  <text x="313" y="168" text-anchor="middle" font-size="9" fill="#dc2626">✗ Slow to train</text>
+  <text x="313" y="185" text-anchor="middle" font-size="9" fill="#6b7280">→ Finance, IoT sensors</text>
+  <!-- XGBoost -->
+  <rect x="379" y="28" width="115" height="165" rx="8" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+  <text x="436" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">XGBoost+Lags</text>
+  <text x="436" y="66" text-anchor="middle" font-size="9" fill="#374151">Tabular ML approach</text>
+  <line x1="389" y1="73" x2="484" y2="73" stroke="#fef9c3" stroke-width="1"/>
+  <text x="436" y="88" text-anchor="middle" font-size="9" fill="#374151">✓ Many series</text>
+  <text x="436" y="104" text-anchor="middle" font-size="9" fill="#374151">✓ External features</text>
+  <text x="436" y="120" text-anchor="middle" font-size="9" fill="#374151">✓ SHAP explanations</text>
+  <text x="436" y="136" text-anchor="middle" font-size="9" fill="#374151">✓ Fast inference</text>
+  <text x="436" y="152" text-anchor="middle" font-size="9" fill="#dc2626">✗ Feature engineering</text>
+  <text x="436" y="168" text-anchor="middle" font-size="9" fill="#dc2626">✗ Needs lag features</text>
+  <text x="436" y="185" text-anchor="middle" font-size="9" fill="#6b7280">→ Retail, supply chain</text>
+  <!-- Auto ML -->
+  <rect x="502" y="28" width="110" height="165" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="557" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Auto-ARIMA</text>
+  <text x="557" y="66" text-anchor="middle" font-size="9" fill="#374151">pmdarima</text>
+  <line x1="512" y1="73" x2="602" y2="73" stroke="#ffedd5" stroke-width="1"/>
+  <text x="557" y="88" text-anchor="middle" font-size="9" fill="#374151">✓ Auto p,d,q</text>
+  <text x="557" y="104" text-anchor="middle" font-size="9" fill="#374151">✓ AIC selection</text>
+  <text x="557" y="120" text-anchor="middle" font-size="9" fill="#374151">✓ Quick baseline</text>
+  <text x="557" y="136" text-anchor="middle" font-size="9" fill="#374151">✓ No manual tuning</text>
+  <text x="557" y="152" text-anchor="middle" font-size="9" fill="#dc2626">✗ Slow on large data</text>
+  <text x="557" y="168" text-anchor="middle" font-size="9" fill="#dc2626">✗ Black box params</text>
+  <text x="557" y="185" text-anchor="middle" font-size="9" fill="#6b7280">→ Prototyping fast</text>
+</svg>
+      <div class="code-block"><pre>
+# ── XGBoost with lag features — tabular ML approach for time series ────────────
+import pandas as pd, numpy as np
+from xgboost import XGBRegressor
+from sklearn.metrics import mean_absolute_error
+
+def create_lag_features(df, target_col, lags=[1, 2, 3, 7, 14, 28, 90]):
+    for lag in lags:
+        df[f'{target_col}_lag{lag}']  = df[target_col].shift(lag)   # value N days ago
+    # Rolling features
+    df[f'{target_col}_roll7_mean']  = df[target_col].shift(1).rolling(7).mean()
+    df[f'{target_col}_roll28_mean'] = df[target_col].shift(1).rolling(28).mean()
+    df[f'{target_col}_roll7_std']   = df[target_col].shift(1).rolling(7).std()
+    # Date features
+    df['day_of_week']  = pd.to_datetime(df['date']).dt.dayofweek
+    df['month']        = pd.to_datetime(df['date']).dt.month
+    df['is_weekend']   = (pd.to_datetime(df['date']).dt.dayofweek >= 5).astype(int)
+    return df.dropna()
+
+df_features = create_lag_features(df.copy(), 'sales')
+
+# Time-based split (never shuffle time series!)
+cutoff = df_features['date'].quantile(0.8)                # 80% train, 20% test
+train  = df_features[df_features['date'] &lt;= cutoff]
+test   = df_features[df_features['date'] &gt; cutoff]
+
+feature_cols = [c for c in df_features.columns if c not in ['date', 'sales']]
+model = XGBRegressor(n_estimators=500, learning_rate=0.05,
+                     max_depth=6, random_state=42)
+model.fit(train[feature_cols], train['sales'],
+          eval_set=[(test[feature_cols], test['sales'])],
+          early_stopping_rounds=50, verbose=False)
+
+preds = model.predict(test[feature_cols])
+mae   = mean_absolute_error(test['sales'], preds)
+mape  = np.mean(np.abs((test['sales'] - preds) / test['sales'])) * 100
+print(f"MAE: {mae:.0f}, MAPE: {mape:.1f}%")
+</pre></div>
+      <div class="note-box"><strong>Interview tip — time series CV:</strong> Never use regular k-fold for time series — it leaks future data into training. Always use <code>TimeSeriesSplit</code> or manual forward-chaining: train on months 1-6, test on 7. Then train on 1-7, test on 8. Never shuffle.</div>
     </div>
 
   </div>

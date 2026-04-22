@@ -3477,310 +3477,1022 @@ print(f"P(class 0), P(class 1) for first 3 samples:
 ═══════════════════════════════════════════════════ -->
 <div class="algo-section" id="s7">
   <div class="algo-header">
-    <div class="algo-number">7</div>
+    <span class="algo-icon">📍</span>
     <div>
-      <div class="algo-title">KNN — K-Nearest Neighbors</div>
-      <div class="algo-subtitle">Tell me who your neighbors are and I'll tell you who you are</div>
+      <div class="algo-title">K-Nearest Neighbors (KNN)</div>
+      <div class="algo-subtitle">The "Ask Your Neighbours" Algorithm — No Training, Pure Memory</div>
     </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('s7','what')">📖 What Is It</button>
-    <button class="tab-btn" onclick="showTab('s7','how')">⚙️ How It Works</button>
-    <button class="tab-btn" onclick="showTab('s7','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s7','code')">💻 Code & Internals</button>
-    <button class="tab-btn" onclick="showTab('s7','terms')">📚 Key Terms</button>
   </div>
 
-  <div class="tab-content active" id="s7-what">
-    <div class="card">
-      <h3>The Simplest Possible Algorithm</h3>
-      <p>KNN doesn't learn anything during training. It just <strong>memorizes all the training data</strong>. When a new point arrives, it finds the K closest points in memory and lets them vote on the answer.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s7','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s7','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s7','params')">Parameters</button>
+    <button class="tab-btn" onclick="showTab('s7','code')">Code</button>
+    <button class="tab-btn" onclick="showTab('s7','tips')">When to Use</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s7-concept">
+    <h3 style="color:#38bdf8">What is KNN? (Plain English First)</h3>
+    <p>Imagine you just moved to a new city and you want to know if a neighbourhood is safe. You don't have statistics — but you look at the <strong>5 nearest houses</strong> and see what kind of families live there. If 4 out of 5 are happy families, you conclude the neighbourhood is safe.</p>
+    <p>That is <strong>exactly</strong> what KNN does with data. When it sees a new data point, it <strong>looks at the K closest points</strong> already in the dataset and takes a vote (classification) or averages their values (regression).</p>
+
+    <div class="concept-box">
+      <h4>The KNN Algorithm — Step by Step</h4>
+      <ol style="line-height:2">
+        <li><strong>Store</strong> — During "training", KNN just memorises all training data. There is NO model built.</li>
+        <li><strong>Measure Distance</strong> — When a new point arrives, calculate the distance between it and every training point.</li>
+        <li><strong>Sort</strong> — Sort all training points from nearest to farthest.</li>
+        <li><strong>Pick Top K</strong> — Take the K nearest ones.</li>
+        <li><strong>Vote (Classification)</strong> — The most common class among those K wins.</li>
+        <li><strong>Average (Regression)</strong> — The mean value of those K points becomes the prediction.</li>
+      </ol>
     </div>
-    <div class="analogy">
-      <div class="label">🏘️ Analogy — Neighborhood Voting</div>
-      <p>You're trying to decide which restaurant to eat at. Instead of researching, you ask your 5 nearest friends what they prefer. 4 say Indian, 1 says Chinese → you go Indian. KNN does this for data: new point arrives, find 5 nearest training points, majority vote decides the class.</p>
+
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">Real-World Analogies</h4>
+      <table style="width:100%;border-collapse:collapse">
+        <tr style="border-bottom:1px solid #334155">
+          <th style="text-align:left;padding:6px;color:#94a3b8">Scenario</th>
+          <th style="text-align:left;padding:6px;color:#94a3b8">KNN Equivalent</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:6px">Recommending a movie based on your past 5 favourite films</td>
+          <td style="padding:6px">K=5 nearest movies in feature space → recommend the genre they share</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:6px">Doctor diagnosing a patient by comparing to 3 similar past patients</td>
+          <td style="padding:6px">K=3 nearest patient records → majority diagnosis</td>
+        </tr>
+        <tr>
+          <td style="padding:6px">Predicting house price from 10 similar nearby houses</td>
+          <td style="padding:6px">K=10, regression → average of those 10 prices</td>
+        </tr>
+      </table>
     </div>
-    <div class="card">
-      <h3>KNN is a Lazy Learner</h3>
+
+    <div class="concept-box" style="border-color:#a855f7">
+      <h4 style="color:#d8b4fe">Why "Lazy" Learner?</h4>
+      <p>KNN is called a <strong>lazy learner</strong> because it does zero work during training — it just stores data. All the computation happens at <em>prediction time</em>. This means:</p>
       <ul>
-        <li><strong>Training:</strong> Just store all data. No computation. Instant.</li>
-        <li><strong>Prediction:</strong> For each new point, calculate distance to ALL training points. Very slow for large datasets.</li>
-        <li>This is opposite to most algorithms (which train slowly but predict fast)</li>
+        <li>Training is instant (just copy data to memory)</li>
+        <li>But prediction is slow — must compare against every training point</li>
+        <li>With 1 million training points, every single prediction requires 1 million distance calculations</li>
       </ul>
-      <div class="highlight"><p>KNN with 1 million training points: each prediction requires 1 million distance calculations. This is why KNN doesn't scale to large datasets.</p></div>
     </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">Distance Metrics — How "Close" is Measured</h3>
+    <p>The word "nearest" means nothing without defining what "distance" means. Here are the main options:</p>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Metric</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Formula</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Best When</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Avoid When</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#22c55e"><strong>Euclidean</strong></td>
+        <td style="padding:8px;font-family:monospace">√(Σ(aᵢ−bᵢ)²)</td>
+        <td style="padding:8px">Continuous data, similar scales</td>
+        <td style="padding:8px">High dimensions (curse of dimensionality)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#f59e0b"><strong>Manhattan</strong></td>
+        <td style="padding:8px;font-family:monospace">Σ|aᵢ−bᵢ|</td>
+        <td style="padding:8px">Grid-like data, when outliers exist</td>
+        <td style="padding:8px">When diagonal moves are meaningful</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#a855f7"><strong>Minkowski</strong></td>
+        <td style="padding:8px;font-family:monospace">(Σ|aᵢ−bᵢ|ᵖ)^(1/p)</td>
+        <td style="padding:8px">General; p=1→Manhattan, p=2→Euclidean</td>
+        <td style="padding:8px">When you don't know which p to pick</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;color:#38bdf8"><strong>Hamming</strong></td>
+        <td style="padding:8px;font-family:monospace">Count of positions where aᵢ≠bᵢ</td>
+        <td style="padding:8px">Categorical / binary features</td>
+        <td style="padding:8px">Continuous numeric features</td>
+      </tr>
+    </table>
+
+    <div class="concept-box" style="border-color:#ef4444;margin-top:16px">
+      <h4 style="color:#f87171">Critical Warning: Feature Scaling is MANDATORY for KNN</h4>
+      <p>If "age" ranges from 20–80 and "salary" ranges from 20,000–200,000, the distance calculation will be completely dominated by salary. A tiny salary difference will matter far more than a huge age difference — even if age is the more important feature.</p>
+      <p><strong>Always scale your features before using KNN:</strong></p>
+      <ul>
+        <li><code>StandardScaler</code> — subtracts mean, divides by std dev → values centered around 0</li>
+        <li><code>MinMaxScaler</code> — scales everything to [0, 1] range</li>
+      </ul>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">Choosing K — The Most Important Decision</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">K Value</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Effect</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Problem</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#ef4444"><strong>K = 1</strong></td>
+        <td style="padding:8px">Extremely flexible, fits every point</td>
+        <td style="padding:8px">Overfitting — memorises noise; bad on new data</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#22c55e"><strong>K = 5–20</strong></td>
+        <td style="padding:8px">Balanced generalisation</td>
+        <td style="padding:8px">Usually the sweet spot — start here</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;color:#f59e0b"><strong>K = N (all data)</strong></td>
+        <td style="padding:8px">Always predicts majority class</td>
+        <td style="padding:8px">Underfitting — ignores the local neighbourhood</td>
+      </tr>
+    </table>
+    <p style="margin-top:8px;color:#94a3b8"><strong>Rule of thumb:</strong> Start with K = √(number of training samples). Always use odd K for binary classification (prevents ties).</p>
   </div>
 
-  <div class="tab-content" id="s7-how">
-    <div class="card">
-      <h3>The Prediction Process</h3>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Step 1</div><div class="step-txt">New data point arrives (e.g., a movie with certain features)</div></div>
-        <div class="flow-step"><div class="step-num">Step 2</div><div class="step-txt">Calculate distance from new point to every training point</div></div>
-        <div class="flow-step"><div class="step-num">Step 3</div><div class="step-txt">Sort by distance, pick K nearest neighbors</div></div>
-        <div class="flow-step"><div class="step-num">Step 4</div><div class="step-txt">Classification: majority vote. Regression: average of K neighbors.</div></div>
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s7-visual">
+    <h3 style="color:#38bdf8">How KNN Votes to Classify</h3>
+    <svg viewBox="0 0 520 340" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;width:100%;font-family:sans-serif">
+  <rect width="520" height="340" rx="12" fill="#0f172a"/>
+  <!-- Title -->
+  <text x="260" y="28" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">KNN: K=5 Voting — "Which class is the new point?"</text>
+  <!-- Axes -->
+  <line x1="50" y1="290" x2="480" y2="290" stroke="#475569" stroke-width="1.5"/>
+  <line x1="50" y1="290" x2="50"  y2="50"  stroke="#475569" stroke-width="1.5"/>
+  <text x="265" y="315" text-anchor="middle" fill="#94a3b8" font-size="11">Feature 1 (e.g. Height)</text>
+  <text x="18" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" transform="rotate(-90,18,170)">Feature 2 (e.g. Weight)</text>
+  <!-- Blue class points (scattered) -->
+  <circle cx="140" cy="110" r="9" fill="#3b82f6" opacity="0.9"/>
+  <circle cx="200" cy="150" r="9" fill="#3b82f6" opacity="0.9"/>
+  <circle cx="170" cy="200" r="9" fill="#3b82f6" opacity="0.9"/>
+  <circle cx="120" cy="170" r="9" fill="#3b82f6" opacity="0.9"/>
+  <circle cx="100" cy="130" r="9" fill="#3b82f6" opacity="0.9"/>
+  <circle cx="90"  cy="230" r="9" fill="#3b82f6" opacity="0.9"/>
+  <!-- Red class points (scattered) -->
+  <circle cx="360" cy="120" r="9" fill="#ef4444" opacity="0.9"/>
+  <circle cx="400" cy="170" r="9" fill="#ef4444" opacity="0.9"/>
+  <circle cx="370" cy="220" r="9" fill="#ef4444" opacity="0.9"/>
+  <circle cx="430" cy="130" r="9" fill="#ef4444" opacity="0.9"/>
+  <circle cx="420" cy="240" r="9" fill="#ef4444" opacity="0.9"/>
+  <!-- New mystery point -->
+  <circle cx="260" cy="175" r="12" fill="#fbbf24" stroke="#fff" stroke-width="2.5"/>
+  <text x="260" y="179" text-anchor="middle" fill="#000" font-size="11" font-weight="bold">?</text>
+  <!-- K=5 nearest neighbors circle -->
+  <circle cx="260" cy="175" r="88" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <!-- Lines to 5 nearest neighbors -->
+  <line x1="260" y1="175" x2="200" y2="150" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="260" y1="175" x2="170" y2="200" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="260" y1="175" x2="200" y2="150" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="260" y1="175" x2="170" y2="200" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="260" y1="175" x2="360" y2="120" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="260" y1="175" x2="370" y2="220" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="260" y1="175" x2="400" y2="170" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Neighbor count box -->
+  <rect x="185" y="230" width="150" height="60" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="260" y="248" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">K=5 Neighbors Found</text>
+  <text x="260" y="265" text-anchor="middle" fill="#3b82f6" font-size="11">● Blue: 2 votes</text>
+  <text x="260" y="281" text-anchor="middle" fill="#ef4444" font-size="11">● Red: 3 votes → WINNER</text>
+  <!-- Legend -->
+  <circle cx="60" cy="316" r="7" fill="#3b82f6"/>
+  <text x="72" y="320" fill="#94a3b8" font-size="10">Class A (Blue)</text>
+  <circle cx="160" cy="316" r="7" fill="#ef4444"/>
+  <text x="172" y="320" fill="#94a3b8" font-size="10">Class B (Red)</text>
+  <circle cx="270" cy="316" r="7" fill="#fbbf24"/>
+  <text x="282" y="320" fill="#94a3b8" font-size="10">New Point → Classified Red</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">The yellow question mark is the new point. The dashed circle is the K=5 nearest-neighbor radius. Lines connect to each neighbor. 3 red, 2 blue → predicted class = Red.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Impact of K on Decision Boundary</h3>
+    <svg viewBox="0 0 540 260" xmlns="http://www.w3.org/2000/svg" style="max-width:540px;width:100%;font-family:sans-serif">
+  <rect width="540" height="260" rx="12" fill="#0f172a"/>
+  <text x="270" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Impact of K Value on Decision Boundary</text>
+  <!-- Panel 1: K=1 (overfit) -->
+  <rect x="20" y="38" width="155" height="155" rx="6" fill="#1e293b"/>
+  <text x="97" y="58" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="bold">K = 1</text>
+  <text x="97" y="74" text-anchor="middle" fill="#ef4444" font-size="10">OVERFIT — jagged boundary</text>
+  <circle cx="60"  cy="100" r="7" fill="#3b82f6"/>
+  <circle cx="80"  cy="130" r="7" fill="#3b82f6"/>
+  <circle cx="70"  cy="160" r="7" fill="#3b82f6"/>
+  <circle cx="110" cy="95"  r="7" fill="#ef4444"/>
+  <circle cx="130" cy="125" r="7" fill="#ef4444"/>
+  <circle cx="145" cy="158" r="7" fill="#ef4444"/>
+  <circle cx="95"  cy="145" r="7" fill="#ef4444"/>
+  <path d="M85,90 Q90,115 75,135 Q65,155 85,175" fill="none" stroke="#facc15" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Panel 2: K=5 (good) -->
+  <rect x="192" y="38" width="155" height="155" rx="6" fill="#1e293b"/>
+  <text x="269" y="58" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="bold">K = 5</text>
+  <text x="269" y="74" text-anchor="middle" fill="#22c55e" font-size="10">JUST RIGHT — smooth boundary</text>
+  <circle cx="225" cy="100" r="7" fill="#3b82f6"/>
+  <circle cx="245" cy="130" r="7" fill="#3b82f6"/>
+  <circle cx="235" cy="160" r="7" fill="#3b82f6"/>
+  <circle cx="285" cy="95"  r="7" fill="#ef4444"/>
+  <circle cx="305" cy="125" r="7" fill="#ef4444"/>
+  <circle cx="315" cy="158" r="7" fill="#ef4444"/>
+  <circle cx="265" cy="145" r="7" fill="#ef4444"/>
+  <path d="M255,82 L258,195" fill="none" stroke="#facc15" stroke-width="2"/>
+  <!-- Panel 3: K=all (underfit) -->
+  <rect x="364" y="38" width="155" height="155" rx="6" fill="#1e293b"/>
+  <text x="441" y="58" text-anchor="middle" fill="#f87171" font-size="12" font-weight="bold">K = N (all)</text>
+  <text x="441" y="74" text-anchor="middle" fill="#ef4444" font-size="10">UNDERFIT — always majority</text>
+  <circle cx="400" cy="100" r="7" fill="#3b82f6"/>
+  <circle cx="420" cy="130" r="7" fill="#3b82f6"/>
+  <circle cx="410" cy="160" r="7" fill="#3b82f6"/>
+  <circle cx="460" cy="95"  r="7" fill="#ef4444"/>
+  <circle cx="480" cy="125" r="7" fill="#ef4444"/>
+  <circle cx="495" cy="158" r="7" fill="#ef4444"/>
+  <circle cx="440" cy="145" r="7" fill="#ef4444"/>
+  <rect x="364" y="38" width="155" height="155" rx="6" fill="#ef444422"/>
+  <text x="441" y="130" text-anchor="middle" fill="#ef4444" font-size="28" opacity="0.5">✗</text>
+  <!-- Bottom tip -->
+  <text x="270" y="226" text-anchor="middle" fill="#94a3b8" font-size="11">Tip: Start with K=sqrt(N). Always use odd K for binary classification to avoid ties.</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">K=1 creates wiggly, complex boundaries that perfectly fit training data but fail on test data. K=5 creates smooth boundaries that generalise well. K=all always predicts the majority class — it stops looking locally.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Distance Metrics Visualised</h3>
+    <svg viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg" style="max-width:540px;width:100%;font-family:sans-serif">
+  <rect width="540" height="280" rx="12" fill="#0f172a"/>
+  <text x="270" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Distance Metrics: Same 2 Points, Different Distances</text>
+  <!-- Grid -->
+  <rect x="30" y="40" width="480" height="200" rx="6" fill="#1e293b"/>
+  <!-- Point A and B on a mini grid -->
+  <line x1="90"  y1="60"  x2="90"  y2="230" stroke="#334155" stroke-width="1"/>
+  <line x1="180" y1="60"  x2="180" y2="230" stroke="#334155" stroke-width="1"/>
+  <line x1="270" y1="60"  x2="270" y2="230" stroke="#334155" stroke-width="1"/>
+  <line x1="360" y1="60"  x2="360" y2="230" stroke="#334155" stroke-width="1"/>
+  <line x1="450" y1="60"  x2="450" y2="230" stroke="#334155" stroke-width="1"/>
+  <line x1="30"  y1="110" x2="510" y2="110" stroke="#334155" stroke-width="1"/>
+  <line x1="30"  y1="160" x2="510" y2="160" stroke="#334155" stroke-width="1"/>
+  <!-- Points -->
+  <circle cx="120" cy="90"  r="9" fill="#3b82f6"/>
+  <text x="120" y="80" text-anchor="middle" fill="#93c5fd" font-size="10">A (1,2)</text>
+  <circle cx="390" cy="190" r="9" fill="#ef4444"/>
+  <text x="390" y="210" text-anchor="middle" fill="#fca5a5" font-size="10">B (4,5)</text>
+  <!-- Euclidean: straight diagonal -->
+  <line x1="120" y1="90" x2="390" y2="190" stroke="#22c55e" stroke-width="2.5"/>
+  <text x="240" y="128" text-anchor="middle" fill="#22c55e" font-size="11">Euclidean</text>
+  <text x="240" y="140" text-anchor="middle" fill="#22c55e" font-size="10">√((4-1)²+(5-2)²) = 4.24</text>
+  <!-- Manhattan: L-shape -->
+  <polyline points="120,90 390,90 390,190" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="430" y="140" text-anchor="middle" fill="#f59e0b" font-size="11">Manhattan</text>
+  <text x="430" y="153" text-anchor="middle" fill="#f59e0b" font-size="10">|4-1|+|5-2|=6</text>
+  <!-- Minkowski label -->
+  <rect x="40" y="218" width="460" height="18" rx="4" fill="#0f172a"/>
+  <text x="270" y="231" text-anchor="middle" fill="#94a3b8" font-size="10">Minkowski (p param): p=1→Manhattan  p=2→Euclidean  p=∞→Chebyshev (max single-axis diff)</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Same two points — different distances depending on which metric you use. Euclidean takes the straight-line path. Manhattan forces you to travel along a grid (like city blocks). Your choice of metric changes which points are considered "nearest".</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">External Reference: KNN Visual Explainer</h3>
+    <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*ZQ9TFpLHT4eJBEQHyFRg8g.png"
+         alt="KNN Decision Boundary"
+         style="max-width:100%;border-radius:8px;border:1px solid #334155"
+         onerror="this.style.display='none'">
+  </div>
+
+  <!-- PARAMS TAB -->
+  <div class="tab-content" id="s7-params">
+    <h3 style="color:#38bdf8">KNeighborsClassifier — Every Parameter Explained</h3>
+
+    <div class="param-card">
+      <div class="param-name">n_neighbors <span class="param-default">default=5</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The value of K — how many nearest neighbours to consider when voting.<br>
+        <strong>Think of it as:</strong> "How many neighbours do I ask before deciding?"<br>
+        <strong>Impact of changing:</strong>
+        <ul>
+          <li>Low K (e.g., 1-3): Highly sensitive to individual points. Wiggly decision boundary. Overfits.</li>
+          <li>High K (e.g., 50+): Very smooth boundary. May underfit and miss local patterns.</li>
+          <li>K=1: Perfect training accuracy but terrible test accuracy (memorises noise).</li>
+        </ul>
+        <strong>How to tune:</strong> Use cross-validation across a range of K values (1 to 30). Plot validation accuracy vs K and pick the elbow.<br>
+        <code>for k in range(1, 31): model = KNeighborsClassifier(n_neighbors=k)</code>
       </div>
     </div>
-    <div class="card">
-      <h3>Distance Metrics</h3>
-      <ul>
-        <li><strong>Euclidean Distance:</strong> Straight-line distance. √[(x₁-x₂)² + (y₁-y₂)²]. Most common. Works well for continuous features.</li>
-        <li><strong>Manhattan Distance:</strong> Grid-path distance (like city blocks). |x₁-x₂| + |y₁-y₂|. Better when features have different units.</li>
-        <li><strong>Cosine Similarity:</strong> Angle between vectors (not magnitude). Used for text data (TF-IDF vectors).</li>
-      </ul>
+
+    <div class="param-card">
+      <div class="param-name">weights <span class="param-default">default='uniform'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> How much "say" each neighbour gets in the vote.<br>
+        <strong>Options:</strong>
+        <ul>
+          <li><code>'uniform'</code> — All K neighbours vote equally. A neighbour at distance 0.1 and one at distance 10 have the same weight.</li>
+          <li><code>'distance'</code> — Closer neighbours vote louder. Weight = 1/distance. Far-away neighbours barely matter.</li>
+          <li><code>callable</code> — You can pass your own custom weighting function.</li>
+        </ul>
+        <strong>When to use distance weights:</strong> When you believe very close neighbours are much more informative than far-away ones.<br>
+        <strong>Example impact:</strong> If a new point has 3 very nearby red neighbours (distance 0.1) and 2 far blue neighbours (distance 5.0), uniform voting → possible tie; distance weighting → strongly red.
+      </div>
     </div>
-    <div class="card">
-      <h3>Choosing K — The Critical Decision</h3>
-      <ul>
-        <li><strong>K=1:</strong> Predict based on single nearest neighbor. Very complex, noisy decision boundary. Overfits.</li>
-        <li><strong>K=50:</strong> Smooth boundary, but might miss local patterns. Underfits.</li>
-        <li><strong>Best K:</strong> Use cross-validation. Try odd numbers (avoid ties). Typically 5-20.</li>
-      </ul>
+
+    <div class="param-card">
+      <div class="param-name">algorithm <span class="param-default">default='auto'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The data structure/algorithm used to find the K nearest neighbours efficiently.<br>
+        <strong>Options:</strong>
+        <ul>
+          <li><code>'auto'</code> — Sklearn picks the best algorithm based on your data. Almost always start here.</li>
+          <li><code>'ball_tree'</code> — Organises data in a ball tree. Fast for many dimensions (>20 features). Uses Minkowski distances.</li>
+          <li><code>'kd_tree'</code> — Organises data in a KD-tree. Fast for low dimensions (&lt;20 features). Only Euclidean/Manhattan.</li>
+          <li><code>'brute'</code> — Compares every training point one by one. Slow but always correct. Use for tiny datasets.</li>
+        </ul>
+        <strong>Speed comparison:</strong> For 100,000 data points, brute force calculates 100,000 distances per prediction; KD-tree only calculates ~17 (log₂(100000) ≈ 17).
+      </div>
     </div>
+
+    <div class="param-card">
+      <div class="param-name">leaf_size <span class="param-default">default=30</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Only applies when algorithm is 'ball_tree' or 'kd_tree'. Determines when the tree stops splitting and just stores points in a leaf node.<br>
+        <strong>Impact of changing:</strong>
+        <ul>
+          <li>Smaller leaf_size: Deeper tree → faster queries but more memory and slower build time.</li>
+          <li>Larger leaf_size: Shallower tree → faster build but slower queries (brute-force inside the leaf).</li>
+        </ul>
+        <strong>Typical range:</strong> 20–50. Rarely needs tuning unless you have very large datasets.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">p <span class="param-default">default=2</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The power parameter for the Minkowski distance metric.<br>
+        <strong>Values:</strong>
+        <ul>
+          <li><code>p=1</code> → Manhattan distance (sum of absolute differences, like walking city blocks)</li>
+          <li><code>p=2</code> → Euclidean distance (straight-line distance — the default)</li>
+          <li><code>p=3+</code> → Higher-order Minkowski (rarely used in practice)</li>
+        </ul>
+        <strong>Only used when:</strong> metric='minkowski' (the default metric). If you explicitly set metric='manhattan', p is ignored.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">metric <span class="param-default">default='minkowski'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The distance function used to measure "closeness".<br>
+        <strong>Common values:</strong>
+        <ul>
+          <li><code>'minkowski'</code> — Default. Combined with p param: p=2 gives Euclidean, p=1 gives Manhattan.</li>
+          <li><code>'euclidean'</code> — Straight-line distance. Most common for continuous data.</li>
+          <li><code>'manhattan'</code> — City-block distance. Better when data has many outliers.</li>
+          <li><code>'cosine'</code> — Angle-based. Great for text data (measures direction, not magnitude).</li>
+          <li><code>'hamming'</code> — For binary/categorical features (fraction of positions that differ).</li>
+        </ul>
+        <strong>Rule:</strong> Use Euclidean for numeric data, cosine for text/NLP, Hamming for binary features.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">n_jobs <span class="param-default">default=None</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Number of CPU cores to use for distance calculations during prediction.<br>
+        <strong>Values:</strong> None=1 core, -1=all available cores, 4=use 4 cores.<br>
+        <strong>Impact:</strong> Prediction can be parallelised easily. Set n_jobs=-1 for large datasets to dramatically speed up prediction time.
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Key Attributes After Fitting</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Attribute</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">What It Contains</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">classes_</td>
+        <td style="padding:8px">Array of class labels the model knows about</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">effective_metric_</td>
+        <td style="padding:8px">The actual metric being used (may differ from metric param due to auto-selection)</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">n_samples_fit_</td>
+        <td style="padding:8px">Number of training samples stored (this IS the model)</td>
+      </tr>
+    </table>
   </div>
 
-  <div class="tab-content" id="s7-use">
-    <div class="card">
-      <h3>🎬 Real Use Case: Movie Recommendation System</h3>
-      <p>Netflix, Amazon Prime, and YouTube use KNN-style collaborative filtering. "Users who watched the same movies as you also watched X" — that's KNN on user behavior vectors.</p>
-    </div>
-    <div class="card">
-      <h3>How It Works for Recommendations</h3>
-      <ul>
-        <li>Each user is represented as a vector of movie ratings (thousands of dimensions)</li>
-        <li>To recommend to User A: find K users with most similar rating vectors</li>
-        <li>Movies those K users liked but User A hasn't seen → recommend those</li>
-      </ul>
-      <div class="highlight"><p>"Customers who bought similar items also bought X" on Amazon = KNN on purchase history vectors.</p></div>
-    </div>
-    <div class="card">
-      <h3>Other Use Cases</h3>
-      <ul>
-        <li><strong>Medical Diagnosis:</strong> Find patients with similar symptoms and lab values — what diagnosis did they have?</li>
-        <li><strong>Anomaly Detection:</strong> If a point has no close neighbors (is isolated), it's likely an anomaly</li>
-        <li><strong>Image Recognition:</strong> k-NN on image feature vectors (before deep learning era)</li>
-      </ul>
-    </div>
-  </div>
-
+  <!-- CODE TAB -->
   <div class="tab-content" id="s7-code">
-    <div class="card"><h3>Complete Code: KNN Classification with K Selection</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">from</span> sklearn.neighbors <span class="c-kw">import</span> <span class="c-cls">KNeighborsClassifier</span> -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.datasets <span class="c-kw">import</span> load_iris -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split, cross_val_score -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span> -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> classification_report -- specify the source table <span class="code-comment">-- the table to read from</span>
+    <h3 style="color:#38bdf8">Annotated Code — Every Line Explained</h3>
+    <pre><code class="language-python">
+from sklearn.neighbors import KNeighborsClassifier   # import the classifier
+from sklearn.preprocessing import StandardScaler      # MUST scale for KNN
+from sklearn.model_selection import cross_val_score   # for finding best K
+from sklearn.pipeline import Pipeline                 # bundle scaler + model
+import numpy as np
 
-data = load_iris()
-X, y = data.data, data.target
+# ── Step 1: Scale features (CRITICAL for KNN) ────────────────────────────────
+# Without scaling, salary (range 0-100k) dominates over age (range 20-80)
+# StandardScaler makes every feature have mean=0 and std=1
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)  # fit on train, transform train
+X_test_scaled  = scaler.transform(X_test)        # only transform test (no fit!)
 
-scaler = <span class="c-cls">StandardScaler</span>()
-X_scaled = scaler.fit_transform(X)
+# ── Step 2: Find the best K using cross-validation ───────────────────────────
+# Try every K from 1 to 25 and measure cross-validation accuracy
+k_scores = []
+for k in range(1, 26):
+    knn = KNeighborsClassifier(
+        n_neighbors=k,      # number of neighbours to vote
+        weights='uniform',  # each neighbour votes equally
+        algorithm='auto',   # sklearn picks the fastest data structure
+        metric='minkowski', # distance formula
+        p=2,                # p=2 with minkowski = euclidean distance
+    )
+    # 5-fold cross-validation — splits data 5 ways, tests each split
+    scores = cross_val_score(knn, X_train_scaled, y_train, cv=5)
+    k_scores.append(scores.mean())   # average accuracy across 5 folds
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled, y, test_size=0.2, random_state=42
+best_k = np.argmax(k_scores) + 1    # +1 because range started at 1
+print(f"Best K: {best_k}, Accuracy: {k_scores[best_k-1]:.3f}")
+
+# ── Step 3: Train final model with best K ────────────────────────────────────
+knn_final = KNeighborsClassifier(
+    n_neighbors=best_k,    # use the best K we found above
+    weights='distance',    # closer neighbours count more than farther ones
+    algorithm='auto',      # auto picks kd_tree/ball_tree/brute appropriately
+    leaf_size=30,          # only matters for ball_tree/kd_tree, default is fine
+    metric='minkowski',    # euclidean distance (p=2 below)
+    p=2,                   # p=2 → euclidean; change to 1 for manhattan
+    n_jobs=-1,             # use all CPU cores for faster prediction
 )
+knn_final.fit(X_train_scaled, y_train)  # "training" = storing all data in tree
 
-k_values = range(1, 31)
-cv_scores = []
+# ── Step 4: Predict and inspect ──────────────────────────────────────────────
+y_pred = knn_final.predict(X_test_scaled)   # for each test point, find K nearest, vote
 
-for k in k_values:
-    knn = <span class="c-cls">KNeighborsClassifier</span>(n_neighbors=k, metric='euclidean', weights='distance')
-    scores = cross_val_score(knn, X_train, y_train, cv=5)
-    cv_scores.append(scores.mean())
+# Get probabilities (useful for confidence scores)
+y_proba = knn_final.predict_proba(X_test_scaled)   # e.g. [0.33, 0.67] → 67% class 1
 
-best_k = k_values[np.argmax(cv_scores)]
-print(f"Best K: {best_k}, CV Accuracy: {max(cv_scores):.3f}") -- find the highest value in this column <span class="code-comment">-- largest value in this column</span>
+# Find actual neighbours for a single point (debugging / explainability)
+distances, indices = knn_final.kneighbors(X_test_scaled[:1])
+# distances: how far each neighbour is
+# indices: row numbers in training data of those K neighbours
+print(f"5 nearest neighbours are at distances: {distances[0].round(3)}")
 
-final_knn = <span class="c-cls">KNeighborsClassifier</span>(n_neighbors=best_k, metric='euclidean', weights='distance')
-final_knn.fit(X_train, y_train)
-y_pred = final_knn.predict(X_test)
-print(classification_report(y_test, y_pred, target_names=data.target_names))
+# ── Step 5: Better approach — use Pipeline so scaling + model are bundled ─────
+pipe = Pipeline([
+    ('scaler', StandardScaler()),               # step 1: scale
+    ('knn', KNeighborsClassifier(n_neighbors=best_k, weights='distance')),  # step 2: classify
+])
+pipe.fit(X_train, y_train)       # automatically scales then trains
+pipe.predict(X_test)             # automatically scales X_test before predicting
+# Pipeline prevents data leakage (scaler fitted only on training data)
+    </code></pre>
 
-new_flower = scaler.transform([[5.1, 3.5, 1.4, 0.2]])
-distances, indices = final_knn.kneighbors(new_flower)
-print(f"Nearest neighbor indices: {indices[0]}")
-print(f"Their distances: {distances[0].round(3)}")        <span class="code-comment">-- round to this many decimal places</span>
-print(f"Predicted class: {data.target_names[final_knn.predict(new_flower)[0]]}")
-</pre></div>
+    <h3 style="color:#38bdf8;margin-top:20px">KNN for Regression</h3>
+    <pre><code class="language-python">
+from sklearn.neighbors import KNeighborsRegressor
+
+# Same parameters, but instead of voting → averages the K neighbours' values
+knn_reg = KNeighborsRegressor(
+    n_neighbors=5,       # average of 5 nearest house prices
+    weights='distance',  # closer houses contribute more to the average
+    algorithm='auto',
+    metric='euclidean',
+)
+knn_reg.fit(X_train_scaled, y_train)
+y_pred = knn_reg.predict(X_test_scaled)   # returns average of K neighbours
+    </code></pre>
   </div>
 
-  <div class="tab-content" id="s7-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Euclidean Distance</span></td><td>Straight-line (as-the-crow-flies) distance between two points in N dimensions</td><td>Points (1,2) and (4,6): distance = √[(4-1)²+(6-2)²] = 5</td></tr>
-        <tr><td><span class="term-name">Manhattan Distance</span></td><td>Sum of absolute differences along each dimension — like navigating city blocks</td><td>Points (1,2) and (4,6): distance = |4-1|+|6-2| = 7</td></tr>
-        <tr><td><span class="term-name">K Value</span></td><td>How many neighbors vote. Low K = complex noisy boundary. High K = smooth boundary. Choose via cross-validation.</td><td>K=1: one neighbor (overfit). K=30: 30 neighbors (underfit for small dataset)</td></tr>
-        <tr><td><span class="term-name">Lazy Learner</span></td><td>Algorithm that stores all training data and does all computation at prediction time. No explicit training step.</td><td>Training: instant. Predicting 1 point in 1M dataset: 1M distance calculations</td></tr>
-        <tr><td><span class="term-name">Curse of Dimensionality</span></td><td>In high dimensions (many features), all points become equally far apart — KNN loses meaning because "nearest neighbor" is no longer meaningfully close</td><td>With 1000 features, even nearest neighbor may be very far away</td></tr>
-        <tr><td><span class="term-name">weights='distance'</span></td><td>Closer neighbors get more vote weight than distant ones. Better than equal voting when data is noisy.</td><td>Neighbor at distance 0.1 gets weight 10. At distance 1 gets weight 1.</td></tr>
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s7-tips">
+    <h3 style="color:#38bdf8">When to Use KNN</h3>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Use KNN When:</h4>
+      <ul style="line-height:1.9">
+        <li>Dataset is <strong>small to medium</strong> (under ~50,000 rows) — prediction speed is acceptable</li>
+        <li>You need a <strong>quick baseline</strong> model with minimal coding (no hyperparameter complexity)</li>
+        <li>The <strong>decision boundary is irregular</strong> and complex (KNN adapts automatically)</li>
+        <li>You have <strong>very few features</strong> (fewer dimensions = distance metrics work better)</li>
+        <li>You want <strong>interpretability</strong> — you can literally show which K training points influenced the prediction</li>
+        <li>Your data changes <strong>frequently</strong> — KNN requires no retraining, just add/remove data points</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Avoid KNN When:</h4>
+      <ul style="line-height:1.9">
+        <li>Dataset is <strong>large</strong> (millions of rows) — prediction becomes impossibly slow</li>
+        <li>You have <strong>many features</strong> (>20) — curse of dimensionality makes distances meaningless</li>
+        <li>Features are on <strong>very different scales</strong> and you cannot/have not scaled them</li>
+        <li>You have <strong>categorical features</strong> with no meaningful distance (use label encoding carefully)</li>
+        <li>You need <strong>feature importance</strong> — KNN cannot tell you which features matter most</li>
+        <li>Storage is a concern — the entire training set must stay in memory forever</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">KNN vs Other Algorithms</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#1e293b">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Property</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">KNN</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">Decision Tree</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">Logistic Reg</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Training speed</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Instant</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Fast</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Fast</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Prediction speed</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">Slow</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Very fast</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Very fast</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Needs scaling</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">YES (critical)</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">No</td>
+          <td style="padding:7px;text-align:center;color:#f59e0b">Recommended</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Interpretable</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Medium</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">High</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">High</td>
+        </tr>
+        <tr>
+          <td style="padding:7px">Handles complex boundary</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Yes</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Yes</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">No (linear only)</td>
+        </tr>
       </table>
+    </div>
+    <div class="concept-box" style="border-color:#a855f7">
+      <h4 style="color:#d8b4fe">Curse of Dimensionality — Why KNN Breaks in High Dimensions</h4>
+      <p>In 2D space, the "nearest neighbour" of a point is genuinely nearby. But as you add more dimensions:</p>
+      <ul>
+        <li>In 100D space, all points are approximately the same distance from each other</li>
+        <li>The concept of "nearest" becomes meaningless — everything is equally far away</li>
+        <li>You would need exponentially more data to maintain the same density as dimensions increase</li>
+      </ul>
+      <p><strong>Solution:</strong> Use PCA to reduce dimensions before applying KNN, or switch to a tree-based model for high-dimensional data.</p>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      8. NAIVE BAYES
 ═══════════════════════════════════════════════════ -->
 <div class="algo-section" id="s8">
   <div class="algo-header">
-    <div class="algo-number">8</div>
+    <span class="algo-icon">📊</span>
     <div>
       <div class="algo-title">Naive Bayes</div>
-      <div class="algo-subtitle">Probability-based classification using Bayes' theorem</div>
-    </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('s8','what')">📖 What Is It</button>
-    <button class="tab-btn" onclick="showTab('s8','how')">⚙️ How It Works</button>
-    <button class="tab-btn" onclick="showTab('s8','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s8','code')">💻 Code & Internals</button>
-    <button class="tab-btn" onclick="showTab('s8','terms')">📚 Key Terms</button>
-  </div>
-
-  <div class="tab-content active" id="s8-what">
-    <div class="card">
-      <h3>What is Naive Bayes?</h3>
-      <p>Naive Bayes uses <strong>Bayes' theorem</strong> from probability theory to classify data. Given the features of a new sample, it calculates the probability it belongs to each class and picks the highest.</p>
-    </div>
-    <div class="analogy">
-      <div class="label">📧 Analogy — Spam Filter</div>
-      <p>You receive an email with the words "FREE MONEY CLICK NOW". Your spam filter has learned from 10,000 past emails:<br>
-      "FREE" appears in 80% of spam, 5% of legitimate emails<br>
-      "MONEY" appears in 70% of spam, 3% of legitimate<br>
-      "CLICK" appears in 75% of spam, 10% of legitimate<br>
-      Naive Bayes multiplies these: Spam score = 0.8 × 0.7 × 0.75 = 0.42. Not-spam score = 0.05 × 0.03 × 0.10 = 0.00015. Spam wins!</p>
-    </div>
-    <div class="card">
-      <h3>Why "Naive"?</h3>
-      <p>It's called "naive" because it assumes all features are <strong>completely independent</strong> of each other. In reality, "FREE" and "MONEY" often appear together. But despite this unrealistic assumption, Naive Bayes works surprisingly well, especially for text classification.</p>
-      <div class="highlight"><p>The "naive" independence assumption is wrong in practice, but Naive Bayes is still fast, simple, works with little data, and performs well for text data — making it widely used.</p></div>
+      <div class="algo-subtitle">Probability-Based Classification — Fast, Simple, Surprisingly Powerful</div>
     </div>
   </div>
 
-  <div class="tab-content" id="s8-how">
-    <div class="card">
-      <h3>Bayes' Theorem</h3>
-      <p>P(Spam | email words) = P(email words | Spam) × P(Spam) / P(email words)</p>
-      <ul>
-        <li><strong>P(Spam)</strong> = Prior — what % of all emails are spam? (e.g., 30%)</li>
-        <li><strong>P(email words | Spam)</strong> = Likelihood — how often does this word appear in spam?</li>
-        <li><strong>P(Spam | email words)</strong> = Posterior — probability this specific email is spam</li>
-      </ul>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s8','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s8','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s8','params')">Parameters</button>
+    <button class="tab-btn" onclick="showTab('s8','code')">Code</button>
+    <button class="tab-btn" onclick="showTab('s8','tips')">When to Use</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s8-concept">
+    <h3 style="color:#38bdf8">What is Naive Bayes? (Plain English First)</h3>
+    <p>Imagine you are a detective. Someone tells you: "I received an email with the words FREE, WINNER, and CLAIM." You need to decide: spam or not spam?</p>
+    <p>A Naive Bayes detective would think: "In the past, 80% of emails containing FREE were spam. 90% with WINNER were spam. 75% with CLAIM were spam. Overall, 30% of all emails are spam." It then <strong>multiplies those probabilities together</strong> and concludes — this email is very probably spam.</p>
+    <p>This is <strong>Bayes' Theorem</strong> applied to classification: combine prior knowledge (base rates) with new evidence (observed features) to update your belief about what category something belongs to.</p>
+
+    <div class="concept-box">
+      <h4>Bayes' Theorem — The Core Formula</h4>
+      <div style="background:#0f172a;padding:14px;border-radius:8px;text-align:center;font-size:15px;margin:10px 0">
+        <span style="color:#f1f5f9;font-family:monospace">P(Class | Features) = P(Features | Class) × P(Class) / P(Features)</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px">
+        <tr style="background:#1e293b">
+          <th style="padding:8px;text-align:left;color:#94a3b8">Term</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">Name</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">Plain English</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px;font-family:monospace;color:#93c5fd">P(Class | Features)</td>
+          <td style="padding:8px;color:#a855f7">Posterior</td>
+          <td style="padding:8px">What we WANT: "Given these words, what's the probability it's spam?"</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px;font-family:monospace;color:#93c5fd">P(Features | Class)</td>
+          <td style="padding:8px;color:#22c55e">Likelihood</td>
+          <td style="padding:8px">How common is this evidence if it IS spam? (learned from training data)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px;font-family:monospace;color:#93c5fd">P(Class)</td>
+          <td style="padding:8px;color:#3b82f6">Prior</td>
+          <td style="padding:8px">What percentage of all emails are spam regardless of content?</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;font-family:monospace;color:#93c5fd">P(Features)</td>
+          <td style="padding:8px;color:#f59e0b">Evidence</td>
+          <td style="padding:8px">How common are these words overall? (constant — same for all classes, so ignored)</td>
+        </tr>
+      </table>
     </div>
-    <div class="card">
-      <h3>Three Variants of Naive Bayes</h3>
-      <ul>
-        <li><strong>MultinomialNB:</strong> For text data with word counts or TF-IDF. Most common for NLP.</li>
-        <li><strong>GaussianNB:</strong> For continuous numerical features. Assumes features follow normal distribution.</li>
-        <li><strong>BernoulliNB:</strong> For binary features (word present/absent). Simpler than Multinomial.</li>
-      </ul>
+
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">The "Naive" Assumption Explained</h4>
+      <p>The algorithm is called <em>Naive</em> because it makes a massive, unrealistic assumption: <strong>all features are independent of each other given the class label</strong>.</p>
+      <p>In reality, the words "free" and "money" often appear together (correlated). But Naive Bayes pretends they don't — it treats each word as if its presence is completely independent of every other word.</p>
+      <p><strong>Why is this "naive" assumption okay?</strong> Despite being wrong, the model still works remarkably well in practice, especially for text classification. The relative ranking of probabilities (spam vs not-spam) is preserved even when the actual probability values are wrong.</p>
+      <div style="background:#0f172a;padding:10px;border-radius:6px;font-family:monospace;font-size:12px;margin-top:10px">
+        P(spam | "free","money","winner")<br>
+        = P("free"|spam) × P("money"|spam) × P("winner"|spam) × P(spam)<br>
+        = 0.80 × 0.70 × 0.90 × 0.30<br>
+        = 0.151 (unnormalised)
+      </div>
     </div>
-    <div class="card">
-      <h3>Laplace Smoothing — Avoiding Zero Probabilities</h3>
-      <p>What if a word never appeared in training spam emails? P(word|spam) = 0, and multiplying anything by 0 gives 0. The entire probability becomes 0 regardless of other words!</p>
-      <div class="highlight"><p>Solution: <strong>Add 1 to every word count</strong> (Laplace smoothing, alpha=1). Even unseen words get a tiny probability. This prevents the "zero probability" problem.</p></div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">Three Types of Naive Bayes</h3>
+    <p>The three variants differ only in what statistical distribution they assume for P(Features | Class):</p>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Type</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Feature Type</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Distribution Assumed</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Best Use Case</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#3b82f6"><strong>GaussianNB</strong></td>
+        <td style="padding:8px">Continuous numbers</td>
+        <td style="padding:8px">Normal/bell curve</td>
+        <td style="padding:8px">Medical data, sensor readings</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#a855f7"><strong>MultinomialNB</strong></td>
+        <td style="padding:8px">Counts / frequencies</td>
+        <td style="padding:8px">Multinomial distribution</td>
+        <td style="padding:8px">Text classification (word counts)</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;color:#f59e0b"><strong>BernoulliNB</strong></td>
+        <td style="padding:8px">Binary (0/1)</td>
+        <td style="padding:8px">Bernoulli distribution</td>
+        <td style="padding:8px">Spam detection (word present/absent)</td>
+      </tr>
+    </table>
+
+    <div class="concept-box" style="border-color:#a855f7;margin-top:16px">
+      <h4 style="color:#d8b4fe">Log Probabilities — Why NB Uses log() Internally</h4>
+      <p>When multiplying many small probabilities together (e.g., 0.001 × 0.003 × 0.0001 × ...), the product becomes astronomically small — smaller than what floating-point numbers can represent. This is called <strong>numerical underflow</strong>.</p>
+      <p>Solution: use logarithms! Since log(a × b) = log(a) + log(b), multiplication of probabilities becomes addition of log-probabilities. The class with the highest log-probability still wins, so the final prediction is identical — but without numerical errors.</p>
     </div>
   </div>
 
-  <div class="tab-content" id="s8-use">
-    <div class="card">
-      <h3>📧 Real Use Case: Gmail Spam Filter</h3>
-      <p>Gmail processes billions of emails daily. Each email must be classified as spam or not-spam in milliseconds. Naive Bayes is perfect: it's extremely fast, works well with text features (words), and needs minimal training data.</p>
-    </div>
-    <div class="card">
-      <h3>Why Naive Bayes for Email</h3>
-      <ul>
-        <li><strong>Speed:</strong> Prediction is just multiplication of stored probabilities — microseconds per email</li>
-        <li><strong>Text-native:</strong> Word frequencies map perfectly to MultinomialNB's probability framework</li>
-        <li><strong>Updatable:</strong> When users mark email as spam, probability tables update instantly</li>
-        <li><strong>Works with little data:</strong> Even 1,000 training emails give decent performance</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Other Applications</h3>
-      <ul>
-        <li><strong>Sentiment Analysis:</strong> Positive/negative review classification</li>
-        <li><strong>Document Classification:</strong> Auto-tag news articles into categories</li>
-        <li><strong>Medical Diagnosis:</strong> GaussianNB on continuous lab results</li>
-        <li><strong>Language Detection:</strong> Which language is this text written in?</li>
-      </ul>
-    </div>
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s8-visual">
+    <h3 style="color:#38bdf8">Bayes' Theorem in Action — Spam Detection</h3>
+    <svg viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%;font-family:sans-serif">
+  <rect width="560" height="300" rx="12" fill="#0f172a"/>
+  <text x="280" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Bayes' Theorem — Spam Detection Example</text>
+  <!-- Formula bar -->
+  <rect x="40" y="38" width="480" height="36" rx="6" fill="#1e293b"/>
+  <text x="280" y="52" text-anchor="middle" fill="#f1f5f9" font-size="12" font-weight="bold">P(Spam | "free money") = P("free money" | Spam) × P(Spam) / P("free money")</text>
+  <text x="280" y="68" text-anchor="middle" fill="#94a3b8" font-size="11">Posterior = Likelihood × Prior / Evidence</text>
+  <!-- Three boxes -->
+  <!-- Prior box -->
+  <rect x="30" y="90" width="150" height="110" rx="8" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="105" y="110" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">PRIOR</text>
+  <text x="105" y="127" text-anchor="middle" fill="#93c5fd" font-size="11">P(Spam)</text>
+  <text x="105" y="148" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="bold">0.30</text>
+  <text x="105" y="168" text-anchor="middle" fill="#94a3b8" font-size="10">30% of all emails</text>
+  <text x="105" y="183" text-anchor="middle" fill="#94a3b8" font-size="10">in training set were spam</text>
+  <!-- Likelihood box -->
+  <rect x="205" y="90" width="150" height="110" rx="8" fill="#1e3a2f" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="280" y="110" text-anchor="middle" fill="#86efac" font-size="12" font-weight="bold">LIKELIHOOD</text>
+  <text x="280" y="127" text-anchor="middle" fill="#86efac" font-size="11">P("free"|Spam)</text>
+  <text x="280" y="148" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="bold">0.80</text>
+  <text x="280" y="168" text-anchor="middle" fill="#94a3b8" font-size="10">80% of spam emails</text>
+  <text x="280" y="183" text-anchor="middle" fill="#94a3b8" font-size="10">contained word "free"</text>
+  <!-- Posterior box -->
+  <rect x="380" y="90" width="150" height="110" rx="8" fill="#3b1a1a" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="455" y="110" text-anchor="middle" fill="#fca5a5" font-size="12" font-weight="bold">POSTERIOR</text>
+  <text x="455" y="127" text-anchor="middle" fill="#fca5a5" font-size="11">P(Spam|"free")</text>
+  <text x="455" y="148" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="bold">≈ 0.68</text>
+  <text x="455" y="168" text-anchor="middle" fill="#94a3b8" font-size="10">Given "free" appeared,</text>
+  <text x="455" y="183" text-anchor="middle" fill="#94a3b8" font-size="10">68% chance it is spam</text>
+  <!-- Naive assumption box -->
+  <rect x="30" y="215" width="500" height="55" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="280" y="233" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="bold">The "Naive" Assumption (why it's called Naive Bayes)</text>
+  <text x="280" y="251" text-anchor="middle" fill="#f1f5f9" font-size="11">P("free" AND "money" | Spam)  =  P("free"|Spam) × P("money"|Spam)</text>
+  <text x="280" y="267" text-anchor="middle" fill="#94a3b8" font-size="10">Words are treated as INDEPENDENT — unrealistic, but surprisingly effective in practice!</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Prior (base rate of spam) × Likelihood (how often spam contains this word) → Posterior (updated probability that this email is spam). The Evidence denominator is a normalising constant — same for all classes, so it doesn't change which class wins.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Three Types of Naive Bayes — Side by Side</h3>
+    <svg viewBox="0 0 560 310" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%;font-family:sans-serif">
+  <rect width="560" height="310" rx="12" fill="#0f172a"/>
+  <text x="280" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Three Types of Naive Bayes — When to Use Which</text>
+  <!-- Gaussian -->
+  <rect x="20"  y="42" width="165" height="245" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="102" y="64"  text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">GaussianNB</text>
+  <text x="102" y="82"  text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Data Type:</text>
+  <text x="102" y="96"  text-anchor="middle" fill="#94a3b8" font-size="10">Continuous numbers</text>
+  <text x="102" y="112" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Example:</text>
+  <text x="102" y="126" text-anchor="middle" fill="#94a3b8" font-size="10">Height, temperature,</text>
+  <text x="102" y="140" text-anchor="middle" fill="#94a3b8" font-size="10">sensor readings</text>
+  <text x="102" y="158" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Assumption:</text>
+  <text x="102" y="172" text-anchor="middle" fill="#94a3b8" font-size="10">Features follow a</text>
+  <text x="102" y="186" text-anchor="middle" fill="#94a3b8" font-size="10">bell curve (Gaussian)</text>
+  <text x="102" y="204" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Param: var_smoothing</text>
+  <text x="102" y="218" text-anchor="middle" fill="#94a3b8" font-size="10">Adds tiny value to</text>
+  <text x="102" y="232" text-anchor="middle" fill="#94a3b8" font-size="10">variance — prevents</text>
+  <text x="102" y="246" text-anchor="middle" fill="#94a3b8" font-size="10">division by zero</text>
+  <text x="102" y="275" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">Best for: numeric data</text>
+  <!-- Multinomial -->
+  <rect x="197" y="42" width="165" height="245" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="279" y="64"  text-anchor="middle" fill="#d8b4fe" font-size="12" font-weight="bold">MultinomialNB</text>
+  <text x="279" y="82"  text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Data Type:</text>
+  <text x="279" y="96"  text-anchor="middle" fill="#94a3b8" font-size="10">Count / frequency data</text>
+  <text x="279" y="112" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Example:</text>
+  <text x="279" y="126" text-anchor="middle" fill="#94a3b8" font-size="10">Word counts in a doc,</text>
+  <text x="279" y="140" text-anchor="middle" fill="#94a3b8" font-size="10">TF-IDF features</text>
+  <text x="279" y="158" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Assumption:</text>
+  <text x="279" y="172" text-anchor="middle" fill="#94a3b8" font-size="10">Features are counts</text>
+  <text x="279" y="186" text-anchor="middle" fill="#94a3b8" font-size="10">(non-negative integers)</text>
+  <text x="279" y="204" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Param: alpha</text>
+  <text x="279" y="218" text-anchor="middle" fill="#94a3b8" font-size="10">Laplace smoothing —</text>
+  <text x="279" y="232" text-anchor="middle" fill="#94a3b8" font-size="10">handles words never seen</text>
+  <text x="279" y="246" text-anchor="middle" fill="#94a3b8" font-size="10">during training</text>
+  <text x="279" y="275" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">Best for: text/NLP</text>
+  <!-- Bernoulli -->
+  <rect x="374" y="42" width="165" height="245" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="456" y="64"  text-anchor="middle" fill="#fde68a" font-size="12" font-weight="bold">BernoulliNB</text>
+  <text x="456" y="82"  text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Data Type:</text>
+  <text x="456" y="96"  text-anchor="middle" fill="#94a3b8" font-size="10">Binary 0/1 features</text>
+  <text x="456" y="112" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Example:</text>
+  <text x="456" y="126" text-anchor="middle" fill="#94a3b8" font-size="10">Word present (1)</text>
+  <text x="456" y="140" text-anchor="middle" fill="#94a3b8" font-size="10">or absent (0)</text>
+  <text x="456" y="158" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Assumption:</text>
+  <text x="456" y="172" text-anchor="middle" fill="#94a3b8" font-size="10">Each feature is a</text>
+  <text x="456" y="186" text-anchor="middle" fill="#94a3b8" font-size="10">yes/no binary flag</text>
+  <text x="456" y="204" text-anchor="middle" fill="#f1f5f9" font-size="10" font-weight="bold">Param: binarize</text>
+  <text x="456" y="218" text-anchor="middle" fill="#94a3b8" font-size="10">Threshold to convert</text>
+  <text x="456" y="232" text-anchor="middle" fill="#94a3b8" font-size="10">continuous → binary</text>
+  <text x="456" y="246" text-anchor="middle" fill="#94a3b8" font-size="10">automatically</text>
+  <text x="456" y="275" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">Best for: binary features</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Choose based on your data type. For text: use Multinomial (word counts) or Bernoulli (word present/absent). For continuous numbers: use Gaussian.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">External Reference: Naive Bayes Explained</h3>
+    <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*aFhOj7TdBIZir4keHMgHOw.png"
+         alt="Naive Bayes Classifier"
+         style="max-width:100%;border-radius:8px;border:1px solid #334155"
+         onerror="this.style.display='none'">
   </div>
 
+  <!-- PARAMS TAB -->
+  <div class="tab-content" id="s8-params">
+    <h3 style="color:#38bdf8">GaussianNB Parameters</h3>
+
+    <div class="param-card">
+      <div class="param-name">var_smoothing <span class="param-default">default=1e-9</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> A tiny value (0.000000001 by default) added to the variance of each feature to prevent division by zero.<br>
+        <strong>Why it exists:</strong> If a feature has zero variance in one class (e.g., all training patients with diabetes have exactly the same blood sugar), the Gaussian formula would divide by zero. Adding var_smoothing prevents this.<br>
+        <strong>Impact of changing:</strong>
+        <ul>
+          <li>Larger value (e.g., 1e-3): Stronger smoothing — feature variance is inflated more. Makes model less sensitive to individual features. Acts as regularisation.</li>
+          <li>Smaller value (e.g., 1e-12): Less smoothing — model trusts the exact variance from data. Risk of numerical errors if variance is 0.</li>
+        </ul>
+        <strong>When to tune:</strong> If you see NaN predictions or warnings about zero variance, increase var_smoothing to 1e-6 or 1e-3.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">priors <span class="param-default">default=None</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The prior probability P(Class) for each class — how common each class is before seeing any features.<br>
+        <strong>Default (None):</strong> Sklearn automatically estimates priors from the training data. If 30% of training examples are spam, P(spam)=0.30.<br>
+        <strong>Custom priors example:</strong> If you <em>know</em> from domain knowledge that 5% of all real-world emails are spam (but your training set is balanced 50/50), set <code>priors=[0.95, 0.05]</code> to correct for the dataset imbalance.<br>
+        <strong>Impact:</strong> Custom priors can dramatically improve real-world performance when your training set doesn't reflect the true class distribution.
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:24px">MultinomialNB Parameters</h3>
+
+    <div class="param-card">
+      <div class="param-name">alpha <span class="param-default">default=1.0</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Laplace/Lidstone smoothing parameter for handling unseen words.<br>
+        <strong>The problem it solves:</strong> If the word "cryptocurrency" never appeared in training spam emails, then P("cryptocurrency"|spam)=0. Multiplying by 0 makes the entire spam probability = 0, regardless of all other words. This is called the <strong>zero-frequency problem</strong>.<br>
+        <strong>How alpha fixes it:</strong> Instead of 0/total, it becomes (0+alpha)/(total+alpha×vocab_size). Even unseen words get a tiny non-zero probability.<br>
+        <strong>Values:</strong>
+        <ul>
+          <li><code>alpha=1.0</code> — Laplace smoothing (classic). Each unseen word gets probability 1/(total + vocab_size).</li>
+          <li><code>alpha=0.5</code> — Lidstone smoothing. Less smoothing than Laplace.</li>
+          <li><code>alpha=0.0</code> — No smoothing. Dangerous — any unseen word kills the probability.</li>
+        </ul>
+        <strong>Tune with cross-validation:</strong> Try values [0.001, 0.01, 0.1, 0.5, 1.0, 2.0, 10.0].
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">fit_prior <span class="param-default">default=True</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Whether to learn class prior probabilities from training data.<br>
+        <strong>True (default):</strong> Estimate P(Class) from the frequency of each class in training set.<br>
+        <strong>False:</strong> Use uniform priors — every class is assumed equally likely regardless of how many training examples each class has. Useful for heavily imbalanced datasets where you want the model to rely purely on feature patterns.
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:24px">BernoulliNB Parameters</h3>
+
+    <div class="param-card">
+      <div class="param-name">alpha <span class="param-default">default=1.0</span></div>
+      <div class="param-desc">Same as MultinomialNB — Laplace smoothing to handle unseen binary features.</div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">binarize <span class="param-default">default=0.0</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> A threshold for automatically converting continuous features to binary (0/1).<br>
+        <strong>Example:</strong> If word count feature value is 3.0 and binarize=0.5, then 3.0 > 0.5 → converted to 1 (word is present).<br>
+        <strong>None:</strong> Don't binarize — assume input is already binary. Use this if you've pre-processed your features.
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Shared Attributes After Fitting</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Attribute</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Type</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Meaning</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">class_log_prior_</td>
+        <td style="padding:8px">array [n_classes]</td>
+        <td style="padding:8px">Log of prior probability for each class — learned from training data</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">feature_log_prob_</td>
+        <td style="padding:8px">array [n_classes, n_features]</td>
+        <td style="padding:8px">Log of P(feature|class) for each feature-class combination. This is the model's "knowledge".</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">class_count_</td>
+        <td style="padding:8px">array [n_classes]</td>
+        <td style="padding:8px">Number of training examples per class</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- CODE TAB -->
   <div class="tab-content" id="s8-code">
-    <div class="card"><h3>Complete Code: Email Spam Classification</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-<span class="c-kw">from</span> sklearn.naive_bayes <span class="c-kw">import</span> <span class="c-cls">MultinomialNB</span>, <span class="c-cls">GaussianNB</span> <span class="code-comment"># grab MultinomialNB, GaussianNB from sklearn.naive_bayes</span>
-<span class="c-kw">from</span> sklearn.feature_extraction.text <span class="c-kw">import</span> <span class="c-cls">TfidfVectorizer</span> <span class="code-comment"># grab TfidfVectorizer from sklearn.feature_extraction.text</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split      <span class="code-comment"># grab train_test_split from sklearn.model_selection</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> classification_report         <span class="code-comment"># grab classification_report from sklearn.metrics</span>
-<span class="c-kw">from</span> sklearn.pipeline <span class="c-kw">import</span> <span class="c-cls">Pipeline</span>                     <span class="code-comment"># grab Pipeline from sklearn.pipeline</span>
+    <h3 style="color:#38bdf8">Complete Spam Classifier — Annotated</h3>
+    <pre><code class="language-python">
+from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import classification_report, confusion_matrix
+
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 1: Text Classification with MultinomialNB (most common use)
+# ══════════════════════════════════════════════════════════
 
 emails = [
-    "Free money win prize click now limited offer",
-    "Meeting tomorrow at 10am conference room B",
-    "Congratulations you won lottery claim reward",
-    "Can you review the quarterly report please",
-    "Urgent your account suspended verify immediately",
-    "Team lunch is at noon today the usual place",
-    "Buy cheap medication online no prescription",
-    "Please find attached the project proposal",
+    "free money winner claim prize",       # spam
+    "meeting at 3pm tomorrow office",      # not spam
+    "you won a free car click here",       # spam
+    "please review the attached report",   # not spam
 ]
-labels = [1, 0, 1, 0, 1, 0, 1, 0]
+labels = [1, 0, 1, 0]   # 1=spam, 0=not spam
 
-X_train, X_test, y_train, y_test = train_test_split(      <span class="code-comment"># split data into training and testing portions</span>
-    emails, labels, test_size=0.25, random_state=42
-)
+# CountVectorizer converts text → word count matrix
+# e.g. "free money" → {free: 1, money: 1, meeting: 0, ...}
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(emails)    # learn vocabulary AND transform
+# X is now a sparse matrix: rows=documents, cols=vocab words, values=word counts
 
-spam_filter = <span class="c-cls">Pipeline</span>([                                  <span class="code-comment"># chain preprocessing + model steps into one object</span>
-    ('tfidf', <span class="c-cls">TfidfVectorizer</span>(stop_words='english', max_features=1000, ngram_range=(1, 2))), <span class="code-comment"># convert text to numbers — rare words score higher</span>
-    ('nb', <span class="c-cls">MultinomialNB</span>(alpha=1.0))                      <span class="code-comment"># Naive Bayes built for word counts — great for text</span>
+# Build Naive Bayes pipeline
+pipe = Pipeline([
+    ('vec', CountVectorizer()),   # convert text to word counts
+    ('nb',  MultinomialNB(
+        alpha=1.0,           # Laplace smoothing: unseen words get prob = 1/(total+vocab)
+        fit_prior=True,      # learn P(spam) and P(not_spam) from training data
+    ))
 ])
 
-spam_filter.fit(X_train, y_train)                         <span class="code-comment"># teach the model using training examples</span>
-y_pred = spam_filter.predict(X_test)                      <span class="code-comment"># let the model guess labels for test data</span>
-print(classification_report(y_test, y_pred, target_names=['Not Spam', 'Spam'])) # ← # precision, recall and F1-score for each class
+pipe.fit(emails[:3], labels[:3])    # train on first 3 examples
+pred = pipe.predict(emails[3:])     # predict last example
 
-new_emails = [
-    "Win free iPhone click this link now",
-    "The budget spreadsheet needs your approval"
-]
-probs = spam_filter.predict_proba(new_emails)             <span class="code-comment"># get probability scores instead of just the final label</span>
-for email, prob in zip(new_emails, probs):                <span class="code-comment"># loop through each item in the list</span>
-    print(f"'{email[:40]}' → Spam probability: {prob[1]:.1%}") # ← # print output to console
+# ── Check what the model learned ─────────────────────────────────────────────
+nb_model = pipe.named_steps['nb']
+vocab = pipe.named_steps['vec'].vocabulary_  # maps words to feature index
 
-gnb = <span class="c-cls">GaussianNB</span>()                                        <span class="code-comment"># probability classifier that assumes bell-curve features</span>
-X_numeric = np.array([[25,120,180],[45,160,240],[35,130,200]]) # ← # convert a list or nested list to a NumPy array
-y_numeric = [0, 1, 0]
-gnb.fit(X_numeric, y_numeric)                             <span class="code-comment"># learn patterns from this data</span>
-</pre></div>
+# Print learned log-probabilities for each word given spam
+# Higher = word more associated with spam
+import numpy as np
+spam_word_probs = np.exp(nb_model.feature_log_prob_[1])    # class 1 = spam
+# np.exp() converts log-probability back to probability
+
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 2: Tune alpha with GridSearchCV
+# ══════════════════════════════════════════════════════════
+param_grid = {'nb__alpha': [0.001, 0.01, 0.1, 0.5, 1.0, 5.0, 10.0]}
+# 'nb__alpha' means: in pipeline step 'nb', tune parameter 'alpha'
+
+search = GridSearchCV(pipe, param_grid, cv=5, scoring='f1')
+search.fit(emails, labels)
+print(f"Best alpha: {search.best_params_['nb__alpha']}")
+
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 3: GaussianNB for continuous features
+# ══════════════════════════════════════════════════════════
+from sklearn.datasets import load_iris
+
+iris = load_iris()
+X, y = iris.data, iris.target     # 4 continuous features (petal length, width, etc.)
+
+gnb = GaussianNB(
+    var_smoothing=1e-9,    # tiny value added to variance to prevent zero-division
+    priors=None,           # learn priors from data (each class has 50 samples → prior=0.33 each)
+)
+gnb.fit(X, y)
+
+# What did it learn?
+print(f"Class priors: {gnb.class_prior_}")           # e.g. [0.33, 0.33, 0.33]
+print(f"Mean per class:
+{gnb.theta_}")              # mean of each feature for each class
+print(f"Variance per class:
+{gnb.var_}")            # variance of each feature per class
+
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 4: BernoulliNB for binary features
+# ══════════════════════════════════════════════════════════
+bnb = BernoulliNB(
+    alpha=1.0,        # smoothing for unseen feature combinations
+    binarize=0.0,     # values > 0.0 → 1 (present), values ≤ 0.0 → 0 (absent)
+    fit_prior=True,   # estimate class priors from training data
+)
+# Use when your features are binary flags:
+# e.g. [contains_free=1, contains_winner=1, contains_meeting=0, ...]
+    </code></pre>
   </div>
 
-  <div class="tab-content" id="s8-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Prior Probability</span></td><td>Base rate before seeing any evidence. P(spam) = how often emails are spam in general.</td><td>30% of all emails are spam → prior = 0.30</td></tr>
-        <tr><td><span class="term-name">Likelihood</span></td><td>P(word | class) — how often does this feature appear in this class based on training data?</td><td>P("FREE" | spam) = 0.80 (80% of spam emails contain "FREE")</td></tr>
-        <tr><td><span class="term-name">Posterior Probability</span></td><td>What we actually want: P(class | features) — probability of class given the observed features</td><td>P(spam | "FREE MONEY CLICK") = 0.97</td></tr>
-        <tr><td><span class="term-name">Laplace Smoothing</span></td><td>Add a small count (usually 1) to every feature so no probability is ever exactly zero. Controlled by alpha parameter.</td><td>alpha=1: add 1 to all word counts before computing probabilities</td></tr>
-        <tr><td><span class="term-name">Conditional Independence</span></td><td>The "naive" assumption that features are unrelated given the class label. Rarely true but works anyway.</td><td>Assumes P("FREE","MONEY"|spam) = P("FREE"|spam) × P("MONEY"|spam)</td></tr>
-        <tr><td><span class="term-name">TF-IDF</span></td><td>Term Frequency-Inverse Document Frequency — weights words by how often they appear in one doc vs all docs. Common words get lower weight.</td><td>"the" gets low weight (appears everywhere). "phishing" gets high weight (rare but meaningful)</td></tr>
-        <tr><td><span class="term-name">MultinomialNB</span></td><td>Naive Bayes variant for count data (word frequencies). Best for text classification.</td><td>spam_filter.predict(["Buy cheap pills online"])</td></tr>
-        <tr><td><span class="term-name">GaussianNB</span></td><td>Naive Bayes variant for continuous features. Assumes each feature follows a Gaussian (bell curve) distribution.</td><td>Medical diagnosis using age, blood pressure, cholesterol</td></tr>
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s8-tips">
+    <h3 style="color:#38bdf8">When to Use Naive Bayes</h3>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Use Naive Bayes When:</h4>
+      <ul style="line-height:1.9">
+        <li><strong>Text classification</strong> — spam detection, sentiment analysis, news categorisation. It's the go-to baseline for NLP.</li>
+        <li>You need a <strong>very fast, simple baseline</strong> to compare against. NB trains in milliseconds even on millions of documents.</li>
+        <li><strong>Real-time streaming</strong> data — NB can update incrementally with partial_fit() without retraining from scratch.</li>
+        <li>You have <strong>very small training data</strong> — NB needs fewer examples than complex models to produce decent results.</li>
+        <li>Features are <strong>genuinely independent</strong> (rare, but when true, NB is optimal).</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Avoid Naive Bayes When:</h4>
+      <ul style="line-height:1.9">
+        <li>Features are <strong>highly correlated</strong> — the independence assumption is badly violated, leading to inaccurate probabilities.</li>
+        <li>You need <strong>well-calibrated probability estimates</strong> — NB probabilities are often extreme (very near 0 or 1) and not accurate absolute probabilities.</li>
+        <li>Your data has <strong>complex non-linear feature interactions</strong> — gradient boosting or neural networks will perform much better.</li>
+        <li>Features include <strong>negative values</strong> for MultinomialNB (it requires non-negative inputs).</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#38bdf8">
+      <h4 style="color:#7dd3fc">Naive Bayes Strengths vs Weaknesses Summary</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#1e293b">
+          <th style="padding:7px;text-align:left;color:#22c55e">Strength</th>
+          <th style="padding:7px;text-align:left;color:#ef4444">Weakness</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Extremely fast training and prediction</td>
+          <td style="padding:7px">Independence assumption rarely holds</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Works well with small datasets</td>
+          <td style="padding:7px">Probability outputs poorly calibrated</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Handles high-dimensional data well</td>
+          <td style="padding:7px">Cannot capture feature interactions</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">No hyperparameter tuning needed usually</td>
+          <td style="padding:7px">Sensitive to feature engineering quality</td>
+        </tr>
+        <tr>
+          <td style="padding:7px">Online learning via partial_fit()</td>
+          <td style="padding:7px">Categorical feature encoding can mislead</td>
+        </tr>
       </table>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      9. K-MEANS CLUSTERING
 ═══════════════════════════════════════════════════ -->

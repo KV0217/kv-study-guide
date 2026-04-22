@@ -10762,170 +10762,509 @@ print(f"Required n per group: {int(n_per_group)}")  # run the test with at least
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      DS PHASE 10 — Business Metrics
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p10">
   <div class="phase-header">
     <h2>Phase 10 — Business Metrics (DA Roles)</h2>
   </div>
   <div class="phase-content">
 
+    <!-- INTRO -->
+    <div class="topic-card">
+      <h3>Why Business Metrics Matter — The DA Mental Model</h3>
+      <p style="line-height:1.7">Data Analyst roles are 30% technical and 70% business impact. Every number you report must connect to a business decision. Interviewers test whether you can translate SQL query results into insights like "Cart abandonment at checkout is 55% — fixing this one step would add ₹22L/month in revenue." Learn to think in terms of the business model: <em>How does this company make money? What behaviors drive that? How do we measure those behaviors?</em></p>
+      <p style="line-height:1.7">The <strong>North Star Metric</strong> is the single number that best captures the core value the company delivers to customers. Everything else is a "supporting metric" that either explains the North Star or diagnoses problems with it.</p>
+      <svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">North Star Metric — Different for Each Business Model</text>
+  <!-- SaaS -->
+  <rect x="10" y="28" width="115" height="165" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="67" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">SaaS</text>
+  <text x="67" y="64" text-anchor="middle" font-size="10" fill="#374151">Salesforce, Notion</text>
+  <line x1="20" y1="71" x2="115" y2="71" stroke="#dbeafe" stroke-width="1"/>
+  <text x="67" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">MRR</text>
+  <text x="67" y="104" text-anchor="middle" font-size="9" fill="#374151">Monthly Recurring</text>
+  <text x="67" y="117" text-anchor="middle" font-size="9" fill="#374151">Revenue</text>
+  <text x="67" y="140" text-anchor="middle" font-size="9" fill="#374151">Supporting: Churn rate</text>
+  <text x="67" y="154" text-anchor="middle" font-size="9" fill="#374151">NRR, CAC, LTV</text>
+  <!-- E-commerce -->
+  <rect x="135" y="28" width="115" height="165" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="192" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">E-commerce</text>
+  <text x="192" y="64" text-anchor="middle" font-size="10" fill="#374151">Amazon, Flipkart</text>
+  <line x1="145" y1="71" x2="240" y2="71" stroke="#dcfce7" stroke-width="1"/>
+  <text x="192" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">GMV</text>
+  <text x="192" y="104" text-anchor="middle" font-size="9" fill="#374151">Gross Merchandise</text>
+  <text x="192" y="117" text-anchor="middle" font-size="9" fill="#374151">Value</text>
+  <text x="192" y="140" text-anchor="middle" font-size="9" fill="#374151">Supporting: CVR</text>
+  <text x="192" y="154" text-anchor="middle" font-size="9" fill="#374151">AOV, Repeat rate</text>
+  <!-- Social/Content -->
+  <rect x="260" y="28" width="115" height="165" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="317" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#7e22ce">Social / Media</text>
+  <text x="317" y="64" text-anchor="middle" font-size="10" fill="#374151">YouTube, Instagram</text>
+  <line x1="270" y1="71" x2="365" y2="71" stroke="#f3e8ff" stroke-width="1"/>
+  <text x="317" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#7e22ce">DAU / Time</text>
+  <text x="317" y="104" text-anchor="middle" font-size="9" fill="#374151">Daily Active Users</text>
+  <text x="317" y="117" text-anchor="middle" font-size="9" fill="#374151">/ Time spent</text>
+  <text x="317" y="140" text-anchor="middle" font-size="9" fill="#374151">Supporting: Stickiness</text>
+  <text x="317" y="154" text-anchor="middle" font-size="9" fill="#374151">Retention, session depth</text>
+  <!-- Marketplace -->
+  <rect x="385" y="28" width="115" height="165" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="442" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">Marketplace</text>
+  <text x="442" y="64" text-anchor="middle" font-size="10" fill="#374151">Uber, Airbnb</text>
+  <line x1="395" y1="71" x2="490" y2="71" stroke="#fef9c3" stroke-width="1"/>
+  <text x="442" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">Transactions</text>
+  <text x="442" y="104" text-anchor="middle" font-size="9" fill="#374151">Completed trips</text>
+  <text x="442" y="117" text-anchor="middle" font-size="9" fill="#374151">/ bookings / orders</text>
+  <text x="442" y="140" text-anchor="middle" font-size="9" fill="#374151">Supporting: Take rate</text>
+  <text x="442" y="154" text-anchor="middle" font-size="9" fill="#374151">Supply/demand match</text>
+  <!-- Fintech -->
+  <rect x="510" y="28" width="100" height="165" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="560" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Fintech</text>
+  <text x="560" y="64" text-anchor="middle" font-size="10" fill="#374151">Zerodha, Paytm</text>
+  <line x1="520" y1="71" x2="600" y2="71" stroke="#ffedd5" stroke-width="1"/>
+  <text x="560" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">TPV</text>
+  <text x="560" y="104" text-anchor="middle" font-size="9" fill="#374151">Total Payment</text>
+  <text x="560" y="117" text-anchor="middle" font-size="9" fill="#374151">Volume</text>
+  <text x="560" y="140" text-anchor="middle" font-size="9" fill="#374151">Supporting: Take rate</text>
+  <text x="560" y="154" text-anchor="middle" font-size="9" fill="#374151">Active traders</text>
+  <!-- bottom -->
+  <text x="310" y="205" text-anchor="middle" font-size="10" font-style="italic" fill="#6b7280">North Star = the single metric that best captures core customer value delivery. Everything else supports it.</text>
+</svg>
+    </div>
+
+    <!-- GROWTH & REVENUE -->
     <div class="topic-card">
       <h3>Growth &amp; Revenue Metrics</h3>
       <table class="term-table">
-        <tr><th>Metric</th><th>Formula</th><th>What It Measures</th></tr>
-        <tr><td>MRR (Monthly Recurring Revenue)</td><td>Σ active subscriptions × monthly price</td><td>Predictable monthly revenue</td></tr>
-        <tr><td>ARR</td><td>MRR × 12</td><td>Annualized revenue</td></tr>
-        <tr><td>MRR Growth</td><td>(MRR_now − MRR_prev) / MRR_prev × 100</td><td>Month-over-month growth rate</td></tr>
-        <tr><td>Net Revenue Retention</td><td>(MRR_start + expansion − churn − contraction) / MRR_start</td><td>Revenue quality; &gt;100% = growing from existing customers</td></tr>
-        <tr><td>Gross Margin</td><td>(Revenue − COGS) / Revenue × 100</td><td>Profitability per rupee of revenue</td></tr>
+        <tr><th>Metric</th><th>Formula</th><th>What It Measures</th><th>Good Target</th></tr>
+        <tr><td>MRR (Monthly Recurring Revenue)</td><td>Σ active subscriptions × monthly price</td><td>Predictable monthly revenue baseline</td><td>Growing every month</td></tr>
+        <tr><td>ARR</td><td>MRR × 12</td><td>Annualized revenue for planning</td><td>Tracks headcount needs</td></tr>
+        <tr><td>MoM Growth</td><td>(MRR_now − MRR_prev) / MRR_prev × 100</td><td>Month-over-month growth rate</td><td>&gt;5% for early stage</td></tr>
+        <tr><td>Net Revenue Retention (NRR)</td><td>(Start MRR + expansion − churn − contraction) / Start MRR</td><td>Revenue quality from existing base</td><td>&gt;100% = growing without new customers</td></tr>
+        <tr><td>Gross Margin</td><td>(Revenue − COGS) / Revenue × 100</td><td>Profitability per rupee of revenue</td><td>&gt;60% for SaaS</td></tr>
       </table>
       <div class="code-block"><pre>
-import pandas as pd                                       <span class="code-comment"># bring in the pandas as pd toolkit</span>
+import pandas as pd
 
-# MRR Analysis
-df_mrr = df.groupby(pd.Grouper(key='subscription_date', freq='M')).agg( # ← # split data into groups by column value
-    new_mrr=('monthly_price', lambda x: x[x.index.isin(new_customers)].sum()), # ← # sum all elements
-    churned_mrr=('monthly_price', lambda x: x[x.index.isin(churned_customers)].sum()), # ← # sum all elements
-    total_mrr=('monthly_price', 'sum')
-)
+# ── MRR trend analysis ─────────────────────────────────────────────────────────
+df_mrr = df.groupby(pd.Grouper(key='subscription_date', freq='ME')).agg(
+    total_mrr=('monthly_price', 'sum'),
+    new_customers=('customer_id', 'count')
+).reset_index()
 
-# MoM Growth
-df_mrr['mrr_growth'] = df_mrr['total_mrr'].pct_change() * 100
+df_mrr['mrr_growth_pct'] = df_mrr['total_mrr'].pct_change() * 100   # MoM growth %
+df_mrr['mrr_3mo_ma']     = df_mrr['total_mrr'].rolling(3).mean()    # 3-month moving avg
+
+# ── New vs Churned MRR breakdown ──────────────────────────────────────────────
+# Expansion MRR: existing customers upgrading
+# Churned MRR: lost customers' revenue
+# NRR = (start_mrr + expansion - churn - contraction) / start_mrr * 100
+# NRR > 100% = "negative churn" — the business grows even without new customers
 </pre></div>
     </div>
 
+    <!-- CUSTOMER METRICS -->
     <div class="topic-card">
-      <h3>Customer Metrics</h3>
-      <table class="term-table">
-        <tr><th>Metric</th><th>Formula</th><th>Benchmark</th></tr>
-        <tr><td>CAC (Customer Acquisition Cost)</td><td>Total Sales+Marketing Spend / New Customers</td><td>Lower is better</td></tr>
-        <tr><td>LTV (Lifetime Value)</td><td>Avg Order Value × Purchase Freq × Avg Lifespan</td><td>LTV:CAC &gt; 3:1 is healthy</td></tr>
-        <tr><td>Payback Period</td><td>CAC / Monthly Gross Margin per customer</td><td>&lt;12 months ideal</td></tr>
-        <tr><td>Churn Rate</td><td>Lost Customers / Start Customers × 100</td><td>&lt;5% monthly for SaaS</td></tr>
-        <tr><td>NPS (Net Promoter Score)</td><td>% Promoters (9-10) − % Detractors (0-6)</td><td>&gt;50 is excellent</td></tr>
-        <tr><td>CSAT</td><td>Satisfied responses / Total responses × 100</td><td>&gt;80% is good</td></tr>
-      </table>
+      <h3>Customer Metrics — LTV:CAC The Most Important Ratio</h3>
+      <p style="line-height:1.7">The LTV:CAC ratio is the single most important measure of whether a business is healthy or not. It answers: "For every rupee we spend acquiring a customer, how much revenue do they generate over their lifetime?" A ratio below 1 means you're paying more to acquire customers than they're worth. A ratio above 5 means you're leaving growth on the table by underinvesting in acquisition.</p>
+      <svg viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">LTV:CAC Ratio — Business Health Indicator</text>
+  <!-- Unsustainable &lt;1x -->
+  <rect x="15" y="30" width="130" height="175" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="2"/>
+  <text x="80" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">LTV:CAC &lt; 1x</text>
+  <text x="80" y="68" text-anchor="middle" font-size="10" fill="#374151">Unsustainable</text>
+  <rect x="35" y="80" width="90" height="60" rx="4" fill="#fca5a5"/>
+  <text x="80" y="105" text-anchor="middle" font-size="9" fill="#7f1d1d">LTV = ₹800</text>
+  <text x="80" y="120" text-anchor="middle" font-size="9" fill="#7f1d1d">CAC = ₹1000</text>
+  <text x="80" y="155" text-anchor="middle" font-size="10" fill="#dc2626">Losing money</text>
+  <text x="80" y="170" text-anchor="middle" font-size="10" fill="#dc2626">on every customer</text>
+  <text x="80" y="185" text-anchor="middle" font-size="9" font-weight="bold" fill="#dc2626">Cut ad spend</text>
+  <!-- OK 1-3x -->
+  <rect x="160" y="30" width="130" height="175" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="2"/>
+  <text x="225" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">LTV:CAC 1–3x</text>
+  <text x="225" y="68" text-anchor="middle" font-size="10" fill="#374151">Barely viable</text>
+  <rect x="180" y="80" width="90" height="60" rx="4" fill="#fef9c3"/>
+  <text x="225" y="105" text-anchor="middle" font-size="9" fill="#713f12">LTV = ₹2,500</text>
+  <text x="225" y="120" text-anchor="middle" font-size="9" fill="#713f12">CAC = ₹1,000</text>
+  <text x="225" y="155" text-anchor="middle" font-size="10" fill="#374151">Small margin</text>
+  <text x="225" y="170" text-anchor="middle" font-size="10" fill="#374151">after COGS/ops costs</text>
+  <text x="225" y="185" text-anchor="middle" font-size="9" font-weight="bold" fill="#a16207">Needs improvement</text>
+  <!-- Healthy 3-5x -->
+  <rect x="305" y="30" width="130" height="175" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+  <text x="370" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">LTV:CAC 3–5x</text>
+  <text x="370" y="68" text-anchor="middle" font-size="10" fill="#374151">Healthy ✓</text>
+  <rect x="325" y="80" width="90" height="60" rx="4" fill="#dcfce7"/>
+  <text x="370" y="105" text-anchor="middle" font-size="9" fill="#14532d">LTV = ₹4,000</text>
+  <text x="370" y="120" text-anchor="middle" font-size="9" fill="#14532d">CAC = ₹1,000</text>
+  <text x="370" y="155" text-anchor="middle" font-size="10" fill="#374151">Sustainable growth</text>
+  <text x="370" y="170" text-anchor="middle" font-size="10" fill="#374151">Invest in growth</text>
+  <text x="370" y="185" text-anchor="middle" font-size="9" font-weight="bold" fill="#15803d">Scale acquisition</text>
+  <!-- Underinvesting &gt;5x -->
+  <rect x="450" y="30" width="155" height="175" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="527" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">LTV:CAC &gt; 5x</text>
+  <text x="527" y="68" text-anchor="middle" font-size="10" fill="#374151">Underinvesting!</text>
+  <rect x="475" y="80" width="105" height="60" rx="4" fill="#dbeafe"/>
+  <text x="527" y="105" text-anchor="middle" font-size="9" fill="#1e3a8a">LTV = ₹8,000</text>
+  <text x="527" y="120" text-anchor="middle" font-size="9" fill="#1e3a8a">CAC = ₹1,000</text>
+  <text x="527" y="155" text-anchor="middle" font-size="10" fill="#374151">Big opportunity</text>
+  <text x="527" y="170" text-anchor="middle" font-size="10" fill="#374151">being missed</text>
+  <text x="527" y="185" text-anchor="middle" font-size="9" font-weight="bold" fill="#1d4ed8">Increase ad spend!</text>
+  <!-- payback -->
+  <text x="310" y="225" text-anchor="middle" font-size="11" font-style="italic" fill="#6b7280">Payback period = CAC / Monthly Gross Margin per customer. Target: &lt;12 months.</text>
+</svg>
       <div class="code-block"><pre>
-# LTV Calculation
-avg_order_value  = df['order_total'].mean()
-purchase_freq    = df.groupby('customer_id')['order_id'].count().mean() # ← # split data into groups by column value
-avg_lifespan_yrs = 3  # estimate from survival analysis or industry data
+import pandas as pd
+import numpy as np
+
+# ── Customer Lifetime Value (LTV) ─────────────────────────────────────────────
+avg_order_value  = df['order_total'].mean()             # average purchase amount
+purchase_freq    = df.groupby('customer_id')['order_id'].count().mean()  # avg orders per customer
+avg_lifespan_yrs = 3    # from survival analysis or industry benchmark
 
 ltv = avg_order_value * purchase_freq * avg_lifespan_yrs
-cac = total_marketing_spend / new_customers_acquired
+print(f"LTV: ₹{ltv:,.0f}")
 
-ltv_cac_ratio = ltv / cac
-print(f"LTV: ₹{ltv:,.0f}")                                <span class="code-comment"># show this value in the terminal</span>
-print(f"CAC: ₹{cac:,.0f}")                                <span class="code-comment"># show this value in the terminal</span>
-print(f"LTV:CAC = {ltv_cac_ratio:.1f}x")                  <span class="code-comment"># show this value in the terminal</span>
-# Rule: <1x = unsustainable | 1-3x = OK | >3x = healthy | >5x = underinvesting in growth
+# ── Customer Acquisition Cost (CAC) ──────────────────────────────────────────
+total_marketing_spend = 500_000    # from finance team
+new_customers_this_month = 250
+cac = total_marketing_spend / new_customers_this_month
+print(f"CAC: ₹{cac:,.0f}")
+print(f"LTV:CAC = {ltv/cac:.1f}x")
 
-# Cohort-based LTV (more accurate)
-cohort_ltv = df.groupby(['cohort_month', 'period'])['revenue'].sum().unstack() # ← # split data into groups by column value
-cumulative_ltv = cohort_ltv.cumsum(axis=1)                <span class="code-comment"># running total — each row adds to the previous</span>
+# ── Payback period ─────────────────────────────────────────────────────────────
+gross_margin_pct = 0.65    # 65% gross margin
+monthly_gm_per_cust = avg_order_value * (purchase_freq/12) * gross_margin_pct
+payback_months = cac / monthly_gm_per_cust
+print(f"Payback period: {payback_months:.1f} months")   # target: &lt; 12 months
+
+# ── Cohort-based LTV (more accurate — tracks each acquisition cohort) ──────────
+cohort_ltv = df.groupby(['cohort_month', 'months_since_join'])['revenue'].sum().unstack()
+cumulative_ltv = cohort_ltv.cumsum(axis=1)    # cumulative revenue by month
+# cohort_ltv.iloc[-1] shows LTV at each month for the most recent cohort
 </pre></div>
+      <table class="term-table">
+        <tr><th>Metric</th><th>Formula</th><th>Benchmark</th></tr>
+        <tr><td>CAC (Customer Acquisition Cost)</td><td>Sales+Marketing Spend / New Customers</td><td>Lower is better; watch trend over time</td></tr>
+        <tr><td>LTV (Lifetime Value)</td><td>AOV × Purchase Frequency × Avg Lifespan</td><td>LTV:CAC &gt; 3x is healthy</td></tr>
+        <tr><td>Payback Period</td><td>CAC / Monthly Gross Margin per customer</td><td>&lt;12 months ideal</td></tr>
+        <tr><td>Churn Rate</td><td>Lost Customers / Start Customers × 100</td><td>&lt;5% monthly for SaaS</td></tr>
+        <tr><td>NPS (Net Promoter Score)</td><td>% Promoters (9–10) − % Detractors (0–6)</td><td>&gt;50 is excellent</td></tr>
+      </table>
     </div>
 
+    <!-- FUNNEL & ENGAGEMENT -->
     <div class="topic-card">
-      <h3>Product &amp; Engagement Metrics</h3>
-      <table class="term-table">
-        <tr><th>Metric</th><th>Formula</th><th>When to Use</th></tr>
-        <tr><td>DAU / MAU</td><td>Daily/Monthly Active Users</td><td>App engagement</td></tr>
-        <tr><td>Stickiness</td><td>DAU / MAU × 100</td><td>&gt;20% good; WhatsApp = ~70%</td></tr>
-        <tr><td>Retention Rate</td><td>Users retained at Day N / Original cohort</td><td>Product-market fit signal</td></tr>
-        <tr><td>Conversion Rate</td><td>Conversions / Total visitors × 100</td><td>Funnel effectiveness</td></tr>
-        <tr><td>Bounce Rate</td><td>Single-page sessions / Total sessions</td><td>Landing page quality</td></tr>
-        <tr><td>Session Duration</td><td>Avg time per session</td><td>Engagement depth</td></tr>
-      </table>
+      <h3>Conversion Funnel &amp; Product Engagement</h3>
+      <p style="line-height:1.7">A conversion funnel maps the journey users take from first contact to completing the desired action (purchase, signup, activation). The analysis identifies which step has the largest drop-off — that step is the highest-leverage optimization target. Even a 5% improvement at the right funnel step can significantly increase revenue without spending more on acquisition.</p>
+      <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Conversion Funnel — Finding Where Users Drop Off</text>
+  <!-- funnel steps -->
+  <polygon points="60,40 560,40 500,95 120,95" fill="#3b82f6" opacity=".8"/>
+  <text x="310" y="73" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Landing Page — 10,000 visitors</text>
+  <polygon points="120,100 500,100 455,155 165,155" fill="#6366f1" opacity=".8"/>
+  <text x="310" y="133" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Product View — 6,200 (38% drop)</text>
+  <polygon points="165,160 455,160 420,215 200,215" fill="#8b5cf6" opacity=".8"/>
+  <text x="310" y="193" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Add to Cart — 3,100 (50% drop)</text>
+  <polygon points="200,220 420,220 395,265 225,265" fill="#a855f7" opacity=".8"/>
+  <text x="310" y="248" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Checkout — 1,400 (55% drop)</text>
+  <polygon points="225,270 395,270 375,290 245,290" fill="#7c3aed" opacity=".9"/>
+  <text x="310" y="284" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Order Placed — 620 (6.2% CVR)</text>
+  <!-- annotations -->
+  <text x="570" y="68" font-size="10" fill="#3b82f6">Start</text>
+  <text x="520" y="132" font-size="10" fill="#dc2626">← biggest drop</text>
+  <text x="15" y="248" font-size="9" fill="#6b7280">Cart to Order:</text>
+  <text x="15" y="261" font-size="9" fill="#6b7280">44% rate</text>
+</svg>
       <div class="code-block"><pre>
-# Funnel Analysis
-funnel_steps = ['landing_page', 'product_view', 'add_to_cart',
-                'checkout', 'payment', 'order_placed']
+import pandas as pd
 
-funnel_counts = {step: df[df['event']==step]['user_id'].nunique() # ← # count distinct (unique) values in each column
-                 for step in funnel_steps}                <span class="code-comment"># loop through each item in the list</span>
+# ── Funnel analysis ────────────────────────────────────────────────────────────
+funnel_steps = ['landing_page', 'product_view', 'add_to_cart', 'checkout', 'order_placed']
 
-print("Funnel Analysis:")                                 <span class="code-comment"># show this value in the terminal</span>
-prev = None
-for step, count in funnel_counts.items():                 <span class="code-comment"># loop through each item in the list</span>
-    if prev:                                              <span class="code-comment"># only run the next block if this is True</span>
-        drop_pct = (prev - count)/prev * 100
-        print(f"  {step}: {count:,} users ({drop_pct:.1f}% drop-off)") # ← # print output to console
-    else:                                                 <span class="code-comment"># if nothing matched above, do this instead</span>
-        print(f"  {step}: {count:,} users (entry)")       <span class="code-comment"># show this value in the terminal</span>
-    prev = count
+funnel_counts = {
+    step: df[df['event'] == step]['user_id'].nunique()
+    for step in funnel_steps
+}
+
+print("\nConversion Funnel:")
+prev_count = None
+for step, count in funnel_counts.items():
+    if prev_count:
+        step_cvr = count / prev_count * 100
+        print(f"  {step}: {count:,} ({step_cvr:.1f}% of previous step)")
+    else:
+        print(f"  {step}: {count:,} (entry)")
+    prev_count = count
 
 overall_cvr = funnel_counts['order_placed'] / funnel_counts['landing_page'] * 100
-print(f"\nOverall CVR: {overall_cvr:.2f}%")               <span class="code-comment"># show this value in the terminal</span>
+print(f"\nOverall Conversion Rate: {overall_cvr:.2f}%")
 
-# DAU/MAU stickiness
-df['date'] = pd.to_datetime(df['event_time']).dt.date     <span class="code-comment"># pull date parts like year or month from this column</span>
-dau = df.groupby('date')['user_id'].nunique().mean()      <span class="code-comment"># split data into groups by a column</span>
-mau = df['user_id'].nunique()                             <span class="code-comment"># count how many different values exist</span>
+# ── Product engagement ─────────────────────────────────────────────────────────
+# DAU/MAU stickiness (should be > 20% for consumer apps)
+df['date'] = pd.to_datetime(df['event_time']).dt.date
+dau = df.groupby('date')['user_id'].nunique().mean()   # avg daily active users
+mau = df['user_id'].nunique()                          # unique users in month
 stickiness = dau / mau * 100
-print(f"Stickiness: {stickiness:.1f}%")                   <span class="code-comment"># show this value in the terminal</span>
+print(f"Stickiness: {stickiness:.1f}%")   # WhatsApp ~70%; most SaaS apps 20-40%
+
+# Day N retention (cohort analysis)
+cohorts = df.groupby(['cohort_date', 'days_since_join'])['user_id'].nunique().unstack()
+retention = cohorts.divide(cohorts[0], axis=0) * 100  # % of cohort still active
+print("\nDay-1 Retention:", retention[1].mean().round(1))   # benchmark: >40% for D1
+print("Day-7 Retention:", retention[7].mean().round(1))     # benchmark: >20% for D7
+print("Day-30 Retention:", retention[30].mean().round(1))   # benchmark: >10% for D30
 </pre></div>
+      <table class="term-table">
+        <tr><th>Metric</th><th>Formula</th><th>Benchmark</th><th>Why It Matters</th></tr>
+        <tr><td>DAU / MAU</td><td>Daily / Monthly Active Users</td><td>DAU/MAU &gt; 20% good</td><td>App engagement depth</td></tr>
+        <tr><td>Stickiness</td><td>DAU / MAU × 100</td><td>WhatsApp ~70%; most apps 20–40%</td><td>How "sticky" the product is</td></tr>
+        <tr><td>D1/D7/D30 Retention</td><td>Users returning on day N / original cohort</td><td>D1&gt;40%, D7&gt;20%, D30&gt;10%</td><td>Product-market fit signal</td></tr>
+        <tr><td>Conversion Rate (CVR)</td><td>Conversions / Total visitors × 100</td><td">E-commerce: 2–4%</td><td>Funnel efficiency</td></tr>
+        <tr><td>Bounce Rate</td><td>Single-page sessions / Total sessions</td><td>&lt;40% is good</td><td>Landing page quality</td></tr>
+      </table>
+      <div class="note-box"><strong>Interview tip — quantify impact:</strong> "The checkout drop-off is 55%. If we reduce it to 45%, we gain ~170 orders. At ₹2,000 AOV and 65% margin, that's ₹2.2L monthly profit impact. This should be our highest-priority A/B test." Numbers beat vague statements every time.</div>
     </div>
 
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      DS PHASE 11 — Python Coding Round
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p11">
   <div class="phase-header">
     <h2>Phase 11 — Python Coding Round</h2>
   </div>
   <div class="phase-content">
 
+    <!-- COMPLEXITY -->
     <div class="topic-card">
-      <h3>List, Dict, String — Essentials</h3>
+      <h3>Big-O Complexity — What Interviewers Actually Test</h3>
+      <p style="line-height:1.7">Big-O notation describes how an algorithm's runtime (or memory) scales as input size n grows. Interviewers don't always ask about Big-O explicitly, but they expect you to recognize when your solution is unnecessarily slow. The key: avoid nested loops on large data (<strong>O(n²)</strong>), prefer dict lookups over list scans (<strong>O(1) vs O(n)</strong>), and know that sorting costs <strong>O(n log n)</strong>.</p>
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Big-O Complexity — How Algorithms Scale with Input Size</text>
+  <!-- axes -->
+  <line x1="55" y1="240" x2="590" y2="240" stroke="#374151" stroke-width="2"/>
+  <line x1="55" y1="30" x2="55" y2="240" stroke="#374151" stroke-width="2"/>
+  <text x="320" y="262" text-anchor="middle" font-size="11" fill="#374151">Input size (n) →</text>
+  <text x="22" y="135" text-anchor="middle" font-size="11" fill="#374151" transform="rotate(-90,22,135)">Operations →</text>
+  <!-- O(1) -->
+  <line x1="65" y1="218" x2="580" y2="218" stroke="#059669" stroke-width="2.5"/>
+  <text x="585" y="222" font-size="10" fill="#059669">O(1)</text>
+  <!-- O(log n) -->
+  <path d="M65,218 Q200,165 580,145" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <text x="585" y="148" font-size="10" fill="#22c55e">O(log n)</text>
+  <!-- O(n) -->
+  <line x1="65" y1="218" x2="580" y2="80" stroke="#3b82f6" stroke-width="2"/>
+  <text x="585" y="83" font-size="10" fill="#3b82f6">O(n)</text>
+  <!-- O(n log n) -->
+  <path d="M65,218 Q250,150 580,60" fill="none" stroke="#a855f7" stroke-width="2"/>
+  <text x="565" y="55" font-size="10" fill="#a855f7">O(n log n)</text>
+  <!-- O(n²) -->
+  <path d="M65,230 Q200,200 450,60" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <text x="455" y="55" font-size="10" fill="#f59e0b">O(n²)</text>
+  <!-- O(2^n) -->
+  <path d="M65,237 Q200,230 320,60" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="315" y="55" font-size="10" fill="#dc2626">O(2ⁿ)</text>
+  <!-- legend -->
+  <rect x="55" y="248" width="510" height="25" rx="4" fill="#f8fafc"/>
+  <text x="80" y="264" font-size="9" fill="#059669">O(1): dict lookup</text>
+  <text x="170" y="264" font-size="9" fill="#22c55e">O(log n): binary search</text>
+  <text x="285" y="264" font-size="9" fill="#3b82f6">O(n): linear scan</text>
+  <text x="360" y="264" font-size="9" fill="#a855f7">O(n log n): merge sort</text>
+  <text x="460" y="264" font-size="9" fill="#f59e0b">O(n²): nested loops</text>
+</svg>
       <div class="code-block"><pre>
-# ── List Comprehensions ──
-squares    = [x**2 for x in range(10)]                    <span class="code-comment"># generate numbers from start to end</span>
-evens      = [x for x in range(20) if x % 2 == 0]         <span class="code-comment"># generate numbers from start to end</span>
-flat       = [x for row in matrix for x in row]   # flatten 2D list
-pairs      = [(x,y) for x in [1,2] for y in ['a','b']]
+# ── Common Big-O patterns in Python ───────────────────────────────────────────
 
-# ── Dict Comprehensions ──
-word_len   = {word: len(word) for word in ['apple','banana','cherry']} # ← # count number of items
-freq       = {char: text.count(char) for char in set(text)} # ← # create a set of unique values
+# O(1) — constant time — dict/set lookup
+d = {'a': 1, 'b': 2}
+x = d['a']            # O(1) — hash lookup, regardless of dict size
+s = {1, 2, 3}
+found = 2 in s        # O(1) — set membership test
 
-# ── Useful built-ins ──
-nums = [3,1,4,1,5,9,2,6]
-print(sorted(nums, reverse=True))      # [9,6,5,4,3,2,1,1]
-print(max(nums), min(nums), sum(nums))                    <span class="code-comment"># show this value in the terminal</span>
-print(list(enumerate(['a','b','c'])))  # [(0,'a'),(1,'b'),(2,'c')]
-print(list(zip([1,2,3],['a','b','c'])))# [(1,'a'),(2,'b'),(3,'c')]
+# O(n) — linear — single loop or scan
+lst = list(range(1000))
+found = 999 in lst    # O(n) — must scan each element in worst case
+total = sum(lst)      # O(n) — touches every element once
 
-# Counter — most common elements
-from collections import Counter                           <span class="code-comment"># grab Counter from collections</span>
-text = "banana"
-print(Counter(text))          # Counter({'a':3,'n':2,'b':1})
-print(Counter(text).most_common(2))  # [('a',3),('n',2)]
+# O(log n) — logarithmic — binary search
+import bisect
+sorted_lst = sorted(range(1000))
+pos = bisect.bisect_left(sorted_lst, 500)   # O(log n)
 
-# defaultdict — no KeyError
-from collections import defaultdict                       <span class="code-comment"># grab defaultdict from collections</span>
-graph = defaultdict(list)
-graph['A'].append('B')   # no need to init graph['A'] = []
+# O(n log n) — sorting
+sorted_data = sorted(range(1000))           # O(n log n)
+import heapq
+top_5 = heapq.nlargest(5, range(1000))     # O(n log 5) = O(n)
+
+# O(n²) — nested loops — AVOID on large inputs!
+pairs = [(i, j) for i in range(1000) for j in range(1000)]  # 1M iterations!
+
+# Better approach: use dict to solve two-sum in O(n) instead of O(n²)
+def two_sum_slow(nums, target):           # O(n²)
+    for i in range(len(nums)):
+        for j in range(i+1, len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+
+def two_sum_fast(nums, target):           # O(n) — use a dict as a lookup table
+    seen = {}                             # stores value: index pairs
+    for i, x in enumerate(nums):
+        complement = target - x
+        if complement in seen:            # O(1) dict lookup instead of O(n) scan
+            return [seen[complement], i]
+        seen[x] = i
 </pre></div>
     </div>
 
+    <!-- LIST DICT STRING -->
     <div class="topic-card">
-      <h3>Common Interview Coding Problems</h3>
+      <h3>List, Dict, String — Essentials</h3>
       <div class="code-block"><pre>
-# Q1: Find duplicates in a list
+from collections import Counter, defaultdict
+
+# ── List comprehensions ────────────────────────────────────────────────────────
+squares  = [x**2 for x in range(10)]                 # [0, 1, 4, 9, ..., 81]
+evens    = [x for x in range(20) if x % 2 == 0]     # filter: only even numbers
+flat     = [x for row in matrix for x in row]        # flatten 2D list to 1D
+pairs    = [(x, y) for x in [1,2] for y in ['a','b']]  # [(1,'a'),(1,'b'),(2,'a'),(2,'b')]
+
+# ── Dict comprehensions ────────────────────────────────────────────────────────
+word_len = {w: len(w) for w in ['apple', 'banana', 'cherry']}   # {'apple':5, ...}
+freq     = {c: text.count(c) for c in set(text)}                # character frequency
+
+# ── Useful built-ins ───────────────────────────────────────────────────────────
+nums = [3, 1, 4, 1, 5, 9, 2, 6]
+print(sorted(nums, reverse=True))               # descending sort
+print(max(nums), min(nums), sum(nums))
+print(list(enumerate(['a','b','c'])))           # [(0,'a'), (1,'b'), (2,'c')]
+print(list(zip([1,2,3], ['a','b','c'])))        # [(1,'a'), (2,'b'), (3,'c')]
+
+# ── Counter — most common elements O(n) ────────────────────────────────────────
+text = "banana"
+print(Counter(text))                            # Counter({'a':3,'n':2,'b':1})
+print(Counter(text).most_common(2))             # [('a',3),('n',2)]
+
+# ── defaultdict — no KeyError when key doesn't exist ──────────────────────────
+graph = defaultdict(list)
+graph['A'].append('B')   # no need to first check if 'A' exists or set graph['A']=[]
+
+# ── String operations ─────────────────────────────────────────────────────────
+s = "  Hello, World!  "
+print(s.strip())                                # "Hello, World!" — remove whitespace
+print(s.lower().replace(',', ''))               # "  hello world!  "
+print(s.split(','))                             # ['  Hello', ' World!  ']
+print(','.join(['a', 'b', 'c']))                # "a,b,c"
+print(s[::-1])                                  # reverse string
+</pre></div>
+    </div>
+
+    <!-- PANDAS SPEED -->
+    <div class="topic-card">
+      <h3>Pandas Performance — Vectorization Over Loops</h3>
+      <p style="line-height:1.7">Pandas is built on NumPy, which uses C under the hood. Vectorized operations (operating on whole columns at once) run in C — often 100–1000× faster than Python loops. The most common mistake is using <code>df.apply(axis=1)</code> or <code>iterrows()</code> for operations that can be done with simple column arithmetic.</p>
+      <svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Pandas Speed Hierarchy — Fastest to Slowest</text>
+  <!-- arrow left = fast, right = slow -->
+  <line x1="40" y1="50" x2="580" y2="50" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="40" y="45" font-size="10" fill="#059669">FAST</text>
+  <text x="545" y="45" font-size="10" fill="#dc2626">SLOW</text>
+  <polygon points="575,45 585,50 575,55" fill="#dc2626"/>
+  <!-- vectorized -->
+  <rect x="30" y="60" width="100" height="70" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="80" y="85" text-anchor="middle" font-size="11" font-weight="bold" fill="#065f46">Vectorized</text>
+  <text x="80" y="100" text-anchor="middle" font-size="9" fill="#374151">df['col'] * 2</text>
+  <text x="80" y="115" text-anchor="middle" font-size="9" fill="#374151">np operations</text>
+  <text x="80" y="128" text-anchor="middle" font-size="9" fill="#374151">Built-in agg</text>
+  <!-- apply on series -->
+  <rect x="145" y="60" width="115" height="70" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="202" y="85" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">Series.apply()</text>
+  <text x="202" y="100" text-anchor="middle" font-size="9" fill="#374151">df['col'].apply(f)</text>
+  <text x="202" y="115" text-anchor="middle" font-size="9" fill="#374151">2–5× slower than</text>
+  <text x="202" y="128" text-anchor="middle" font-size="9" fill="#374151">vectorized</text>
+  <!-- apply on df rows -->
+  <rect x="275" y="60" width="115" height="70" rx="6" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+  <text x="332" y="80" text-anchor="middle" font-size="10" font-weight="bold" fill="#a16207">df.apply(axis=1)</text>
+  <text x="332" y="96" text-anchor="middle" font-size="9" fill="#374151">Row-by-row apply</text>
+  <text x="332" y="111" text-anchor="middle" font-size="9" fill="#374151">10–50× slower</text>
+  <text x="332" y="126" text-anchor="middle" font-size="9" fill="#374151">avoid on large df</text>
+  <!-- iterrows -->
+  <rect x="405" y="60" width="105" height="70" rx="6" fill="#fee2e2" stroke="#f87171" stroke-width="1.5"/>
+  <text x="457" y="80" text-anchor="middle" font-size="10" font-weight="bold" fill="#dc2626">iterrows()</text>
+  <text x="457" y="96" text-anchor="middle" font-size="9" fill="#374151">Python loop</text>
+  <text x="457" y="111" text-anchor="middle" font-size="9" fill="#374151">100–1000×</text>
+  <text x="457" y="126" text-anchor="middle" font-size="9" fill="#374151">slower — avoid!</text>
+  <!-- for loop -->
+  <rect x="525" y="60" width="85" height="70" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="567" y="80" text-anchor="middle" font-size="10" font-weight="bold" fill="#dc2626">for loop</text>
+  <text x="567" y="96" text-anchor="middle" font-size="9" fill="#374151">Worst case</text>
+  <text x="567" y="111" text-anchor="middle" font-size="9" fill="#374151">NEVER for</text>
+  <text x="567" y="126" text-anchor="middle" font-size="9" fill="#374151">large datasets</text>
+  <!-- rule -->
+  <rect x="30" y="148" width="580" height="55" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="310" y="168" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e293b">The Golden Rule of Pandas</text>
+  <text x="310" y="186" text-anchor="middle" font-size="11" fill="#374151">Always prefer: df['result'] = df['a'] + df['b']</text>
+  <text x="310" y="200" text-anchor="middle" font-size="11" fill="#374151">Over: df['result'] = df.apply(lambda r: r['a'] + r['b'], axis=1)</text>
+</svg>
+      <div class="code-block"><pre>
+import pandas as pd
+import numpy as np
+
+# ── WRONG: Python loop (slowest) ──────────────────────────────────────────────
+for i in range(len(df)):
+    df.loc[i, 'result'] = df.loc[i, 'a'] * df.loc[i, 'b']   # O(n) with Python overhead
+
+# ── BETTER: apply with lambda (medium) ────────────────────────────────────────
+df['result'] = df.apply(lambda r: r['a'] * r['b'], axis=1)   # still Python per row
+
+# ── BEST: vectorized operation (fastest) ──────────────────────────────────────
+df['result'] = df['a'] * df['b']     # C-level operation on entire column at once
+
+# ── Real example: categorize ages ─────────────────────────────────────────────
+# SLOW:
+df['age_group'] = df['age'].apply(lambda x: 'Young' if x &lt; 30 else 'Senior')
+
+# FAST:
+df['age_group'] = np.where(df['age'] &lt; 30, 'Young', 'Senior')   # vectorized conditional
+
+# ── np.where for multi-condition ──────────────────────────────────────────────
+df['tier'] = np.select(
+    [df['revenue'] &gt; 10000, df['revenue'] &gt; 5000, df['revenue'] &gt; 1000],
+    ['Gold', 'Silver', 'Bronze'],
+    default='Basic'
+)
+
+# ── Efficient aggregations ────────────────────────────────────────────────────
+# AVOID: df.apply(sum) on each column — it's a hidden loop
+# USE: df.sum() — vectorized
+
+# ── Memory optimization ───────────────────────────────────────────────────────
+df['category'] = df['category'].astype('category')   # object→category: 70% memory reduction
+df['int_col']  = pd.to_numeric(df['int_col'], downcast='integer')  # int64→int16/32
+print(df.dtypes)                                                   # verify dtypes
+print(df.memory_usage(deep=True).sum() / 1024**2, "MB")           # total memory used
+</pre></div>
+    </div>
+
+    <!-- INTERVIEW CODING PROBLEMS -->
+    <div class="topic-card">
+      <h3>Classic Interview Coding Problems</h3>
+      <div class="code-block"><pre>
+from collections import Counter
+
+# ── Q1: Find duplicates in a list — O(n) ──────────────────────────────────────
 def find_duplicates(lst):
     seen, dups = set(), set()
     for x in lst:
-        if x in seen: dups.add(x)
-        else: seen.add(x)                                 <span class="code-comment">-- if no condition matched, use this default</span>
+        if x in seen:
+            dups.add(x)
+        else:
+            seen.add(x)
     return list(dups)
 
-# Q2: Two Sum — find pair that adds to target
+# ── Q2: Two Sum — O(n) with dict ──────────────────────────────────────────────
 def two_sum(nums, target):
     seen = {}
     for i, x in enumerate(nums):
@@ -10934,103 +11273,115 @@ def two_sum(nums, target):
             return [seen[complement], i]
         seen[x] = i
 
-# Q3: Flatten nested list
+# ── Q3: Flatten nested list — O(n) recursive ─────────────────────────────────
 def flatten(lst):
     result = []
     for item in lst:
-        if isinstance(item, list): result.extend(flatten(item))
-        else: result.append(item)                         <span class="code-comment">-- if no condition matched, use this default</span>
+        if isinstance(item, list):
+            result.extend(flatten(item))   # recursively flatten
+        else:
+            result.append(item)
     return result
 
-# Q4: Most frequent element
-from collections import Counter                           <span class="code-comment">-- the table to read from</span>
+# ── Q4: Most frequent element ─────────────────────────────────────────────────
 def most_frequent(lst):
-    return Counter(lst).most_common(1)[0][0]
+    return Counter(lst).most_common(1)[0][0]   # O(n) with Counter
 
-# Q5: Reverse words in a sentence
+# ── Q5: Reverse words in a sentence ───────────────────────────────────────────
 def reverse_words(s):
-    return ' '.join(s.split()[::-1])                      <span class="code-comment">-- connect with another table on a shared column</span>
+    return ' '.join(s.split()[::-1])           # split → reverse → rejoin
 
-# Q6: Check if string is anagram
+# ── Q6: Check if anagram ──────────────────────────────────────────────────────
 def is_anagram(s1, s2):
-    return Counter(s1.lower()) == Counter(s2.lower())     <span class="code-comment">-- convert text to all lowercase</span>
+    return Counter(s1.lower().replace(' ', '')) == Counter(s2.lower().replace(' ', ''))
 
-# Q7: Fibonacci with memoization                          <span class="code-comment">-- define a named temporary query (CTE)</span>
-from functools import lru_cache                           <span class="code-comment">-- the table to read from</span>
-@lru_cache(maxsize=None)
+# ── Q7: Fibonacci with memoization — O(n) ─────────────────────────────────────
+from functools import lru_cache
+@lru_cache(maxsize=None)                       # cache results to avoid recomputation
 def fib(n):
-    if n <= 1: return n
-    return fib(n-1) + fib(n-2)
+    if n &lt;= 1: return n
+    return fib(n-1) + fib(n-2)               # O(n) with cache vs O(2^n) without
 
-# Q8: Moving average
+# ── Q8: Moving average ────────────────────────────────────────────────────────
 def moving_avg(data, window):
-    return [sum(data[i:i+window])/window for i in range(len(data)-window+1)] -- add up all values in this column <span class="code-comment">-- add up all values in this column</span>
+    return [sum(data[i:i+window])/window for i in range(len(data)-window+1)]
+# Pandas version (faster for large data):
+# pd.Series(data).rolling(window).mean().dropna().tolist()
 
-# Q9: Group by key (like SQL GROUP BY)                    <span class="code-comment">-- collect rows with the same value before aggregating</span>
-from itertools import groupby                             <span class="code-comment">-- the table to read from</span>
-data = [('A',1),('B',2),('A',3),('B',4)]
-grouped = {k: [v for _,v in g]
-           for k,g in groupby(sorted(data), key=lambda x: x[0])}
+# ── Q9: Group items by key ────────────────────────────────────────────────────
+from itertools import groupby
+data = [('A',1), ('B',2), ('A',3), ('B',4)]
+grouped = {k: [v for _, v in g]
+           for k, g in groupby(sorted(data), key=lambda x: x[0])}
+# → {'A': [1, 3], 'B': [2, 4]}
 
-# Q10: Merge two sorted lists
+# ── Q10: Merge two sorted lists — O(n+m) ─────────────────────────────────────
 def merge_sorted(a, b):
     result, i, j = [], 0, 0
-    while i < len(a) and j < len(b):                      <span class="code-comment">-- count how many characters are in the text</span>
-        if a[i] <= b[j]: result.append(a[i]); i+=1
-        else: result.append(b[j]); j+=1                   <span class="code-comment">-- if no condition matched, use this default</span>
+    while i &lt; len(a) and j &lt; len(b):
+        if a[i] &lt;= b[j]:
+            result.append(a[i]); i += 1
+        else:
+            result.append(b[j]); j += 1
     return result + a[i:] + b[j:]
 </pre></div>
     </div>
 
+    <!-- OOP -->
     <div class="topic-card">
       <h3>OOP Basics (Asked in Technical Rounds)</h3>
       <div class="code-block"><pre>
-class DataPipeline:                                       <span class="code-comment"># define a new object type (blueprint)</span>
-    """Example class showing OOP concepts"""
+class DataPipeline:
+    '''Demonstrates all 4 OOP concepts in one class'''
 
-    class_count = 0  # class variable (shared by all instances)
+    class_count = 0       # class variable: shared across all instances
 
-    def __init__(self, name, source):                     <span class="code-comment"># define a reusable function</span>
-        self.name   = name    # instance variable
+    def __init__(self, name, source):
+        self.name   = name     # instance variable: unique per object
         self.source = source
         self.data   = None
         DataPipeline.class_count += 1
 
-    def load(self):                            # instance method
-        self.data = pd.read_csv(self.source)              <span class="code-comment"># read a CSV file into a table</span>
-        return self                                       <span class="code-comment"># send back a result from this function</span>
+    def load(self):            # instance method
+        import pandas as pd
+        self.data = pd.read_csv(self.source)
+        return self            # return self enables method chaining: pipe.load().clean()
 
-    def clean(self):                                      <span class="code-comment"># define a reusable function</span>
-        self.data.dropna(inplace=True)                    <span class="code-comment"># delete rows that have missing values</span>
-        return self  # return self → enables chaining: pipe.load().clean()
+    def clean(self):
+        self.data.dropna(inplace=True)
+        return self
 
     @classmethod
-    def get_count(cls):                        # class method
-        return cls.class_count                            <span class="code-comment"># send back a result from this function</span>
+    def get_count(cls):        # class method — accesses class-level data
+        return cls.class_count
 
     @staticmethod
-    def validate_extension(path):              # static method (no self/cls)
-        return path.endswith('.csv')                      <span class="code-comment"># send back a result from this function</span>
+    def validate_extension(path):   # static method — no self or cls, just utility
+        return path.endswith('.csv')
 
-    def __repr__(self):                        # string representation
-        return f"DataPipeline(name={self.name}, rows={len(self.data) if self.data is not None else 0})" # ← # chain preprocessing + model into one reusable object
+    def __repr__(self):        # string representation for print() and debugging
+        n = len(self.data) if self.data is not None else 0
+        return f"DataPipeline(name={self.name!r}, rows={n})"
 
-# Inheritance
-class MLPipeline(DataPipeline):                           <span class="code-comment"># chain preprocessing + model steps into one object</span>
-    def __init__(self, name, source, model):              <span class="code-comment"># define a reusable function</span>
-        super().__init__(name, source)         # call parent __init__
+# Inheritance (Encapsulation + Polymorphism + Inheritance)
+class MLPipeline(DataPipeline):
+    def __init__(self, name, source, model):
+        super().__init__(name, source)    # call parent constructor
         self.model = model
 
-    def train(self, X, y):                                <span class="code-comment"># define a reusable function</span>
-        self.model.fit(X, y)                              <span class="code-comment"># learn patterns from this data</span>
-        return self                                       <span class="code-comment"># send back a result from this function</span>
+    def train(self, X, y):
+        self.model.fit(X, y)
+        return self
+
+    def predict(self, X):
+        return self.model.predict(X)
 </pre></div>
       <table class="term-table">
-        <tr><th>OOP Concept</th><th>One-line Definition</th></tr>
-        <tr><td>Encapsulation</td><td>Bundle data + methods together; hide internal details</td></tr>
-        <tr><td>Inheritance</td><td>Child class inherits attributes/methods from parent</td></tr>
-        <tr><td>Polymorphism</td><td>Same method name, different behavior in different classes</td></tr>
-        <tr><td>Abstraction</td><td>Show only essential features, hide implementation</td></tr>
+        <tr><th>OOP Pillar</th><th>One-line Definition</th><th>Example in Code</th></tr>
+        <tr><td>Encapsulation</td><td>Bundle data + methods; hide internal details</td><td>self.data — only accessed through load()/clean()</td></tr>
+        <tr><td>Inheritance</td><td>Child class reuses parent attributes/methods</td><td>MLPipeline inherits load() from DataPipeline</td></tr>
+        <tr><td>Polymorphism</td><td>Same method name, different behavior in different classes</td><td>MLPipeline.predict() overrides parent (if it had one)</td></tr>
+        <tr><td>Abstraction</td><td>Show only essential interface, hide complexity</td><td>User calls pipe.load().clean() without seeing pandas code</td></tr>
       </table>
     </div>
 

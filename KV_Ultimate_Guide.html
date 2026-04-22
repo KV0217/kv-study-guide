@@ -8283,144 +8283,326 @@ for doc, score in similar_docs:
     </div>
   </div>
 </div>
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      DS PHASE 1 — Statistics & EDA
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p1">
   <div class="phase-header">
     <h2>Phase 1 — Statistics &amp; EDA</h2>
   </div>
   <div class="phase-content">
 
+    <!-- INTRO -->
     <div class="topic-card">
-      <h3>Descriptive Statistics — Core Terms</h3>
+      <h3>Why Statistics First? The Mental Model</h3>
+      <p style="line-height:1.7">Statistics is the toolbox that turns raw numbers into trustworthy insights. Before any machine learning model, you must understand your data's shape, spot problems (missing values, outliers, impossible values), and test whether patterns are real or just luck. Interviewers at every DS/DA role test statistics because it reveals whether you understand <em>what</em> your model output means, not just how to run the code.</p>
+      <p style="line-height:1.7">EDA (Exploratory Data Analysis) is the investigation phase — you play detective with your data before committing to any approach. The 5 questions EDA answers: (1) What shape is each variable? (2) Are there missing values, and how many? (3) Are there outliers? (4) How do variables relate to each other? (5) Is the target variable balanced?</p>
+    </div>
+
+    <!-- DESCRIPTIVE STATS -->
+    <div class="topic-card">
+      <h3>Descriptive Statistics — Plain English First</h3>
+      <p style="line-height:1.7"><strong>Mean</strong> is the balancing point of the distribution — it gets pulled toward outliers. <strong>Median</strong> is the middle value after sorting — it ignores outliers. <strong>Standard deviation</strong> is the "typical distance from the average" in the original units. If heights average 170 cm with std 10 cm, most people are 160–180 cm. <strong>IQR</strong> (Q3 − Q1) is the range of the middle 50% — anything beyond Q1 − 1.5×IQR or Q3 + 1.5×IQR is a statistical outlier.</p>
       <table class="term-table">
-        <tr><th>Term</th><th>Formula / Meaning</th><th>When to Use</th></tr>
-        <tr><td>Mean</td><td>Sum / Count</td><td>Symmetric data, no outliers</td></tr>
-        <tr><td>Median</td><td>Middle value when sorted</td><td>Skewed data, outliers present</td></tr>
-        <tr><td>Mode</td><td>Most frequent value</td><td>Categorical data</td></tr>
-        <tr><td>Variance</td><td>Avg squared deviation from mean</td><td>Measuring spread</td></tr>
-        <tr><td>Std Dev</td><td>√Variance</td><td>Same unit as data, easier to interpret</td></tr>
-        <tr><td>IQR</td><td>Q3 − Q1</td><td>Outlier detection: &lt;Q1−1.5×IQR or &gt;Q3+1.5×IQR</td></tr>
-        <tr><td>Skewness</td><td>+ve = right tail, −ve = left tail</td><td>Deciding transformation</td></tr>
-        <tr><td>Kurtosis</td><td>&gt;3 = heavy tails (leptokurtic)</td><td>Outlier risk assessment</td></tr>
-        <tr><td>CV (Coeff of Variation)</td><td>Std/Mean × 100%</td><td>Comparing spread across different scales</td></tr>
+        <tr><th>Statistic</th><th>Formula / Meaning</th><th>When to Use</th><th>Outlier Robust?</th></tr>
+        <tr><td>Mean</td><td>Sum / Count</td><td>Symmetric data, no heavy outliers</td><td>No — pulled by outliers</td></tr>
+        <tr><td>Median</td><td>Middle value when sorted</td><td>Skewed data, outliers present</td><td>Yes</td></tr>
+        <tr><td>Mode</td><td>Most frequent value</td><td>Categorical data, bimodal data</td><td>Yes</td></tr>
+        <tr><td>Variance</td><td>Avg squared deviation from mean</td><td>Measuring spread (squared units)</td><td>No</td></tr>
+        <tr><td>Std Dev (σ)</td><td>√Variance</td><td>Same unit as data, interpretable</td><td>No</td></tr>
+        <tr><td>IQR</td><td>Q3 − Q1</td><td>Outlier detection, boxplot</td><td>Yes</td></tr>
+        <tr><td>Skewness</td><td>+ve = right tail, −ve = left tail</td><td>Deciding log transform</td><td>No</td></tr>
+        <tr><td>Kurtosis</td><td>&gt;3 = heavy tails</td><td>Outlier risk, extreme value risk</td><td>No</td></tr>
+        <tr><td>CV (Coeff of Variation)</td><td>σ/Mean × 100%</td><td>Comparing spread across different scales</td><td>No</td></tr>
       </table>
       <div class="code-block"><pre>
-import numpy as np, pandas as pd                          <span class="code-comment"># bring in the numpy as np, pandas as pd toolkit</span>
-from scipy import stats                                   <span class="code-comment"># grab stats from scipy</span>
+import numpy as np, pandas as pd
+from scipy import stats
 
 data = df['MonthlyCharges']
-print(f"Mean:     {data.mean():.2f}")                     <span class="code-comment"># show this value in the terminal</span>
-print(f"Median:   {data.median():.2f}")                   <span class="code-comment"># show this value in the terminal</span>
-print(f"Std:      {data.std():.2f}")                      <span class="code-comment"># show this value in the terminal</span>
-print(f"Skew:     {data.skew():.2f}")                     <span class="code-comment"># show this value in the terminal</span>
-print(f"Kurtosis: {data.kurtosis():.2f}")                 <span class="code-comment"># show this value in the terminal</span>
-print(f"IQR:      {data.quantile(0.75) - data.quantile(0.25):.2f}") # ← # value at the given percentile (0.25 = Q1, 0.75 = Q3)
 
-Q1, Q3 = data.quantile(0.25), data.quantile(0.75)         <span class="code-comment"># value at a given percentile (0.25 = Q1, 0.75 = Q3)</span>
-IQR = Q3 - Q1
-outliers = df[(data < Q1 - 1.5*IQR) | (data > Q3 + 1.5*IQR)]
-print(f"Outliers: {len(outliers)}")                       <span class="code-comment"># show this value in the terminal</span>
+# ── Central tendency ───────────────────────────────────────────────────────────
+print(f"Mean:     {data.mean():.2f}")         # sum / count — affected by outliers
+print(f"Median:   {data.median():.2f}")       # middle value — robust to outliers
+print(f"Mode:     {data.mode()[0]:.2f}")      # most frequent value
+
+# ── Spread ─────────────────────────────────────────────────────────────────────
+print(f"Std Dev:  {data.std():.2f}")          # typical distance from mean
+print(f"Variance: {data.var():.2f}")          # std dev² — hard to interpret directly
+Q1, Q3 = data.quantile(0.25), data.quantile(0.75)  # 25th and 75th percentile
+IQR = Q3 - Q1                                # range of middle 50% of data
+print(f"IQR:      {IQR:.2f}")
+print(f"CV:       {data.std()/data.mean()*100:.1f}%")  # relative spread, scale-independent
+
+# ── Shape ──────────────────────────────────────────────────────────────────────
+print(f"Skew:     {data.skew():.2f}")         # >0 = right tail; <0 = left tail; ≈0 = symmetric
+print(f"Kurtosis: {data.kurtosis():.2f}")     # >0 = heavy tails (more outliers than normal)
+
+# ── Outlier detection using IQR fence ─────────────────────────────────────────
+lower_fence = Q1 - 1.5 * IQR                 # values below this are outliers
+upper_fence = Q3 + 1.5 * IQR                 # values above this are outliers
+outliers = df[(data &lt; lower_fence) | (data &gt; upper_fence)]
+print(f"Outliers: {len(outliers)} rows ({len(outliers)/len(df)*100:.1f}%)")
 </pre></div>
     </div>
 
+    <!-- NORMAL DISTRIBUTION SVG -->
     <div class="topic-card">
-      <h3>Probability Distributions</h3>
-      <table class="term-table">
-        <tr><th>Distribution</th><th>Use Case</th><th>Key Parameter</th></tr>
-        <tr><td>Normal</td><td>Height, errors, test scores</td><td>mean, std</td></tr>
-        <tr><td>Binomial</td><td>Success/fail trials (CTR, conversion)</td><td>n trials, p probability</td></tr>
-        <tr><td>Poisson</td><td>Count of events in fixed time (calls/hr)</td><td>λ = avg rate</td></tr>
-        <tr><td>Exponential</td><td>Time between events</td><td>λ rate</td></tr>
-        <tr><td>Uniform</td><td>Equal probability over range</td><td>a, b</td></tr>
-        <tr><td>Log-Normal</td><td>Income, stock prices (right-skewed)</td><td>log of data is normal</td></tr>
-        <tr><td>Beta</td><td>Probability of probability (A/B test priors)</td><td>α, β</td></tr>
-      </table>
-      <div class="note-box">Interview tip: "Income is log-normal because it can't go below zero and is right-skewed. Log-transforming it makes it approximately normal, which helps linear models."</div>
+      <h3>The Normal Distribution — The Most Important Shape in Statistics</h3>
+      <p style="line-height:1.7">The Normal (Gaussian) distribution appears everywhere in nature because of the <strong>Central Limit Theorem</strong>: when you average many independent random things, the average tends toward a Normal distribution — regardless of the original shape. This is why test scores, measurement errors, and biological measurements are often approximately Normal.</p>
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">Normal Distribution — 68-95-99.7 Rule</text>
+  <!-- shade 3σ zone -->
+  <polygon points="55,220 565,220 555,80 475,40 390,28 310,25 230,28 145,40 65,80" fill="#dbeafe" opacity=".5"/>
+  <!-- shade 2σ zone -->
+  <polygon points="115,220 505,220 498,68 425,38 368,28 310,25 252,28 195,38 122,68" fill="#bfdbfe" opacity=".5"/>
+  <!-- shade 1σ zone -->
+  <polygon points="185,220 435,220 428,58 380,32 340,25 310,25 280,25 240,32 192,58" fill="#93c5fd" opacity=".5"/>
+  <!-- bell curve -->
+  <polyline points="55,220 80,218 100,214 120,206 140,193 160,175 180,152 200,127 220,103 240,81 260,65 280,54 300,48 310,47 320,48 340,54 360,65 380,81 400,103 420,127 440,152 460,175 480,193 500,206 520,214 540,218 565,220" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+  <!-- mean line -->
+  <line x1="310" y1="47" x2="310" y2="230" stroke="#1e293b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="310" y="244" text-anchor="middle" font-size="11" fill="#1e293b">μ</text>
+  <!-- std dev markers -->
+  <line x1="185" y1="220" x2="185" y2="228" stroke="#374151" stroke-width="1.5"/>
+  <text x="185" y="242" text-anchor="middle" font-size="10" fill="#374151">μ−1σ</text>
+  <line x1="435" y1="220" x2="435" y2="228" stroke="#374151" stroke-width="1.5"/>
+  <text x="435" y="242" text-anchor="middle" font-size="10" fill="#374151">μ+1σ</text>
+  <line x1="115" y1="220" x2="115" y2="228" stroke="#374151" stroke-width="1.5"/>
+  <text x="115" y="242" text-anchor="middle" font-size="10" fill="#374151">μ−2σ</text>
+  <line x1="505" y1="220" x2="505" y2="228" stroke="#374151" stroke-width="1.5"/>
+  <text x="505" y="242" text-anchor="middle" font-size="10" fill="#374151">μ+2σ</text>
+  <!-- percent labels -->
+  <text x="310" y="145" text-anchor="middle" font-size="13" font-weight="bold" fill="#1d4ed8">68%</text>
+  <text x="310" y="100" text-anchor="middle" font-size="11" fill="#1d4ed8">95%</text>
+  <text x="310" y="70" text-anchor="middle" font-size="10" fill="#1d4ed8">99.7%</text>
+  <!-- bracket lines for 68% -->
+  <line x1="185" y1="152" x2="310" y2="152" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="435" y1="152" x2="310" y2="152" stroke="#1d4ed8" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- skew callout -->
+  <text x="310" y="270" text-anchor="middle" font-size="11" font-style="italic" fill="#6b7280">Symmetric: mean = median = mode. Z-score = (x − μ) / σ tells you how many std devs from centre.</text>
+</svg>
+      <p style="line-height:1.7">The <strong>Z-score</strong> converts any value to "how many standard deviations above or below the mean" — it standardizes across different scales. Z = (x − μ) / σ. A Z-score of +2 means the value is 2 std devs above average — only 2.3% of the data is higher.</p>
     </div>
 
+    <!-- SKEWNESS SVG -->
     <div class="topic-card">
-      <h3>Hypothesis Testing</h3>
-      <table class="term-table">
-        <tr><th>Test</th><th>When to Use</th><th>Null Hypothesis</th></tr>
-        <tr><td>t-test (1 sample)</td><td>Compare sample mean to known value</td><td>mean = μ₀</td></tr>
-        <tr><td>t-test (2 sample)</td><td>Compare means of 2 groups</td><td>mean₁ = mean₂</td></tr>
-        <tr><td>ANOVA</td><td>Compare means of 3+ groups</td><td>All group means equal</td></tr>
-        <tr><td>Chi-Square</td><td>Association between 2 categorical vars</td><td>Variables are independent</td></tr>
-        <tr><td>Mann-Whitney U</td><td>Non-parametric 2-group comparison</td><td>Distributions are same</td></tr>
-        <tr><td>Pearson correlation</td><td>Linear relationship between 2 numeric vars</td><td>correlation = 0</td></tr>
-      </table>
+      <h3>Skewness — Which Direction Does the Tail Point?</h3>
+      <p style="line-height:1.7">Skewness tells you whether data has a longer tail on the right (positive skew) or left (negative skew). This matters because skewed data violates many statistical test assumptions, and outliers on the right tail pull the mean far above the median. The standard fix for right-skewed data (income, prices, counts) is a <strong>log transformation</strong> — it compresses the long tail and makes the distribution more symmetric.</p>
+      <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Skewness — Which Way Does the Tail Point?</text>
+  <!-- Left skew -->
+  <rect x="15" y="30" width="180" height="145" rx="8" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="105" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626">Negative Skew (Left)</text>
+  <polyline points="25,165 40,163 55,158 75,148 95,130 115,105 130,85 145,110 158,148 168,163 182,165" fill="none" stroke="#dc2626" stroke-width="2"/>
+  <text x="105" y="180" text-anchor="middle" font-size="10" fill="#374151">Long left tail. Mean &lt; Median.</text>
+  <text x="105" y="193" text-anchor="middle" font-size="10" fill="#6b7280">e.g. exam scores (most high)</text>
+  <!-- Symmetric -->
+  <rect x="215" y="30" width="180" height="145" rx="8" fill="#f0fdf4" stroke="#6ee7b7" stroke-width="1.5"/>
+  <text x="305" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#059669">Symmetric (Normal)</text>
+  <polyline points="225,165 240,162 255,154 270,140 285,120 297,100 305,88 313,100 325,120 340,140 355,154 370,162 385,165" fill="none" stroke="#059669" stroke-width="2"/>
+  <text x="305" y="180" text-anchor="middle" font-size="10" fill="#374151">Balanced. Mean = Median.</text>
+  <text x="305" y="193" text-anchor="middle" font-size="10" fill="#6b7280">e.g. height, IQ scores</text>
+  <!-- Right skew -->
+  <rect x="415" y="30" width="185" height="145" rx="8" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="507" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#d97706">Positive Skew (Right)</text>
+  <polyline points="425,165 438,163 450,158 462,150 470,135 476,115 480,95 490,125 505,148 520,160 535,165 590,165" fill="none" stroke="#d97706" stroke-width="2"/>
+  <text x="507" y="180" text-anchor="middle" font-size="10" fill="#374151">Long right tail. Mean &gt; Median.</text>
+  <text x="507" y="193" text-anchor="middle" font-size="10" fill="#6b7280">e.g. income, house prices</text>
+</svg>
       <div class="code-block"><pre>
-from scipy import stats                                   <span class="code-comment"># grab stats from scipy</span>
+import numpy as np
 
-churners    = df[df['Churn']==1]['MonthlyCharges']
+skewness = data.skew()
+if abs(skewness) &lt; 0.5:
+    print("Approximately symmetric — use mean; Normal tests valid")
+elif skewness &gt; 0.5:
+    print(f"Right-skewed ({skewness:.2f}) — consider log1p transform, use median")
+    data_transformed = np.log1p(data)      # log(1+x): handles zeros safely
+else:
+    print(f"Left-skewed ({skewness:.2f}) — consider square or reflect+log")
+
+# After transformation, check skewness again:
+print(f"After log transform: skew = {np.log1p(data).skew():.2f}")
+# Goal: |skew| < 0.5 for roughly symmetric distribution
+</pre></div>
+    </div>
+
+    <!-- HYPOTHESIS TESTING -->
+    <div class="topic-card">
+      <h3>Hypothesis Testing — Plain English Mental Model</h3>
+      <p style="line-height:1.7">Hypothesis testing answers: "Is this pattern real, or could it have happened by chance?" You start with a <strong>null hypothesis (H₀)</strong> — usually "there is no effect / no difference" — and try to find enough evidence to reject it. The <strong>p-value</strong> is the probability of seeing your result (or something more extreme) if H₀ were truly true. If p &lt; 0.05, the result is "statistically significant" — there's less than 5% chance it happened by pure luck.</p>
+      <svg viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <defs>
+    <marker id="arrH" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <text x="310" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Which Statistical Test? — Decision Flowchart</text>
+  <!-- start -->
+  <rect x="230" y="35" width="160" height="36" rx="18" fill="#7c3aed" opacity=".15" stroke="#7c3aed" stroke-width="2"/>
+  <text x="310" y="57" text-anchor="middle" font-size="12" fill="#7c3aed" font-weight="bold">What are you comparing?</text>
+  <!-- branch 1: 2 numeric -->
+  <line x1="310" y1="71" x2="140" y2="110" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrH)"/>
+  <text x="195" y="97" text-anchor="middle" font-size="9" fill="#64748b">2 numeric vars</text>
+  <rect x="50" y="110" width="160" height="34" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="125" text-anchor="middle" font-size="11" fill="#1d4ed8">Correlation</text>
+  <text x="130" y="138" text-anchor="middle" font-size="10" fill="#374151">Pearson (normal) / Spearman</text>
+  <!-- branch 2: 1 cat + 1 numeric -->
+  <line x1="310" y1="71" x2="310" y2="110" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrH)"/>
+  <text x="355" y="95" text-anchor="middle" font-size="9" fill="#64748b">1 cat + 1 num</text>
+  <rect x="220" y="110" width="180" height="34" rx="6" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="310" y="122" text-anchor="middle" font-size="11" fill="#15803d">How many groups?</text>
+  <text x="310" y="138" text-anchor="middle" font-size="10" fill="#374151">2 groups or 3+ groups</text>
+  <!-- 2 groups -->
+  <line x1="250" y1="144" x2="175" y2="190" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrH)"/>
+  <text x="193" y="175" text-anchor="middle" font-size="9" fill="#64748b">2 groups</text>
+  <rect x="90" y="190" width="170" height="52" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="175" y="207" text-anchor="middle" font-size="11" fill="#92400e">t-test (parametric)</text>
+  <text x="175" y="221" text-anchor="middle" font-size="10" fill="#374151">Normal data → t-test</text>
+  <text x="175" y="234" text-anchor="middle" font-size="10" fill="#374151">Not normal → Mann-Whitney</text>
+  <!-- 3+ groups -->
+  <line x1="370" y1="144" x2="435" y2="190" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrH)"/>
+  <text x="427" y="175" text-anchor="middle" font-size="9" fill="#64748b">3+ groups</text>
+  <rect x="350" y="190" width="170" height="52" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="435" y="207" text-anchor="middle" font-size="11" fill="#92400e">ANOVA (parametric)</text>
+  <text x="435" y="221" text-anchor="middle" font-size="10" fill="#374151">Normal data → ANOVA</text>
+  <text x="435" y="234" text-anchor="middle" font-size="10" fill="#374151">Not normal → Kruskal-Wallis</text>
+  <!-- branch 3: 2 categorical -->
+  <line x1="310" y1="71" x2="490" y2="110" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrH)"/>
+  <text x="430" y="97" text-anchor="middle" font-size="9" fill="#64748b">2 categorical vars</text>
+  <rect x="415" y="110" width="160" height="34" rx="6" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="495" y="125" text-anchor="middle" font-size="11" fill="#7e22ce">Chi-Square Test</text>
+  <text x="495" y="138" text-anchor="middle" font-size="10" fill="#374151">Test for association</text>
+  <!-- p-value explanation -->
+  <rect x="100" y="262" width="420" height="60" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="310" y="280" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e293b">p-value &lt; 0.05 → Reject null hypothesis (result is statistically significant)</text>
+  <text x="310" y="298" text-anchor="middle" font-size="11" fill="#374151">p-value = P(seeing this result | null hypothesis is true)</text>
+  <text x="310" y="314" text-anchor="middle" font-size="11" fill="#6b7280">NOT "probability the null is true" — a common mistake!</text>
+</svg>
+      <div class="code-block"><pre>
+from scipy import stats
+import pandas as pd
+
+# ── Two-sample t-test: Do churners pay more per month than non-churners? ────────
+churners     = df[df['Churn']==1]['MonthlyCharges']
 non_churners = df[df['Churn']==0]['MonthlyCharges']
-t_stat, p = stats.ttest_ind(churners, non_churners)       <span class="code-comment"># test if two groups have different averages</span>
-print(f"t={t_stat:.3f}, p={p:.4f}")  # p<0.05 → significant difference
+t_stat, p_val = stats.ttest_ind(churners, non_churners)
+# H0: average MonthlyCharges is the same for churners and non-churners
+# If p < 0.05 → reject H0 → there IS a significant difference
+print(f"t-stat={t_stat:.3f}, p-value={p_val:.4f}")
+if p_val &lt; 0.05:
+    print(f"Significant! Churners pay ₹{churners.mean():.0f} vs ₹{non_churners.mean():.0f}")
 
-contingency = pd.crosstab(df['Contract'], df['Churn']) # ← # frequency table of two categorical variables
-chi2, p, dof, expected = stats.chi2_contingency(contingency) # ← # chi-square test: are two categorical variables independent?
-print(f"Chi2={chi2:.3f}, p={p:.4f}")                      <span class="code-comment"># show this value in the terminal</span>
+# ── Chi-square test: Is contract type associated with churn? ──────────────────
+contingency = pd.crosstab(df['Contract'], df['Churn'])   # frequency table
+chi2, p, dof, expected = stats.chi2_contingency(contingency)
+# H0: contract type and churn are INDEPENDENT (no association)
+# If p < 0.05 → reject H0 → contract type IS associated with churn
+print(f"Chi2={chi2:.3f}, dof={dof}, p={p:.4f}")
+
+# ── Mann-Whitney U: Non-parametric alternative when data is not normal ─────────
+# Use when data is clearly non-normal (highly skewed, or small n)
+u_stat, p_mw = stats.mannwhitneyu(churners, non_churners, alternative='two-sided')
+print(f"Mann-Whitney: U={u_stat:.0f}, p={p_mw:.4f}")
+
+# ── One-way ANOVA: Do 3+ contract types have different monthly charges? ────────
+groups = [df[df['Contract']==c]['MonthlyCharges'] for c in df['Contract'].unique()]
+f_stat, p_anova = stats.f_oneway(*groups)
+print(f"ANOVA: F={f_stat:.3f}, p={p_anova:.4f}")
+# If significant, follow up with Tukey HSD to find WHICH pairs differ
 </pre></div>
-      <div class="note-box">p-value &lt; 0.05 → reject null hypothesis → result is statistically significant at 95% confidence level.</div>
+      <div class="note-box"><strong>Type I vs Type II errors:</strong> Type I (False Positive) = rejecting H₀ when it's actually true (false alarm, controlled by α = 0.05). Type II (False Negative) = failing to reject H₀ when it's actually false (missed effect, controlled by statistical power). Reducing α reduces Type I errors but increases Type II.</div>
     </div>
 
+    <!-- A/B TESTING -->
     <div class="topic-card">
-      <h3>A/B Testing</h3>
+      <h3>A/B Testing — Statistics in Production</h3>
       <div class="code-block"><pre>
-control_visitors, control_conversions   = 5000, 238
-treatment_visitors, treatment_conversions = 5000, 312
+from statsmodels.stats.proportion import proportions_ztest
+from statsmodels.stats.power import TTestIndPower
 
-from statsmodels.stats.proportion import proportions_ztest # ← # import proportions_ztest from statsmodels.stats.proportion
-counts = [treatment_conversions, control_conversions]
-nobs   = [treatment_visitors, control_visitors]
-z_stat, p_value = proportions_ztest(counts, nobs)
-print(f"Z={z_stat:.3f}, p={p_value:.4f}")                 <span class="code-comment"># show this value in the terminal</span>
-print("Significant!" if p_value < 0.05 else "Not significant") # ← # print output to console
-print(f"Lift: {(treatment_conversions/treatment_visitors - control_conversions/control_visitors)*100:.2f}%") # ← # print output to console
-
-from statsmodels.stats.power import TTestIndPower         <span class="code-comment"># grab TTestIndPower from statsmodels.stats.power</span>
+# ── Always calculate required sample size BEFORE running the test ──────────────
 analysis = TTestIndPower()
-n = analysis.solve_power(effect_size=0.2, alpha=0.05, power=0.80)
-print(f"Required sample size per group: {n:.0f}")         <span class="code-comment"># show this value in the terminal</span>
+n_per_group = analysis.solve_power(
+    effect_size = 0.2,    # Cohen's d: small=0.2, medium=0.5, large=0.8
+    alpha       = 0.05,   # significance threshold (Type I error rate)
+    power       = 0.80    # 80% chance of detecting the effect if it's real
+)
+print(f"Required per group: {int(n_per_group)}")  # run until both groups reach this
+
+# ── Run the test after collecting enough data ──────────────────────────────────
+control_visitors   = 5000; control_conv   = 238   # 4.76% conversion
+treatment_visitors = 5000; treatment_conv = 312   # 6.24% conversion
+
+counts = [treatment_conv, control_conv]            # successes
+nobs   = [treatment_visitors, control_visitors]    # total observations
+z_stat, p_value = proportions_ztest(counts, nobs)
+print(f"Z={z_stat:.3f}, p={p_value:.4f}")
+print("Significant lift!" if p_value &lt; 0.05 else "No significant difference")
+
+lift_pct = (treatment_conv/treatment_visitors - control_conv/control_visitors) * 100
+print(f"Lift: +{lift_pct:.2f} percentage points")
+
+# ── Common A/B testing mistakes ────────────────────────────────────────────────
+# 1. PEEKING: stopping early when p < 0.05 — inflates false positives by 3-4×
+#    Fix: decide sample size in advance, stick to it
+# 2. MULTIPLE TESTING: 10 variants at α=0.05 → ~40% chance of at least one false positive
+#    Fix: Bonferroni correction → use α/k = 0.05/10 = 0.005 per test
+# 3. SAMPLE RATIO MISMATCH: groups of very different sizes signal broken randomization
+# 4. NETWORK EFFECTS: users in one group influence the other → use cluster randomization
 </pre></div>
-      <div class="note-box">Key A/B Testing terms: <strong>Type I Error</strong> (false positive, α=0.05), <strong>Type II Error</strong> (false negative, β), <strong>Statistical Power</strong> (1−β, usually 0.80), <strong>MDE</strong> (minimum detectable effect).</div>
     </div>
 
+    <!-- EDA PIPELINE -->
     <div class="topic-card">
-      <h3>Full EDA Pipeline</h3>
+      <h3>Full EDA Pipeline — The Standard Checklist</h3>
       <div class="code-block"><pre>
 import pandas as pd, numpy as np, matplotlib.pyplot as plt, seaborn as sns
 
-# Step 1: Shape & Types
-df.shape; df.dtypes; df.head()                            <span class="code-comment"># show the first 5 rows</span>
+# ── Step 1: Basic shape and types ──────────────────────────────────────────────
+print(df.shape)              # (n_rows, n_cols)
+print(df.dtypes)             # object=categorical, int64/float64=numeric
+print(df.head())             # sanity-check first 5 rows
 
-# Step 2: Missing values
-missing = df.isnull().sum()                               <span class="code-comment"># mark missing values as True</span>
-missing_pct = (missing / len(df) * 100).sort_values(ascending=False) # ← # sort rows by one or more column values
-print(missing_pct[missing_pct > 0])                       <span class="code-comment"># show this value in the terminal</span>
-# Rule: <5% → impute median/mode | 5-30% → impute + flag | >30% → drop or model
+# ── Step 2: Missing values ─────────────────────────────────────────────────────
+missing_pct = (df.isnull().sum() / len(df) * 100).sort_values(ascending=False)
+print(missing_pct[missing_pct &gt; 0])
+# Decision rule: <5% → impute | 5-30% → impute + flag column | >30% → drop or special model
 
-# Step 3: Target distribution
-print(df['target'].value_counts(normalize=True))          <span class="code-comment"># count how many times each value appears</span>
-# If imbalanced (<20% minority) → use SMOTE or class_weight
+# ── Step 3: Target distribution ────────────────────────────────────────────────
+print(df['Churn'].value_counts(normalize=True))
+# If minority class < 20% → imbalanced → use SMOTE, class_weight, or stratified split
 
-# Step 4: Numeric distributions
-df.describe()                                             <span class="code-comment"># show count, mean, min, max and quartiles</span>
-df.hist(figsize=(16,10), bins=30)
+# ── Step 4: Numeric distributions ─────────────────────────────────────────────
+print(df.describe())          # count, mean, std, min, 25%, 50%, 75%, max
+df.hist(figsize=(16, 10), bins=30)   # quick visual of all numeric columns at once
 
-# Step 5: Correlation matrix
-corr = df.corr(numeric_only=True)                         <span class="code-comment"># how strongly each pair of columns moves together (-1 to 1)</span>
-sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm', # ← # colour-coded grid showing values (great for correlations)
-            mask=np.triu(corr))                           <span class="code-comment"># keep only the upper triangle of a matrix</span>
+# ── Step 5: Correlation matrix ─────────────────────────────────────────────────
+corr = df.corr(numeric_only=True)
+sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm',
+            mask=np.triu(np.ones_like(corr, dtype=bool)))  # hide upper triangle (duplicate)
+# Watch for: |correlation| > 0.8 between features = multicollinearity risk
 
-# Step 6: Target vs features
-for col in df.select_dtypes('object').columns:            <span class="code-comment"># loop through each item in the list</span>
-    df.groupby(col)['Churn'].mean().sort_values().plot(kind='barh') # ← # sort rows by one or more column values
+# ── Step 6: Target vs categorical features ─────────────────────────────────────
+for col in df.select_dtypes('object').columns:
+    churn_rate = df.groupby(col)['Churn'].mean().sort_values()
+    print(f"
+{col}:
+{churn_rate}")
+# High churn rate in a category = strong predictor → include in model
 
-# Step 7: Outlier check
-df.boxplot(figsize=(16,5)); plt.show()                    <span class="code-comment"># display the chart</span>
+# ── Step 7: Outlier detection ──────────────────────────────────────────────────
+df.boxplot(figsize=(16, 5))   # visual outlier check
+plt.show()
+# Outliers that are data errors → remove. Real extreme values → cap at fence or keep.
+
+# ── Step 8: Categorical cardinality ────────────────────────────────────────────
+cat_cols = df.select_dtypes('object').columns
+for col in cat_cols:
+    n_unique = df[col].nunique()
+    print(f"{col}: {n_unique} unique values")
+# High cardinality (>50 unique) → target encode or group rare categories
 </pre></div>
     </div>
 
@@ -9542,118 +9724,278 @@ pipe.fit(X_train, y_train)                                <span class="code-comm
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      DS PHASE 7 — Model Evaluation Metrics
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p7">
   <div class="phase-header">
     <h2>Phase 7 — Model Evaluation Metrics</h2>
   </div>
   <div class="phase-content">
 
+    <!-- INTRO -->
     <div class="topic-card">
-      <h3>Confusion Matrix — The Foundation</h3>
-      <table class="term-table">
-        <tr><th></th><th>Predicted: Positive</th><th>Predicted: Negative</th></tr>
-        <tr><td><strong>Actual: Positive</strong></td><td>TP (True Positive)</td><td>FN (False Negative) ← Miss</td></tr>
-        <tr><td><strong>Actual: Negative</strong></td><td>FP (False Positive) ← False Alarm</td><td>TN (True Negative)</td></tr>
-      </table>
+      <h3>Why Accuracy is Almost Always the Wrong Metric</h3>
+      <p style="line-height:1.7">Imagine a fraud detection model. Fraud represents 0.1% of all transactions. A model that predicts "not fraud" for every single transaction gets 99.9% accuracy — and is completely useless. This is why choosing the right metric for your specific problem is one of the most important decisions in model building. The right metric aligns with the actual business cost of being wrong.</p>
+      <p style="line-height:1.7">All classification metrics are derived from just four numbers: <strong>TP</strong> (correctly predicted positive), <strong>FP</strong> (incorrectly predicted positive — false alarm), <strong>FN</strong> (missed a real positive — the dangerous miss), and <strong>TN</strong> (correctly predicted negative). Everything else — precision, recall, F1, AUC — is just a formula built from these four.</p>
+    </div>
+
+    <!-- CONFUSION MATRIX SVG -->
+    <div class="topic-card">
+      <h3>Confusion Matrix — The Foundation of All Classification Metrics</h3>
+      <svg viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">Confusion Matrix — Complete Anatomy</text>
+  <!-- Column headers -->
+  <text x="310" y="48" text-anchor="middle" font-size="12" fill="#374151" font-weight="bold">PREDICTED</text>
+  <text x="215" y="68" text-anchor="middle" font-size="11" fill="#374151">Positive</text>
+  <text x="405" y="68" text-anchor="middle" font-size="11" fill="#374151">Negative</text>
+  <!-- Row headers -->
+  <text x="52" y="160" text-anchor="middle" font-size="12" fill="#374151" font-weight="bold" transform="rotate(-90,52,160)">ACTUAL</text>
+  <text x="78" y="145" text-anchor="middle" font-size="11" fill="#374151" transform="rotate(-90,78,145)">Positive</text>
+  <text x="78" y="270" text-anchor="middle" font-size="11" fill="#374151" transform="rotate(-90,78,270)">Negative</text>
+  <!-- TP box -->
+  <rect x="95" y="78" width="230" height="110" rx="6" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="210" y="112" text-anchor="middle" font-size="22" font-weight="bold" fill="#065f46">TP</text>
+  <text x="210" y="134" text-anchor="middle" font-size="12" fill="#065f46">True Positive</text>
+  <text x="210" y="152" text-anchor="middle" font-size="10" fill="#374151">Predicted Positive,</text>
+  <text x="210" y="166" text-anchor="middle" font-size="10" fill="#374151">Actually Positive ✓</text>
+  <!-- FN box -->
+  <rect x="325" y="78" width="230" height="110" rx="6" fill="#fee2e2" stroke="#f87171" stroke-width="2"/>
+  <text x="440" y="112" text-anchor="middle" font-size="22" font-weight="bold" fill="#dc2626">FN</text>
+  <text x="440" y="134" text-anchor="middle" font-size="12" fill="#dc2626">False Negative</text>
+  <text x="440" y="152" text-anchor="middle" font-size="10" fill="#374151">Predicted Negative,</text>
+  <text x="440" y="166" text-anchor="middle" font-size="10" fill="#374151">Actually Positive ✗ MISS</text>
+  <!-- FP box -->
+  <rect x="95" y="198" width="230" height="110" rx="6" fill="#fef9c3" stroke="#eab308" stroke-width="2"/>
+  <text x="210" y="232" text-anchor="middle" font-size="22" font-weight="bold" fill="#92400e">FP</text>
+  <text x="210" y="254" text-anchor="middle" font-size="12" fill="#92400e">False Positive</text>
+  <text x="210" y="272" text-anchor="middle" font-size="10" fill="#374151">Predicted Positive,</text>
+  <text x="210" y="286" text-anchor="middle" font-size="10" fill="#374151">Actually Negative ✗ FALSE ALARM</text>
+  <!-- TN box -->
+  <rect x="325" y="198" width="230" height="110" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <text x="440" y="232" text-anchor="middle" font-size="22" font-weight="bold" fill="#16a34a">TN</text>
+  <text x="440" y="254" text-anchor="middle" font-size="12" fill="#16a34a">True Negative</text>
+  <text x="440" y="272" text-anchor="middle" font-size="10" fill="#374151">Predicted Negative,</text>
+  <text x="440" y="286" text-anchor="middle" font-size="10" fill="#374151">Actually Negative ✓</text>
+  <!-- formula labels on right -->
+  <text x="565" y="133" text-anchor="middle" font-size="9" fill="#7c3aed">Recall =</text>
+  <text x="565" y="146" text-anchor="middle" font-size="9" fill="#7c3aed">TP/(TP+FN)</text>
+  <text x="565" y="253" text-anchor="middle" font-size="9" fill="#7c3aed">Specificity =</text>
+  <text x="565" y="266" text-anchor="middle" font-size="9" fill="#7c3aed">TN/(TN+FP)</text>
+  <!-- formula labels below -->
+  <text x="210" y="320" text-anchor="middle" font-size="9" fill="#7c3aed">Precision = TP/(TP+FP)</text>
+  <text x="440" y="320" text-anchor="middle" font-size="9" fill="#7c3aed">NPV = TN/(TN+FN)</text>
+</svg>
       <div class="code-block"><pre>
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay # ← # import confusion_matrix, ConfusionMatrixDisplay from sklearn.metrics <span class="code-comment">-- the table to read from</span>
+from sklearn.metrics import (confusion_matrix, classification_report,
+                              precision_score, recall_score, f1_score)
+
 cm = confusion_matrix(y_test, y_pred)
-TP = cm[1,1]; FN = cm[1,0]; FP = cm[0,1]; TN = cm[0,0]
+TP = cm[1,1]    # predicted positive AND actually positive
+FN = cm[1,0]    # predicted negative BUT actually positive ← the dangerous miss
+FP = cm[0,1]    # predicted positive BUT actually negative ← the false alarm
+TN = cm[0,0]    # predicted negative AND actually negative
 
-accuracy  = (TP+TN) / (TP+TN+FP+FN)
-precision = TP / (TP+FP)
-recall    = TP / (TP+FN)
-f1        = 2 * precision * recall / (precision + recall)
-specificity = TN / (TN+FP)
+# ── Core metrics ──────────────────────────────────────────────────────────────
+accuracy    = (TP + TN) / (TP + TN + FP + FN)   # overall correctness (misleading when imbalanced)
+precision   = TP / (TP + FP)    # "when I say yes, how often am I right?" — reduces FP
+recall      = TP / (TP + FN)    # "of all real positives, how many did I find?" — reduces FN
+f1          = 2 * (precision * recall) / (precision + recall)  # harmonic mean of P and R
+specificity = TN / (TN + FP)    # recall for the negative class
+
+print(f"Accuracy:    {accuracy:.3f}")
+print(f"Precision:   {precision:.3f}")
+print(f"Recall:      {recall:.3f}")
+print(f"F1 Score:    {f1:.3f}")
+print(f"Specificity: {specificity:.3f}")
+
+# ── Full report ───────────────────────────────────────────────────────────────
+print(classification_report(y_test, y_pred, target_names=['Stay', 'Churn']))
+# Shows precision, recall, f1, support for EACH class
+# Macro avg: equal weight to each class (good when classes are balanced)
+# Weighted avg: weighted by support (use when classes are imbalanced)
 </pre></div>
-      <div class="note-box"><strong>Precision</strong> = "When I say Yes, how often am I right?" → TP / (TP+FP)<br>
-<strong>Recall</strong> = "Of all actual Yes cases, how many did I find?" → TP / (TP+FN)</div>
     </div>
 
+    <!-- PRECISION VS RECALL -->
     <div class="topic-card">
-      <h3>Which Metric to Choose</h3>
-      <table class="term-table">
-        <tr><th>Problem</th><th>Primary Metric</th><th>Why</th></tr>
-        <tr><td>Cancer detection</td><td>Recall (Sensitivity)</td><td>Missing a cancer patient (FN) is fatal</td></tr>
-        <tr><td>Spam filter</td><td>Precision</td><td>Blocking legit email (FP) is bad</td></tr>
-        <tr><td>Customer churn</td><td>Recall + AUC</td><td>Missing a churner costs revenue</td></tr>
-        <tr><td>Fraud detection</td><td>Recall + F1</td><td>Missed fraud (FN) is costly</td></tr>
-        <tr><td>Imbalanced classes</td><td>F1 / AUC-PR</td><td>Accuracy is misleading</td></tr>
-        <tr><td>Regression</td><td>RMSE / MAE / R²</td><td>RMSE penalizes large errors more</td></tr>
+      <h3>Precision vs Recall — The Fundamental Tradeoff</h3>
+      <p style="line-height:1.7">You cannot maximize both at the same time — there is always a tradeoff. When you lower the decision threshold (classify more things as positive), you catch more true positives (recall goes up) but also generate more false alarms (precision goes down). The choice depends entirely on which type of mistake is more costly in your business context.</p>
+      <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Precision vs Recall — When to Prioritise Each</text>
+  <!-- Precision priority -->
+  <rect x="15" y="28" width="280" height="150" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="155" y="50" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">Prioritise PRECISION</text>
+  <text x="155" y="68" text-anchor="middle" font-size="11" fill="#374151">FP is more costly than FN</text>
+  <text x="155" y="86" text-anchor="middle" font-size="11" fill="#374151">"When I say YES, I must be right"</text>
+  <line x1="35" y1="97" x2="275" y2="97" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="155" y="114" text-anchor="middle" font-size="10" fill="#374151">• Spam filter (don't block legit email)</text>
+  <text x="155" y="130" text-anchor="middle" font-size="10" fill="#374151">• Recommendation system (irrelevant results frustrate users)</text>
+  <text x="155" y="146" text-anchor="middle" font-size="10" fill="#374151">• Drug approval (false positive approves harmful drug)</text>
+  <text x="155" y="162" text-anchor="middle" font-size="10" fill="#374151">• High-value lead scoring</text>
+  <!-- Recall priority -->
+  <rect x="325" y="28" width="280" height="150" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+  <text x="465" y="50" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626">Prioritise RECALL</text>
+  <text x="465" y="68" text-anchor="middle" font-size="11" fill="#374151">FN is more costly than FP</text>
+  <text x="465" y="86" text-anchor="middle" font-size="11" fill="#374151">"I must catch EVERY real case"</text>
+  <line x1="345" y1="97" x2="585" y2="97" stroke="#fecaca" stroke-width="1"/>
+  <text x="465" y="114" text-anchor="middle" font-size="10" fill="#374151">• Cancer/disease detection (missing = fatal)</text>
+  <text x="465" y="130" text-anchor="middle" font-size="10" fill="#374151">• Fraud detection (missing fraud = money lost)</text>
+  <text x="465" y="146" text-anchor="middle" font-size="10" fill="#374151">• Customer churn (missing churner = lost revenue)</text>
+  <text x="465" y="162" text-anchor="middle" font-size="10" fill="#374151">• Safety-critical anomaly detection</text>
+</svg>
+      <table class="term-table" style="margin-top:1rem">
+        <tr><th>Problem</th><th>Primary Metric</th><th>Why</th><th>Typical Target</th></tr>
+        <tr><td>Cancer detection</td><td>Recall (Sensitivity)</td><td>Missing a cancer patient (FN) is fatal</td><td>Recall &gt; 90%</td></tr>
+        <tr><td>Spam filter</td><td>Precision</td><td>Blocking legit email (FP) is very bad</td><td>Precision &gt; 99%</td></tr>
+        <tr><td>Customer churn</td><td>Recall + AUC</td><td>Missing a churner costs revenue; FP is manageable (retention call)</td><td>Recall &gt; 70%, AUC &gt; 0.80</td></tr>
+        <tr><td>Fraud detection</td><td>Recall + F1</td><td>Missed fraud (FN) = real money lost; FP = annoyed customer</td><td>Recall &gt; 80%</td></tr>
+        <tr><td>Imbalanced classes</td><td>F1 / AUC-PR</td><td>Accuracy is misleading; use AUC-PR for severe imbalance</td><td>F1 &gt; 0.70</td></tr>
+        <tr><td>Regression</td><td>RMSE / MAE / R²</td><td>RMSE penalizes large errors more; MAE is more interpretable</td><td>Context-dependent</td></tr>
       </table>
     </div>
 
+    <!-- ROC CURVE -->
     <div class="topic-card">
-      <h3>ROC Curve &amp; AUC</h3>
+      <h3>ROC Curve &amp; AUC — Threshold-Independent Evaluation</h3>
+      <p style="line-height:1.7">The ROC curve plots True Positive Rate (recall) against False Positive Rate at every possible decision threshold. AUC (Area Under the Curve) summarises model quality as a single number: it equals the probability that the model ranks a random positive case higher than a random negative case. A model with AUC 0.87 correctly ranks 87% of all (positive, negative) pairs.</p>
+      <svg viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">ROC Curve — AUC Explained</text>
+  <!-- axes -->
+  <line x1="90" y1="40" x2="90" y2="270" stroke="#374151" stroke-width="2"/>
+  <line x1="90" y1="270" x2="380" y2="270" stroke="#374151" stroke-width="2"/>
+  <text x="235" y="295" text-anchor="middle" font-size="11" fill="#374151">False Positive Rate (FPR) →</text>
+  <text x="38" y="155" text-anchor="middle" font-size="11" fill="#374151" transform="rotate(-90,38,155)">True Positive Rate (TPR) →</text>
+  <!-- random line -->
+  <line x1="90" y1="270" x2="380" y2="40" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="280" y="165" text-anchor="start" font-size="10" fill="#94a3b8">Random (AUC=0.5)</text>
+  <!-- Good model curve -->
+  <path d="M90,270 C110,150 150,70 200,55 S280,45 380,40" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+  <!-- shade area under good curve -->
+  <path d="M90,270 C110,150 150,70 200,55 S280,45 380,40 L380,270 Z" fill="#3b82f6" opacity=".12"/>
+  <text x="180" y="180" text-anchor="middle" font-size="11" fill="#1d4ed8" font-weight="bold">Good Model</text>
+  <text x="180" y="195" text-anchor="middle" font-size="11" fill="#1d4ed8">AUC = 0.87</text>
+  <!-- Perfect model reference -->
+  <path d="M90,270 L90,40 L380,40" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="240" y="55" text-anchor="middle" font-size="10" fill="#059669">Perfect model AUC=1.0</text>
+  <!-- Axis tick labels -->
+  <text x="90" y="285" text-anchor="middle" font-size="9" fill="#374151">0</text>
+  <text x="235" y="285" text-anchor="middle" font-size="9" fill="#374151">0.5</text>
+  <text x="380" y="285" text-anchor="middle" font-size="9" fill="#374151">1.0</text>
+  <text x="78" y="274" text-anchor="end" font-size="9" fill="#374151">0</text>
+  <text x="78" y="155" text-anchor="end" font-size="9" fill="#374151">0.5</text>
+  <text x="78" y="44" text-anchor="end" font-size="9" fill="#374151">1.0</text>
+  <!-- AUC interpretation table -->
+  <rect x="400" y="40" width="200" height="185" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="500" y="62" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e293b">AUC Benchmarks</text>
+  <text x="500" y="82" text-anchor="middle" font-size="11" fill="#dc2626">0.50 → Random</text>
+  <text x="500" y="100" text-anchor="middle" font-size="11" fill="#f59e0b">0.70–0.79 → Fair</text>
+  <text x="500" y="118" text-anchor="middle" font-size="11" fill="#3b82f6">0.80–0.89 → Good</text>
+  <text x="500" y="136" text-anchor="middle" font-size="11" fill="#059669">0.90–0.99 → Excellent</text>
+  <text x="500" y="154" text-anchor="middle" font-size="10" fill="#6b7280">1.00 = Perfect</text>
+  <text x="500" y="168" text-anchor="middle" font-size="9" fill="#dc2626">(suspect data leakage!)</text>
+  <text x="500" y="190" text-anchor="middle" font-size="10" font-style="italic" fill="#374151">AUC = P(model ranks a</text>
+  <text x="500" y="204" text-anchor="middle" font-size="10" font-style="italic" fill="#374151">positive higher than</text>
+  <text x="500" y="218" text-anchor="middle" font-size="10" font-style="italic" fill="#374151">a random negative)</text>
+  <!-- threshold arrows -->
+  <text x="235" y="310" text-anchor="middle" font-size="10" fill="#374151">Moving threshold right: fewer alarms (↑ Precision, ↓ Recall). Left: more alarms (↑ Recall, ↓ Precision).</text>
+</svg>
       <div class="code-block"><pre>
-from sklearn.metrics import roc_curve, roc_auc_score      <span class="code-comment"># grab roc_curve, roc_auc_score from sklearn.metrics</span>
-y_prob = model.predict_proba(X_test)[:,1]                 <span class="code-comment"># get probability scores instead of just the final label</span>
-fpr, tpr, thresholds = roc_curve(y_test, y_prob)          <span class="code-comment"># shows the tradeoff between catching true vs false positives</span>
-auc = roc_auc_score(y_test, y_prob)                       <span class="code-comment"># overall quality of rankings (0.5 = random, 1 = perfect)</span>
+from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve, average_precision_score
+import numpy as np
 
-# Find optimal threshold (Youden's J = max(TPR - FPR))
-optimal_idx = (tpr - fpr).argmax()
-optimal_threshold = thresholds[optimal_idx]
+y_prob = model.predict_proba(X_test)[:, 1]   # probability scores (not just 0/1 labels)
+
+# ── ROC AUC ───────────────────────────────────────────────────────────────────
+fpr, tpr, thresholds = roc_curve(y_test, y_prob)
+auc = roc_auc_score(y_test, y_prob)
+print(f"ROC AUC: {auc:.4f}")   # 0.5 = random, 1.0 = perfect
+
+# ── Find optimal threshold (Youden's J = TPR - FPR maximised) ─────────────────
+j_scores = tpr - fpr
+best_idx  = np.argmax(j_scores)
+best_threshold = thresholds[best_idx]
+print(f"Optimal threshold: {best_threshold:.3f}")
+# Use this threshold instead of default 0.5 for imbalanced problems
+
+y_pred_optimal = (y_prob >= best_threshold).astype(int)
+
+# ── Precision-Recall AUC (better for severe class imbalance) ──────────────────
+prec, rec, thresh = precision_recall_curve(y_test, y_prob)
+pr_auc = average_precision_score(y_test, y_prob)
+print(f"PR AUC: {pr_auc:.4f}")
+# When positive class is < 5% of data, PR AUC is more informative than ROC AUC
 </pre></div>
-      <table class="term-table">
-        <tr><th>AUC Value</th><th>Model Quality</th></tr>
-        <tr><td>1.00</td><td>Perfect (suspicious — likely data leakage)</td></tr>
-        <tr><td>0.90–0.99</td><td>Excellent</td></tr>
-        <tr><td>0.80–0.89</td><td>Good (churn model = 0.84)</td></tr>
-        <tr><td>0.70–0.79</td><td>Fair</td></tr>
-        <tr><td>0.50</td><td>Random classifier</td></tr>
-      </table>
-      <div class="note-box"><strong>AUC interpretation:</strong> "There is an 84% probability that the model ranks a random positive case higher than a random negative case." — say this in interviews.</div>
+      <div class="note-box"><strong>Interview answer for "Explain AUC to a non-technical person":</strong> "Imagine we randomly pick one person who actually churned and one who didn't. AUC = 0.87 means that 87% of the time, our model gives the churner a higher risk score than the non-churner. It's measuring how well the model ranks risky customers above safe ones."</div>
     </div>
 
+    <!-- REGRESSION METRICS -->
     <div class="topic-card">
       <h3>Regression Metrics</h3>
       <div class="code-block"><pre>
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score # ← # import mean_absolute_error, mean_squared_error, r2_score from sklearn.metrics
-import numpy as np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import numpy as np
 
-mae  = mean_absolute_error(y_test, y_pred)                <span class="code-comment"># average distance between predictions and true values</span>
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))        <span class="code-comment"># average squared error — big mistakes are penalised more</span>
-r2   = r2_score(y_test, y_pred)                           <span class="code-comment"># how much of the variation the model explains (1 = perfect)</span>
-mape = np.mean(np.abs((y_test - y_pred) / y_test)) * 100 # ← # arithmetic mean (average) of values
-n, p = len(y_test), X_test.shape[1]                       <span class="code-comment"># shows (number of rows, number of columns)</span>
-adj_r2 = 1 - (1-r2)*(n-1)/(n-p-1)
+mae  = mean_absolute_error(y_test, y_pred)      # avg |actual - predicted| in original units
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))  # avg √(squared error) — penalizes big misses more
+r2   = r2_score(y_test, y_pred)                 # fraction of variance explained (1 = perfect, 0 = baseline mean)
+mape = np.mean(np.abs((y_test - y_pred) / y_test)) * 100  # % error, scale-independent
+
+# Adjusted R² penalizes adding useless features (unlike regular R² which always goes up)
+n, p = len(y_test), X_test.shape[1]
+adj_r2 = 1 - (1 - r2) * (n - 1) / (n - p - 1)
+
+print(f"MAE:      ₹{mae:.0f}")          # easy to explain: "model is off by ₹X on average"
+print(f"RMSE:     ₹{rmse:.0f}")         # larger than MAE when big errors exist
+print(f"R²:       {r2:.4f}")            # 0.82 = "model explains 82% of variance in price"
+print(f"Adj R²:   {adj_r2:.4f}")        # use this when comparing models with different feature counts
+print(f"MAPE:     {mape:.1f}%")         # scale-free, good for comparing across different target scales
 </pre></div>
       <table class="term-table">
-        <tr><th>Metric</th><th>Use When</th><th>Sensitive to Outliers?</th></tr>
-        <tr><td>MAE</td><td>You want avg error in original units</td><td>No (robust)</td></tr>
-        <tr><td>RMSE</td><td>Same unit as target, penalizes outliers</td><td>Yes</td></tr>
-        <tr><td>R²</td><td>How much variance is explained</td><td>No</td></tr>
-        <tr><td>MAPE</td><td>% error, scale-independent comparison</td><td>Yes (div by small y)</td></tr>
+        <tr><th>Metric</th><th>Unit</th><th>Penalises Outliers?</th><th>When to Use</th></tr>
+        <tr><td>MAE</td><td>Same as target</td><td>No (robust)</td><td>When outliers should not dominate the evaluation</td></tr>
+        <tr><td>RMSE</td><td>Same as target</td><td>Yes (squares errors)</td><td>When large errors are much worse than small ones</td></tr>
+        <tr><td>R²</td><td>None (0 to 1)</td><td>No</td><td>Proportion of variance explained; model comparison</td></tr>
+        <tr><td>MAPE</td><td>Percentage (%)</td><td>Somewhat</td><td>When % error is more natural (sales forecasting)</td></tr>
+        <tr><td>Adjusted R²</td><td>None</td><td>No</td><td>Comparing models with different numbers of features</td></tr>
       </table>
     </div>
 
+    <!-- CROSS-VALIDATION -->
     <div class="topic-card">
-      <h3>Cross-Validation</h3>
+      <h3>Cross-Validation — Getting a Reliable Score</h3>
+      <p style="line-height:1.7">A single train/test split gives you one number that may be lucky or unlucky. Cross-validation averages over multiple splits so you get a more stable estimate and a sense of variance. The standard is 5-fold or 10-fold — shuffle and split into K folds, train on K-1 folds, test on 1, repeat K times. The ± std dev in the result tells you how stable the model is.</p>
       <div class="code-block"><pre>
-from sklearn.model_selection import cross_val_score, StratifiedKFold, TimeSeriesSplit, KFold # ← # import cross_val_score, StratifiedKFold, TimeSeriesSplit, KFold from sklearn.model_selection
+from sklearn.model_selection import cross_val_score, StratifiedKFold, TimeSeriesSplit
+import numpy as np
 
-# Stratified k-fold (classification — preserves class ratio)
-skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42) # ← # k-fold split that preserves class balance in each fold
-scores = cross_val_score(model, X, y, cv=skf, scoring='roc_auc') # ← # evaluate model using k-fold cross-validation
-print(f"AUC: {scores.mean():.4f} ± {scores.std():.4f}") # ← # print output to console
+# ── Standard k-fold (classification — preserves class ratio) ──────────────────
+skf    = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+scores = cross_val_score(model, X, y, cv=skf, scoring='roc_auc', n_jobs=-1)
+print(f"CV AUC: {scores.mean():.4f} ± {scores.std():.4f}")
+# ± std tells you if the model is stable (low) or fragile to data split (high)
 
-# Time series split (respect temporal order — no future leakage)
+# ── Time series split (must respect temporal order — no future data leakage) ────
 tscv = TimeSeriesSplit(n_splits=5)
-for train_idx, test_idx in tscv.split(X):                 <span class="code-comment"># loop through each item in the list</span>
+for fold, (train_idx, test_idx) in enumerate(tscv.split(X)):
     X_tr, X_te = X[train_idx], X[test_idx]
+    print(f"Fold {fold}: train {len(X_tr)} rows, test {len(X_te)} rows")
+    # train set always ends BEFORE test set starts — no peeking at future!
 
-# Learning curve to diagnose bias vs variance
-from sklearn.model_selection import learning_curve        <span class="code-comment"># grab learning_curve from sklearn.model_selection</span>
-import numpy as np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
+# ── Learning curve — diagnose bias vs variance ────────────────────────────────
+from sklearn.model_selection import learning_curve
+import matplotlib.pyplot as plt
+
 train_sizes, train_scores, val_scores = learning_curve(
-    model, X, y, train_sizes=np.linspace(0.1, 1.0, 10), # ← # evenly spaced numbers between start and stop
+    model, X, y,
+    train_sizes=np.linspace(0.1, 1.0, 10),  # 10 evenly spaced training set sizes
     cv=5, scoring='roc_auc', n_jobs=-1
 )
+# If train_score >> val_score → overfitting (high variance) → regularize or get more data
+# If both scores are low → underfitting (high bias) → more features or complex model
+# If both converge at high value → good fit
 </pre></div>
+      <div class="warn-box"><strong>Data leakage golden rule:</strong> Never let any test data influence any preprocessing, scaling, encoding, or imputation step. Always fit transformers on training data only, then transform test data. Use sklearn Pipelines to enforce this automatically.</div>
     </div>
 
   </div>

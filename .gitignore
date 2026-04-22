@@ -1,0 +1,14 @@
+*.pyc
+__pycache__/
+.env
+*.pkl
+*.csv
+*.parquet
+build_*.py
+recover_html.py
+polish_and_sql.py
+add_advanced_topics.py
+merge_all.py
+build_master.py
+KV_Master_Guide.html
+KVRESUME_ATS_Clean.html

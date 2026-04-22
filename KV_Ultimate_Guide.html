@@ -7390,132 +7390,415 @@ print(f"Semantic similarity: {similarity[0][0]:.3f}")   # e.g. 0.83 (very simila
   <div class="special-header">
     <div class="special-number">14</div>
     <div>
-      <div class="algo-title">Snowflake</div>
-      <div class="algo-subtitle">Cloud data warehouse — store and query massive data at scale</div>
+      <div class="special-title">Snowflake</div>
+      <div class="special-subtitle">Cloud Data Warehouse — Elastic, Serverless, Fully Managed SQL Analytics at Scale</div>
     </div>
   </div>
-  <div class="special-section">
 
-    <div class="card">
-      <h3>❄️ What is Snowflake?</h3>
-      <p>Traditional databases (like MySQL, SQL Server) run on a single server. When your data grows to terabytes or you need hundreds of analysts running queries simultaneously, one server can't handle it. Snowflake is a <strong>cloud data warehouse</strong> — data is stored in the cloud (AWS/Azure/GCP) and can be queried by virtually unlimited compute power.</p>
-      <div class="highlight"><p>Key innovation: Snowflake <strong>separates storage from compute</strong>. Your data sits in cheap cloud storage (S3). When you need to query it, you spin up compute power (virtual warehouse). You only pay for compute when you're actually running queries — not 24/7.</p></div>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s14','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s14','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s14','features')">Key Features</button>
+    <button class="tab-btn" onclick="showTab('s14','sql')">SQL Examples</button>
+    <button class="tab-btn" onclick="showTab('s14','tips')">Interview Topics</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s14-concept">
+    <h3 style="color:#38bdf8">What is Snowflake? (Plain English First)</h3>
+    <p>A data warehouse is a database designed for <strong>analytics</strong> — not for updating individual records (like a transactional database that runs your website), but for querying millions or billions of rows to answer business questions like: "What were our top 10 products by revenue last quarter?" or "Which customer segments are churning?"</p>
+    <p>Snowflake is a <strong>cloud-native data warehouse</strong> — meaning it runs entirely on cloud infrastructure (AWS, Azure, or GCP) and manages all the complexity for you. You just run SQL queries, and Snowflake handles servers, scaling, backups, and performance.</p>
+    <p><strong>Why Snowflake specifically?</strong> Its revolutionary insight was to completely separate compute from storage — meaning you can scale your query processing power independently from how much data you store. Before this, scaling up meant buying bigger servers (expensive and slow).</p>
+
+    <div class="concept-box">
+      <h4>Snowflake's 3-Layer Architecture</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <tr style="background:#0f172a">
+          <th style="padding:8px;text-align:left;color:#94a3b8">Layer</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">What It Does</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">Who Manages It</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px;color:#3b82f6"><strong>Cloud Services</strong></td>
+          <td style="padding:8px">Authentication, query parsing, query optimisation, metadata, access control</td>
+          <td style="padding:8px">Snowflake (fully automatic)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px;color:#22c55e"><strong>Compute (Virtual Warehouses)</strong></td>
+          <td style="padding:8px">Executes SQL queries. Each VW is independent — multiple teams can run queries simultaneously without affecting each other.</td>
+          <td style="padding:8px">You choose size (XS to 6XL); Snowflake manages servers</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;color:#f59e0b"><strong>Storage</strong></td>
+          <td style="padding:8px">Data stored in columnar compressed format on cloud object storage (S3 etc). Charged per TB per month.</td>
+          <td style="padding:8px">Snowflake (automatic compression, replication)</td>
+        </tr>
+      </table>
     </div>
 
-    <div class="cards-grid">
-      <div class="card">
-        <h3>🏗️ The 3-Layer Architecture</h3>
-        <h4>Layer 1: Cloud Storage</h4>
-        <p>All data stored in columnar format (Parquet-like) on S3/Azure Blob/GCP Storage. Compressed, organized in micro-partitions (max 16MB each). Very cheap storage.</p>
-        <h4>Layer 2: Compute (Virtual Warehouses)</h4>
-        <p>Independent compute clusters that run your SQL queries. Multiple warehouses can read the same data simultaneously without conflict. Think of them as rental cars — you spin them up when needed, pause when not.</p>
-        <h4>Layer 3: Cloud Services</h4>
-        <p>The brain: metadata management, query optimization, authentication, security, result caching. Runs all the time, automatically.</p>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Virtual Warehouses — The Compute Engine</h4>
+      <p>A Virtual Warehouse (VW) is a cluster of servers that executes your SQL queries. Key properties:</p>
+      <ul>
+        <li><strong>Independent</strong> — multiple VWs can query the same data simultaneously with no performance interference</li>
+        <li><strong>Elastic</strong> — scale from XS (1 server) to 6XL (512 servers equivalent) with a single command</li>
+        <li><strong>Auto-suspend</strong> — automatically pause when idle (stop paying for compute you're not using)</li>
+        <li><strong>Auto-resume</strong> — automatically start when a query arrives</li>
+        <li><strong>Per-second billing</strong> — pay only for seconds the VW is actually running</li>
+      </ul>
+      <p><strong>Example:</strong> Your analytics team's "Large" VW auto-suspends after 5 minutes of inactivity. A query arrives at 9 AM, the VW wakes up in ~5 seconds, runs the query in 30 seconds, then auto-suspends again. You pay for 35 seconds of compute.</p>
+    </div>
+
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">Micro-Partitions — How Snowflake Stores Data</h4>
+      <p>Instead of storing rows together, Snowflake automatically divides each table into <strong>micro-partitions</strong> of 50–500 MB each. Each partition stores data <strong>column-by-column</strong> (columnar format) with metadata about min/max values per column.</p>
+      <p><strong>Why columnar?</strong> For analytics, you usually query a few columns from billions of rows. Columnar format reads only the columns you need, skipping everything else. A query like <code>SELECT AVG(salary) FROM employees</code> reads only the salary column, not name, department, address, etc.</p>
+      <p><strong>Partition pruning:</strong> Snowflake's query optimizer uses the min/max metadata to skip entire partitions that cannot contain relevant data. Query <code>WHERE date > '2024-01-01'</code> skips all partitions where max_date &lt; '2024-01-01'.</p>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">Snowflake vs Traditional Databases</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Property</th>
+        <th style="padding:8px;text-align:center;color:#94a3b8">Snowflake</th>
+        <th style="padding:8px;text-align:center;color:#94a3b8">MySQL/PostgreSQL</th>
+        <th style="padding:8px;text-align:center;color:#94a3b8">Traditional DW</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Use case</td>
+        <td style="padding:8px;text-align:center;color:#22c55e">Analytics (OLAP)</td>
+        <td style="padding:8px;text-align:center">Transactions (OLTP)</td>
+        <td style="padding:8px;text-align:center">Analytics (fixed scale)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Scalability</td>
+        <td style="padding:8px;text-align:center;color:#22c55e">Unlimited, elastic</td>
+        <td style="padding:8px;text-align:center">Limited by single server</td>
+        <td style="padding:8px;text-align:center">Fixed cluster size</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Schema changes</td>
+        <td style="padding:8px;text-align:center;color:#22c55e">Instant (no rebuild)</td>
+        <td style="padding:8px;text-align:center">Can lock table</td>
+        <td style="padding:8px;text-align:center">Slow (hours/days)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Concurrency</td>
+        <td style="padding:8px;text-align:center;color:#22c55e">Multi-cluster VWs</td>
+        <td style="padding:8px;text-align:center">Locking contention</td>
+        <td style="padding:8px;text-align:center">Queue-based</td>
+      </tr>
+      <tr>
+        <td style="padding:8px">Storage format</td>
+        <td style="padding:8px;text-align:center;color:#22c55e">Columnar compressed</td>
+        <td style="padding:8px;text-align:center">Row-based</td>
+        <td style="padding:8px;text-align:center">Columnar (less optimised)</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s14-visual">
+    <h3 style="color:#38bdf8">Snowflake 3-Layer Architecture</h3>
+    <svg viewBox="0 0 580 340" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="340" rx="12" fill="#0f172a"/>
+  <text x="290" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Snowflake 3-Layer Architecture</text>
+  <!-- Layer 1: Cloud Services -->
+  <rect x="30" y="40" width="520" height="65" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <text x="290" y="60" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">Cloud Services Layer (Brain of Snowflake)</text>
+  <text x="80"  y="82" text-anchor="middle" fill="#94a3b8" font-size="10">Authentication</text>
+  <text x="175" y="82" text-anchor="middle" fill="#94a3b8" font-size="10">Query Optimizer</text>
+  <text x="290" y="82" text-anchor="middle" fill="#94a3b8" font-size="10">Metadata Manager</text>
+  <text x="405" y="82" text-anchor="middle" fill="#94a3b8" font-size="10">Access Control</text>
+  <text x="510" y="82" text-anchor="middle" fill="#94a3b8" font-size="10">Query Parser</text>
+  <!-- Layer 2: Compute (Virtual Warehouses) -->
+  <rect x="30" y="125" width="520" height="100" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+  <text x="290" y="145" text-anchor="middle" fill="#86efac" font-size="12" font-weight="bold">Compute Layer — Virtual Warehouses (Elastic, Independent)</text>
+  <!-- 3 virtual warehouses -->
+  <rect x="55"  y="158" width="140" height="52" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="125" y="175" text-anchor="middle" fill="#86efac" font-size="10" font-weight="bold">VW: Analytics Team</text>
+  <text x="125" y="191" text-anchor="middle" fill="#94a3b8" font-size="9">XL size, 8 nodes</text>
+  <text x="125" y="204" text-anchor="middle" fill="#94a3b8" font-size="9">Auto-suspend: 60s</text>
+  <rect x="220" y="158" width="140" height="52" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="290" y="175" text-anchor="middle" fill="#86efac" font-size="10" font-weight="bold">VW: ETL Pipeline</text>
+  <text x="290" y="191" text-anchor="middle" fill="#94a3b8" font-size="9">L size, 4 nodes</text>
+  <text x="290" y="204" text-anchor="middle" fill="#94a3b8" font-size="9">Running 24/7</text>
+  <rect x="385" y="158" width="140" height="52" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="455" y="175" text-anchor="middle" fill="#86efac" font-size="10" font-weight="bold">VW: Data Science</text>
+  <text x="455" y="191" text-anchor="middle" fill="#94a3b8" font-size="9">M size, 2 nodes</text>
+  <text x="455" y="204" text-anchor="middle" fill="#94a3b8" font-size="9">Shared isolation</text>
+  <!-- Layer 3: Storage -->
+  <rect x="30" y="243" width="520" height="65" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+  <text x="290" y="263" text-anchor="middle" fill="#fde68a" font-size="12" font-weight="bold">Storage Layer (Cloud Object Storage — S3/Azure Blob/GCS)</text>
+  <text x="113" y="285" text-anchor="middle" fill="#94a3b8" font-size="10">Columnar Compressed Files</text>
+  <text x="290" y="285" text-anchor="middle" fill="#94a3b8" font-size="10">Micro-Partitions (50-500 MB each)</text>
+  <text x="467" y="285" text-anchor="middle" fill="#94a3b8" font-size="10">Automatic Replication</text>
+  <text x="113" y="300" text-anchor="middle" fill="#475569" font-size="9">Parquet/ORC format</text>
+  <text x="290" y="300" text-anchor="middle" fill="#475569" font-size="9">Immutable + metadata indexed</text>
+  <text x="467" y="300" text-anchor="middle" fill="#475569" font-size="9">3 availability zones</text>
+  <!-- Key insight -->
+  <text x="290" y="325" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Compute and Storage are SEPARATE — scale each independently, pay only for what you use</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Each team gets their own Virtual Warehouse (VW) — independent compute clusters that read from the same shared storage. The Analytics team's heavy queries don't slow down the ETL pipeline's VW. Pay only when VWs are running queries.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Snowflake vs Traditional Data Warehouse</h3>
+    <svg viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="260" rx="12" fill="#0f172a"/>
+  <text x="290" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Snowflake vs Traditional Data Warehouse</text>
+  <!-- Traditional DB -->
+  <rect x="20"  y="38" width="255" height="200" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="147" y="60" text-anchor="middle" fill="#f87171" font-size="12" font-weight="bold">Traditional DW (e.g., Oracle, Redshift)</text>
+  <text x="147" y="78" text-anchor="middle" fill="#94a3b8" font-size="10">Tightly coupled compute + storage</text>
+  <rect x="55"  y="90"  width="185" height="30" rx="4" fill="#374151"/>
+  <text x="147" y="110" text-anchor="middle" fill="#f1f5f9" font-size="10">Server (CPU + Disk + Memory)</text>
+  <rect x="55"  y="128" width="185" height="30" rx="4" fill="#374151"/>
+  <text x="147" y="148" text-anchor="middle" fill="#f1f5f9" font-size="10">Fixed Storage (Attached Disk)</text>
+  <text x="147" y="183" text-anchor="middle" fill="#ef4444" font-size="10">✗ Scale compute → must scale storage too</text>
+  <text x="147" y="198" text-anchor="middle" fill="#ef4444" font-size="10">✗ Pay 24/7 even when idle</text>
+  <text x="147" y="213" text-anchor="middle" fill="#ef4444" font-size="10">✗ Complex cluster management</text>
+  <text x="147" y="228" text-anchor="middle" fill="#ef4444" font-size="10">✗ Schema changes require downtime</text>
+  <!-- Snowflake -->
+  <rect x="305" y="38" width="255" height="200" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="432" y="60" text-anchor="middle" fill="#86efac" font-size="12" font-weight="bold">Snowflake (Cloud-Native)</text>
+  <text x="432" y="78" text-anchor="middle" fill="#94a3b8" font-size="10">Decoupled compute + shared storage</text>
+  <rect x="335" y="90"  width="80"  height="30" rx="4" fill="#1e3a5f"/>
+  <rect x="425" y="90"  width="80"  height="30" rx="4" fill="#1e3a5f"/>
+  <text x="375" y="110" text-anchor="middle" fill="#93c5fd" font-size="9">VW-1</text>
+  <text x="465" y="110" text-anchor="middle" fill="#93c5fd" font-size="9">VW-2</text>
+  <rect x="340" y="130" width="185" height="30" rx="4" fill="#1a3b1a"/>
+  <text x="432" y="150" text-anchor="middle" fill="#86efac" font-size="10">Shared Cloud Storage (S3/Blob/GCS)</text>
+  <line x1="375" y1="120" x2="432" y2="130" stroke="#22c55e" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="465" y1="120" x2="432" y2="130" stroke="#22c55e" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="432" y="185" text-anchor="middle" fill="#22c55e" font-size="10">✓ Scale compute/storage independently</text>
+  <text x="432" y="200" text-anchor="middle" fill="#22c55e" font-size="10">✓ Pay per second only when queries run</text>
+  <text x="432" y="215" text-anchor="middle" fill="#22c55e" font-size="10">✓ Fully managed, zero maintenance</text>
+  <text x="432" y="230" text-anchor="middle" fill="#22c55e" font-size="10">✓ Clone tables instantly (zero-copy)</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Traditional warehouses couple compute and storage — scaling one forces scaling the other. Snowflake decouples them: scale compute by resizing VWs in seconds, scale storage by just adding more data to object storage (charged per TB).</p>
+  </div>
+
+  <!-- FEATURES TAB -->
+  <div class="tab-content" id="s14-features">
+    <h3 style="color:#38bdf8">Key Snowflake Features Every Data Professional Needs to Know</h3>
+
+    <div class="param-card">
+      <div class="param-name">Time Travel</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Access historical versions of any table or database for up to 90 days (based on your plan).<br>
+        <strong>Why it matters:</strong> Accidentally deleted a table? A query updated the wrong rows? Time Travel lets you recover.<br>
+        <code>SELECT * FROM orders AT (TIMESTAMP =&gt; '2024-03-01 10:00:00'::timestamp)</code><br>
+        <code>SELECT * FROM orders BEFORE (STATEMENT =&gt; '&lt;query_id&gt;')</code><br>
+        <strong>Retention period:</strong> Set with <code>DATA_RETENTION_TIME_IN_DAYS = 7</code> (default) to 90 days.
       </div>
-      <div class="card">
-        <h3>🚗 Virtual Warehouses — The Rental Car Model</h3>
-        <p>Each virtual warehouse is an independent compute cluster. Sizes: XS, S, M, L, XL, 2XL, 3XL, 4XL (each step doubles compute power and cost).</p>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">Zero-Copy Cloning</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Create an instant copy of any table, schema, or database without duplicating the data.<br>
+        <strong>How it works:</strong> The clone shares the same underlying micro-partitions as the original. New data writes to new partitions (copy-on-write). You only pay for data written to the clone, not the shared base data.<br>
+        <strong>Use cases:</strong>
         <ul>
-          <li><strong>Auto-suspend:</strong> Automatically pause after N minutes of inactivity → save cost</li>
-          <li><strong>Auto-resume:</strong> Automatically start when a query arrives</li>
-          <li><strong>Multiple warehouses:</strong> Data team uses one warehouse, BI dashboards use another — no competition for resources</li>
-          <li><strong>Scaling:</strong> Need more power? Change size in seconds, no downtime</li>
+          <li>Create a dev/test environment without paying for duplicate storage</li>
+          <li>Snapshot a table before running a risky transformation</li>
+          <li>Let data science team experiment on a clone without affecting production</li>
         </ul>
+        <code>CREATE TABLE orders_dev CLONE orders;</code><br>
+        <code>CREATE DATABASE analytics_dev CLONE analytics_prod;</code>
       </div>
     </div>
 
-    <div class="card">
-      <h3>🔑 Key Snowflake Concepts with SQL Examples</h3>
-      <div class="code-block"><pre>
-<span class="c-cm">-- Snowflake hierarchy: Account → Databases → Schemas → Tables</span>
-<span class="c-kw">CREATE DATABASE</span> analytics_db;
-<span class="c-kw">CREATE SCHEMA</span> analytics_db.sales;
-<span class="c-kw">CREATE TABLE</span> sales.transactions ( -- create a new table with defined columns <span class="code-comment">-- make a new table with these columns</span>
-    transaction_id  <span class="c-cls">VARCHAR</span>,
-    customer_id     <span class="c-cls">NUMBER</span>,
-    amount          <span class="c-cls">FLOAT</span>,
-    created_at      <span class="c-cls">TIMESTAMP_NTZ</span>
-);
-
-<span class="c-cm">-- Loading Data (COPY INTO)</span>
-<span class="c-kw">CREATE STAGE</span> my_stage;
-PUT file:///local/data/sales.csv @my_stage;
-<span class="c-kw">COPY INTO</span> sales.transactions
-<span class="c-kw">FROM</span> @my_stage/sales.csv                                  <span class="code-comment">-- the table to read from</span>
-FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1);
-
-<span class="c-cm">-- Time Travel: Query Historical Data</span>
-<span class="c-kw">SELECT</span> * <span class="c-kw">FROM</span> sales.transactions -- choose which columns to retrieve <span class="code-comment">-- pick which columns to show</span>
-AT (TIMESTAMP => '2024-01-15 10:00:00'::TIMESTAMP);
-
-<span class="c-cm">-- Zero-Copy Cloning</span>
-<span class="c-kw">CREATE TABLE</span> sales.transactions_backup -- create a new table with defined columns <span class="code-comment">-- make a new table with these columns</span>
-<span class="c-kw">CLONE</span> sales.transactions;
-
-<span class="c-cm">-- FLATTEN: Working with JSON data</span> -- define a Common Table Expression (CTE) — named subquery
-<span class="c-kw">SELECT</span>                                                    <span class="code-comment">-- pick which columns to show</span>
-    v:user_id::VARCHAR <span class="c-kw">AS</span> user_id, -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-    f.value:product_name::VARCHAR <span class="c-kw">AS</span> product -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">FROM</span> raw_json_table,                                      <span class="code-comment">-- the table to read from</span>
-LATERAL FLATTEN(INPUT => v:items) f;
-
-<span class="c-cm">-- QUALIFY: Filter Window Functions Inline</span>
-<span class="c-kw">SELECT</span> customer_id, transaction_id, amount, -- choose which columns to retrieve <span class="code-comment">-- pick which columns to show</span>
-    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY amount DESC) as rank -- sort the results by these columns <span class="code-comment">-- sort the results by this column</span>
-<span class="c-kw">FROM</span> sales.transactions                                   <span class="code-comment">-- the table to read from</span>
-QUALIFY rank = 1;
-
-<span class="c-cm">-- SAMPLE: Quick Random Sample for Testing</span>
-<span class="c-kw">SELECT</span> * <span class="c-kw">FROM</span> sales.transactions SAMPLE (1); -- choose which columns to retrieve <span class="code-comment">-- pick which columns to show</span>
-
-<span class="c-cm">-- Streams: Change Data Capture (CDC)</span>
-<span class="c-kw">CREATE STREAM</span> transactions_stream ON TABLE sales.transactions; -- specify the join condition (how tables connect) <span class="code-comment">-- connect with another table on a shared column</span>
-
-<span class="c-cm">-- Tasks: Scheduled SQL</span>
-<span class="c-kw">CREATE TASK</span> daily_aggregation
-WAREHOUSE = compute_wh
-SCHEDULE = 'USING CRON 0 2 * * * UTC'
-AS                                                        <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">INSERT INTO</span> sales.daily_summary -- add new rows to the table <span class="code-comment">-- add new rows to the table</span>
-<span class="c-kw">SELECT</span> DATE(created_at), SUM(amount) <span class="c-kw">FROM</span> sales.transactions <span class="c-kw">GROUP BY</span> 1; -- choose which columns to retrieve <span class="code-comment">-- pick which columns to show</span>
-</pre></div>
+    <div class="param-card">
+      <div class="param-name">Fail-Safe</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> An additional 7-day data recovery window AFTER Time Travel expires. Managed by Snowflake (not user-accessible via SQL).<br>
+        <strong>Purpose:</strong> Protection against catastrophic failures, ransomware, or accidental drops that weren't caught in the Time Travel window.<br>
+        <strong>Access:</strong> Requires contacting Snowflake Support — not accessible via regular queries.
+      </div>
     </div>
 
-    <div class="card">
-      <h3>📊 Comparison: Snowflake vs Traditional SQL vs BigQuery</h3>
-      <table class="cmp-table">
-        <tr><th>Feature</th><th>SQL Server / MySQL</th><th>Snowflake</th><th>BigQuery (Google)</th></tr>
-        <tr><td>Storage</td><td>On-premises server</td><td>Separated (S3/Azure/GCP)</td><td>Separated (GCS)</td></tr>
-        <tr><td>Scaling</td><td>Manual, requires downtime</td><td>Instant, seconds</td><td>Automatic, serverless</td></tr>
-        <tr><td>Pricing</td><td>Fixed server cost</td><td>Pay per compute + storage</td><td>Pay per query (TB scanned)</td></tr>
-        <tr><td>Time Travel</td><td>No (need backups)</td><td>Up to 90 days</td><td>7 days</td></tr>
-        <tr><td>Cloning</td><td>No (full copy needed)</td><td>Zero-copy, instant</td><td>No</td></tr>
-        <tr><td>JSON Support</td><td>Limited</td><td>Native VARIANT type + FLATTEN</td><td>Native + UNNEST</td></tr>
-        <tr><td>Multi-cloud</td><td>No</td><td>Yes (AWS + Azure + GCP)</td><td>Google Cloud only</td></tr>
-        <tr><td>Best For</td><td>OLTP: transactional apps</td><td>OLAP: analytics, data teams</td><td>OLAP: big data, GCP shops</td></tr>
-      </table>
+    <div class="param-card">
+      <div class="param-name">Clustering Keys</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Define one or more columns that Snowflake uses to physically co-locate related micro-partitions.<br>
+        <strong>Why needed:</strong> On very large tables (100GB+), even with partition pruning, too many partitions may need to be scanned.<br>
+        <strong>Example:</strong> If you always filter by date, clustering on the date column ensures rows with similar dates are in the same partitions.<br>
+        <code>ALTER TABLE orders CLUSTER BY (order_date);</code><br>
+        <strong>Cost:</strong> Automatic clustering reclustering runs in the background and incurs compute costs. Only use on frequently-queried large tables.
+      </div>
     </div>
 
-    <div class="card">
-      <h3>📚 Key Snowflake Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th></tr>
-        <tr><td><span class="term-name">Virtual Warehouse</span></td><td>A compute cluster you rent on demand. Pause when idle → save money. Multiple can query same data simultaneously.</td></tr>
-        <tr><td><span class="term-name">Time Travel</span></td><td>Query data as it existed at any point in the past (up to 90 days). Invaluable for recovering from accidental deletes/updates.</td></tr>
-        <tr><td><span class="term-name">Zero-Copy Cloning</span></td><td>Create an instant copy of any table/schema/database without duplicating the actual data. Only new changes use extra storage.</td></tr>
-        <tr><td><span class="term-name">Data Sharing</span></td><td>Share live data with other Snowflake accounts without copying — like giving read access directly to your tables.</td></tr>
-        <tr><td><span class="term-name">Columnar Storage</span></td><td>Data stored by column (not row). Analytics that sum one column read only that column — much faster for OLAP queries.</td></tr>
-        <tr><td><span class="term-name">Micro-Partitions</span></td><td>Snowflake splits data into small files (max 16MB). Queries that filter on certain values only scan relevant partitions — extremely fast.</td></tr>
-        <tr><td><span class="term-name">Stage</span></td><td>Temporary storage location (like an inbox) for loading files into Snowflake. Internal or external (your S3/Azure bucket).</td></tr>
-        <tr><td><span class="term-name">Stream</span></td><td>Change Data Capture — tracks all INSERTs, UPDATEs, DELETEs to a table since the stream was last read. Used for incremental ETL pipelines.</td></tr>
-        <tr><td><span class="term-name">Task</span></td><td>Scheduled SQL — run a query on a schedule (like a cron job) or triggered by a stream. Used to automate data pipelines within Snowflake.</td></tr>
-        <tr><td><span class="term-name">Clustering Keys</span></td><td>Advanced optimization: tell Snowflake to physically organize data by certain columns. Speeds up queries that filter on those columns.</td></tr>
-      </table>
+    <div class="param-card">
+      <div class="param-name">Snowpipe (Continuous Ingestion)</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Automatically loads new data files the moment they land in a cloud storage bucket (S3, Azure Blob, GCS).<br>
+        <strong>How it works:</strong> New file arrives in S3 → S3 sends event notification → Snowpipe picks up file → loads data into target table within seconds/minutes.<br>
+        <strong>Use case:</strong> Near-real-time data ingestion for streaming use cases without managing ETL servers.
+      </div>
     </div>
 
+    <div class="param-card">
+      <div class="param-name">Stages (Internal/External)</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> A named location where data files are stored before loading into Snowflake tables.<br>
+        <strong>Internal Stage:</strong> Snowflake's own managed storage. Use <code>PUT</code> to upload files from your machine.<br>
+        <strong>External Stage:</strong> Points to S3/Azure/GCS bucket. Snowflake reads files directly from cloud storage.<br>
+        <code>CREATE STAGE my_stage URL='s3://my-bucket/data/'</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- SQL TAB -->
+  <div class="tab-content" id="s14-sql">
+    <h3 style="color:#38bdf8">Snowflake SQL — Common Patterns Annotated</h3>
+    <pre><code class="language-sql">
+-- ══════════════════════════════════════════════════════════
+-- VIRTUAL WAREHOUSE MANAGEMENT
+-- ══════════════════════════════════════════════════════════
+
+-- Create a warehouse (compute cluster)
+CREATE OR REPLACE WAREHOUSE analytics_wh
+  WAREHOUSE_SIZE = 'LARGE'            -- XS/S/M/L/XL/2XL/3XL/4XL/5XL/6XL
+  AUTO_SUSPEND = 300                   -- auto-pause after 300 seconds of inactivity
+  AUTO_RESUME = TRUE                   -- auto-start when a query arrives
+  MAX_CLUSTER_COUNT = 3               -- multi-cluster: auto-scale up to 3 clusters for concurrency
+  MIN_CLUSTER_COUNT = 1               -- always keep at least 1 cluster (for fast resume)
+  SCALING_POLICY = 'ECONOMY';         -- vs STANDARD: economy waits longer before scaling up
+
+-- Switch active warehouse for current session
+USE WAREHOUSE analytics_wh;
+
+-- Resize warehouse (takes effect immediately, in-flight queries finish on old size)
+ALTER WAREHOUSE analytics_wh SET WAREHOUSE_SIZE = 'XLARGE';
+
+-- ══════════════════════════════════════════════════════════
+-- DATA LOADING
+-- ══════════════════════════════════════════════════════════
+
+-- Create external stage pointing to S3
+CREATE STAGE s3_stage
+  URL = 's3://my-company-data/raw/'
+  CREDENTIALS = (AWS_KEY_ID = '...' AWS_SECRET_KEY = '...');
+
+-- Load CSV files from stage into table
+COPY INTO orders
+FROM @s3_stage/orders/
+FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' SKIP_HEADER = 1)
+ON_ERROR = 'CONTINUE';  -- CONTINUE skips bad rows; ABORT_STATEMENT (default) fails on error
+
+-- ══════════════════════════════════════════════════════════
+-- TIME TRAVEL
+-- ══════════════════════════════════════════════════════════
+
+-- Query table as it existed at a specific timestamp
+SELECT COUNT(*) FROM orders
+AT (TIMESTAMP => '2024-01-15 09:00:00'::TIMESTAMP_TZ);
+
+-- Query table before a specific query ran (use query ID from history)
+SELECT * FROM orders
+BEFORE (STATEMENT => '01b2c3d4-abcd-1234-5678-000000000001');
+
+-- Restore accidentally deleted table
+UNDROP TABLE orders;   -- works within retention period
+
+-- ══════════════════════════════════════════════════════════
+-- ZERO-COPY CLONING
+-- ══════════════════════════════════════════════════════════
+
+-- Clone table (instant, no data duplication)
+CREATE TABLE orders_backup CLONE orders;
+
+-- Clone database for testing
+CREATE DATABASE analytics_test CLONE analytics_prod;
+
+-- ══════════════════════════════════════════════════════════
+-- WINDOW FUNCTIONS (very common in Snowflake analytics)
+-- ══════════════════════════════════════════════════════════
+
+SELECT
+    customer_id,
+    order_date,
+    order_amount,
+    -- Running total of order amounts per customer, ordered by date
+    SUM(order_amount) OVER (
+        PARTITION BY customer_id     -- reset sum for each customer
+        ORDER BY order_date          -- sum up in date order
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS running_total,
+    -- Rank each order within each customer (1 = most recent)
+    ROW_NUMBER() OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date DESC
+    ) AS order_rank,
+    -- Previous order amount for same customer
+    LAG(order_amount, 1) OVER (
+        PARTITION BY customer_id
+        ORDER BY order_date
+    ) AS prev_order_amount
+FROM orders;
+
+-- ══════════════════════════════════════════════════════════
+-- SEMI-STRUCTURED DATA (JSON)
+-- Snowflake natively stores JSON in VARIANT columns
+-- ══════════════════════════════════════════════════════════
+
+-- Query nested JSON with colon notation
+SELECT
+    raw_event:user_id::VARCHAR AS user_id,          -- extract and cast to VARCHAR
+    raw_event:event_type::VARCHAR AS event_type,
+    raw_event:properties:page_url::VARCHAR AS url,  -- nested: properties.page_url
+    raw_event:timestamp::TIMESTAMP AS event_time
+FROM raw_events
+WHERE raw_event:event_type = 'purchase';
+
+-- Flatten array of items in JSON
+SELECT
+    order_id,
+    f.value:item_name::VARCHAR AS item_name,  -- each element of the array
+    f.value:price::FLOAT AS price
+FROM orders_json,
+LATERAL FLATTEN(INPUT => order_items) f;  -- explodes array into rows
+    </code></pre>
+  </div>
+
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s14-tips">
+    <h3 style="color:#38bdf8">Snowflake Interview Topics for Data Roles</h3>
+    <div class="concept-box" style="border-color:#3b82f6">
+      <h4 style="color:#93c5fd">Architecture Questions</h4>
+      <ul style="line-height:1.9">
+        <li><strong>"Explain the 3 layers of Snowflake"</strong> → Cloud Services (brain), Compute VWs (muscles), Storage (memory)</li>
+        <li><strong>"What is a Virtual Warehouse?"</strong> → Compute cluster. Independent of other VWs. Auto-suspend/resume. Priced by size + uptime.</li>
+        <li><strong>"How does Snowflake achieve concurrency?"</strong> → Multi-cluster VWs: add more clusters automatically when query queue builds up.</li>
+        <li><strong>"What is a micro-partition?"</strong> → Auto-created 50-500MB columnar storage unit with min/max metadata for pruning.</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Feature Questions</h4>
+      <ul style="line-height:1.9">
+        <li><strong>"What is Time Travel?"</strong> → Query data at any point in history up to 90 days. Uses: recovery, auditing, debugging.</li>
+        <li><strong>"What is zero-copy cloning?"</strong> → Instant copy that shares underlying storage. No duplicate data until writes happen.</li>
+        <li><strong>"What is Snowpipe?"</strong> → Continuous ingestion that auto-loads files as they arrive in cloud storage.</li>
+        <li><strong>"What is a stage?"</strong> → Named cloud storage location (internal or external) for staging data before COPY INTO.</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">Performance Optimisation Questions</h4>
+      <ul style="line-height:1.9">
+        <li><strong>"How do you optimise slow Snowflake queries?"</strong>
+          <ol style="margin-top:6px;line-height:1.9">
+            <li>Check query profile in Snowflake UI — identify bottleneck (scan, join, spilling)</li>
+            <li>Add partition pruning: filter on natural clustering columns (date, region)</li>
+            <li>Avoid <code>SELECT *</code> on wide tables — project only needed columns</li>
+            <li>Use appropriate VW size — undersized VW causes disk spilling (slow)</li>
+            <li>Add clustering keys for frequently-filtered large tables (>100GB)</li>
+            <li>Use result caching — identical query in same session returns instantly</li>
+          </ol>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      15. RAG
 ═══════════════════════════════════════════════════ -->
@@ -7523,163 +7806,483 @@ AS                                                        <span class="code-comm
   <div class="special-header">
     <div class="special-number">15</div>
     <div>
-      <div class="algo-title">RAG — Retrieval Augmented Generation</div>
-      <div class="algo-subtitle">Give an LLM access to YOUR documents so it answers from your knowledge base</div>
+      <div class="special-title">RAG — Retrieval Augmented Generation</div>
+      <div class="special-subtitle">Give Any LLM a Memory — Ground AI Answers in Your Own Documents</div>
     </div>
   </div>
-  <div class="special-section">
 
-    <div class="card">
-      <h3>🤔 The Problem RAG Solves</h3>
-      <p>Large Language Models like ChatGPT are incredibly capable but have critical limitations:</p>
-      <ul>
-        <li><strong>Knowledge cutoff:</strong> GPT-4's training data ends in 2023. It knows nothing about last week's news.</li>
-        <li><strong>No private data:</strong> It doesn't know your company's internal documents, policies, or proprietary information.</li>
-        <li><strong>Hallucination:</strong> When uncertain, LLMs make up plausible-sounding but wrong answers confidently.</li>
-      </ul>
-      <div class="highlight"><p>RAG Solution: "ChatGPT that knows your company's internal docs." Instead of relying only on its trained knowledge, the LLM first retrieves relevant passages from YOUR documents, then generates an answer grounded in that retrieved text.</p></div>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s15','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s15','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s15','components')">Components</button>
+    <button class="tab-btn" onclick="showTab('s15','code')">Code</button>
+    <button class="tab-btn" onclick="showTab('s15','tips')">When to Use</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s15-concept">
+    <h3 style="color:#38bdf8">What is RAG? (Plain English First)</h3>
+    <p>A standard LLM (like GPT-4 or LLaMA) knows only what was in its training data — and that data has a cutoff date. It cannot answer questions about your company's internal policies, last week's news, your product documentation, or any private data.</p>
+    <p>RAG (Retrieval Augmented Generation) solves this by giving the LLM a <strong>real-time reference library</strong>. Before generating an answer, the system first searches your document collection for the most relevant passages and injects them into the LLM's prompt. The LLM then answers based on those retrieved facts — not just its training data.</p>
+    <p>Think of it like the difference between a student answering from memory vs a student with open-book access to reference materials. Open-book = more accurate, updatable, and verifiable.</p>
+
+    <div class="concept-box">
+      <h4>RAG Pipeline — The 5 Steps</h4>
+      <ol style="line-height:2.2">
+        <li><strong>Ingest Documents</strong> — Load your documents (PDFs, Word files, websites, Notion pages, SQL query results). Split them into smaller chunks (e.g., 200-500 words each). Why chunks? LLMs have limited context windows; you want to retrieve only the most relevant section, not an entire 100-page manual.</li>
+        <li><strong>Create Embeddings</strong> — Convert each chunk to a dense vector (e.g., 384 or 1536 numbers) using an embedding model. Chunks with similar meaning will have similar vectors (high cosine similarity).</li>
+        <li><strong>Store in Vector Database</strong> — Save all chunk vectors + original text in a vector database (Pinecone, Chroma, Weaviate, pgvector, FAISS) optimised for similarity search.</li>
+        <li><strong>Retrieve at Query Time</strong> — When a user asks a question: embed the question → find top-K most similar document chunks → retrieve their original text.</li>
+        <li><strong>Augment + Generate</strong> — Build a prompt: "Here is context: [retrieved chunks]. Question: [user query]. Answer based only on the context." → Send to LLM → Return grounded answer.</li>
+      </ol>
     </div>
 
-    <div class="cards-grid">
-      <div class="card">
-        <h3>🔢 What Are Embeddings?</h3>
-        <p>Embeddings are <strong>numbers that capture meaning</strong>. Any text is converted to a long vector of numbers (e.g., 768 numbers for BERT).</p>
-        <ul>
-          <li>"King" → [0.2, -0.5, 0.8, ...]</li>
-          <li>"Queen" → [0.2, -0.5, 0.7, ...] ← very similar!</li>
-          <li>"Car" → [-0.8, 0.3, 0.1, ...] ← very different</li>
-          <li>"Automobile" → [-0.75, 0.28, 0.12, ...] ← similar to "Car"</li>
-        </ul>
-        <p style="margin-top:10px">Similar meanings → similar vectors. This lets us find relevant documents by finding vectors that are mathematically close to the query vector.</p>
-      </div>
-      <div class="card">
-        <h3>🗄️ Vector Databases</h3>
-        <p>Special databases designed to store and search embeddings efficiently.</p>
-        <ul>
-          <li><strong>FAISS</strong> (Facebook): Fast, local, free. Best for research/prototype.</li>
-          <li><strong>ChromaDB</strong>: Easy, local, great for getting started. Free.</li>
-          <li><strong>Pinecone</strong>: Cloud, production-ready, managed. Paid.</li>
-          <li><strong>Weaviate</strong>: Open-source, self-hosted or cloud. Very feature-rich.</li>
-        </ul>
-        <p style="margin-top:8px">Similarity search uses <strong>cosine similarity</strong>: 1=identical direction, 0=unrelated, -1=opposite.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>🔄 How RAG Works — Step by Step</h3>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Step 1</div><div class="step-txt">Collect your documents (PDFs, Word files, web pages, databases)</div></div>
-        <div class="flow-step"><div class="step-num">Step 2</div><div class="step-txt">Split into chunks (e.g., 500 words each with 50-word overlap)</div></div>
-        <div class="flow-step"><div class="step-num">Step 3</div><div class="step-txt">Convert each chunk to an embedding vector using a sentence encoder</div></div>
-        <div class="flow-step"><div class="step-num">Step 4</div><div class="step-txt">Store all vectors in a vector database (ChromaDB, Pinecone, FAISS)</div></div>
-      </div>
-      <p style="margin-top:12px;color:#6070a0;font-size:12px;text-align:center">↑ Done ONCE. Then for each user query ↓</p>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Step 5</div><div class="step-txt">User asks: "What is our refund policy for digital products?"</div></div>
-        <div class="flow-step"><div class="step-num">Step 6</div><div class="step-txt">Convert question to embedding using same encoder</div></div>
-        <div class="flow-step"><div class="step-num">Step 7</div><div class="step-txt">Find top 3-5 most similar chunks in vector database (cosine similarity)</div></div>
-        <div class="flow-step"><div class="step-num">Step 8</div><div class="step-txt">Build prompt: "Context: [retrieved chunks]\n\nQuestion: [user question]"</div></div>
-        <div class="flow-step"><div class="step-num">Step 9</div><div class="step-txt">LLM generates answer grounded in those specific chunks</div></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>💻 Complete Code: PDF RAG with LangChain + ChromaDB</h3>
-      <div class="code-block"><pre>
-<span class="c-cm"># pip install langchain chromadb sentence-transformers openai pypdf</span>
-<span class="c-kw">from</span> langchain.document_loaders <span class="c-kw">import</span> PyPDFLoader        <span class="code-comment"># grab PyPDFLoader from langchain.document_loaders</span>
-<span class="c-kw">from</span> langchain.text_splitter <span class="c-kw">import</span> RecursiveCharacterTextSplitter <span class="code-comment"># grab RecursiveCharacterTextSplitter from langchain.text_splitter</span>
-<span class="c-kw">from</span> langchain.embeddings <span class="c-kw">import</span> HuggingFaceEmbeddings    <span class="code-comment"># grab HuggingFaceEmbeddings from langchain.embeddings</span>
-<span class="c-kw">from</span> langchain.vectorstores <span class="c-kw">import</span> Chroma                 <span class="code-comment"># grab Chroma from langchain.vectorstores</span>
-<span class="c-kw">from</span> langchain.chains <span class="c-kw">import</span> RetrievalQA                  <span class="code-comment"># grab RetrievalQA from langchain.chains</span>
-<span class="c-kw">from</span> langchain.llms <span class="c-kw">import</span> OpenAI                         <span class="code-comment"># grab OpenAI from langchain.llms</span>
-
-<span class="c-cm"># PHASE 1: INDEXING (do once — builds the knowledge base)</span>
-loader = PyPDFLoader("company_policy.pdf")
-documents = loader.load()
-print(f"Loaded {len(documents)} pages")                   <span class="code-comment"># show this value in the terminal</span>
-
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=500, chunk_overlap=50,
-    length_function=len,
-    separators=["\n\n", "\n", ". ", " "]
-)
-chunks = splitter.split_documents(documents)
-
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
-
-vectorstore = Chroma.from_documents(
-    documents=chunks,
-    embedding=embeddings,
-    persist_directory="./chroma_db"
-)
-vectorstore.persist()
-print("Knowledge base created and saved!")                <span class="code-comment"># show this value in the terminal</span>
-
-<span class="c-cm"># PHASE 2: QUERYING (real-time, per user question)</span>
-vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
-retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 4})
-
-qa_chain = RetrievalQA.from_chain_type(
-    llm=OpenAI(temperature=0),
-    chain_type="stuff",
-    retriever=retriever,
-    return_source_documents=True
-)
-
-question = "What is the refund policy for digital products?"
-result = qa_chain(question)
-print(f"Answer: {result['result']}")                      <span class="code-comment"># show this value in the terminal</span>
-print("\nSources used:")                                  <span class="code-comment"># show this value in the terminal</span>
-for doc in result['source_documents']:                    <span class="code-comment"># loop through each item in the list</span>
-    print(f"  - Page {doc.metadata['page']}: {doc.page_content[:100]}...") # ← # print output to console
-</pre></div>
-    </div>
-
-    <div class="cards-grid">
-      <div class="card">
-        <h3>🏢 Real Use Cases for RAG</h3>
-        <ul>
-          <li><strong>Internal Company Chatbot:</strong> "What is our parental leave policy?" → scans HR handbook</li>
-          <li><strong>Customer Support:</strong> "How do I reset my password?" → scans product documentation</li>
-          <li><strong>Legal Analysis:</strong> "Does this contract have a non-compete clause?" → scans contract text</li>
-          <li><strong>Medical Research:</strong> "What treatments are recommended for condition X?" → scans medical papers</li>
-          <li><strong>Code Documentation:</strong> "How do I use the authentication API?" → scans codebase docs</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>⚠️ RAG Best Practices</h3>
-        <ul>
-          <li><strong>Chunk size matters:</strong> Too small = no context. Too large = retrieves irrelevant text. 300-800 characters is typical.</li>
-          <li><strong>Overlap is important:</strong> 10-20% overlap prevents losing info at boundaries</li>
-          <li><strong>Reranking:</strong> After retrieval, use a second model to rerank chunks by relevance</li>
-          <li><strong>Temperature=0:</strong> For factual Q&A, use low temperature to get precise answers</li>
-          <li><strong>Show sources:</strong> Always show which documents were used — builds trust and allows verification</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>📚 Key RAG Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Embedding</span></td><td>Converting text to a dense vector of numbers that captures semantic meaning. Similar text → similar vectors.</td><td>"cat" and "kitten" have high cosine similarity. "cat" and "car" have low similarity.</td></tr>
-        <tr><td><span class="term-name">Vector Database</span></td><td>Special database that stores embeddings and allows extremely fast similarity search</td><td>ChromaDB, Pinecone, FAISS, Weaviate, Qdrant</td></tr>
-        <tr><td><span class="term-name">Cosine Similarity</span></td><td>Measures the angle between two vectors. 1=same direction (identical meaning), 0=perpendicular (unrelated), -1=opposite</td><td>cos_sim("climate change", "global warming") ≈ 0.92</td></tr>
-        <tr><td><span class="term-name">Chunking</span></td><td>Splitting long documents into smaller pieces before indexing. LLMs have context limits — can't process entire books at once.</td><td>A 100-page PDF → 800 chunks of 500 characters each</td></tr>
-        <tr><td><span class="term-name">Retrieval</span></td><td>Finding the most relevant chunks from the vector database for a given query</td><td>Query: "refund policy" → retrieves top 4 most similar document chunks</td></tr>
-        <tr><td><span class="term-name">Augmentation</span></td><td>Adding the retrieved chunks to the prompt so the LLM has relevant context to answer from</td><td>Prompt = "Context: [retrieved text]\n\nQuestion: [user question]\n\nAnswer:"</td></tr>
-        <tr><td><span class="term-name">Generation</span></td><td>The LLM's final step — producing the answer using the augmented prompt (question + retrieved context)</td><td>LLM reads the retrieved policy text and generates a clear, specific answer</td></tr>
-        <tr><td><span class="term-name">Hallucination</span></td><td>LLM confidently making up information that sounds plausible but is wrong. RAG reduces this by grounding answers in real retrieved text.</td><td>Without RAG: LLM might invent a refund policy. With RAG: quotes the actual policy.</td></tr>
-        <tr><td><span class="term-name">Context Window</span></td><td>The maximum amount of text an LLM can process at once. GPT-4: 128K tokens. This limits how much retrieved text you can include.</td><td>128K tokens ≈ 96,000 words ≈ a typical novel</td></tr>
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">What Are Embeddings?</h4>
+      <p>An embedding is a list of numbers (a vector) that represents the <strong>meaning</strong> of a piece of text. Two pieces of text with similar meaning will have vectors that point in similar directions (high cosine similarity ≈ close to 1.0).</p>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+        <tr style="background:#0f172a">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Text</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Cosine Similarity to "dog"</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">"puppy"</td>
+          <td style="padding:7px;color:#22c55e">0.91 — very similar</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">"canine"</td>
+          <td style="padding:7px;color:#22c55e">0.87 — very similar</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">"cat"</td>
+          <td style="padding:7px;color:#f59e0b">0.72 — related (both pets)</td>
+        </tr>
+        <tr>
+          <td style="padding:7px">"quantum physics"</td>
+          <td style="padding:7px;color:#ef4444">0.12 — unrelated</td>
+        </tr>
       </table>
     </div>
 
+    <div class="concept-box" style="border-color:#a855f7">
+      <h4 style="color:#d8b4fe">What is a Vector Database?</h4>
+      <p>A vector database stores millions of embedding vectors and can instantly find the top-K most similar vectors to a query vector. Regular databases search by exact match (WHERE id = 5). Vector databases search by semantic similarity — "find me the 5 most similar chunks to this query."</p>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+        <tr style="background:#0f172a">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Database</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Best For</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Type</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#3b82f6">FAISS</td>
+          <td style="padding:7px">Local, fast, no server needed. Best for development.</td>
+          <td style="padding:7px">In-memory library (Facebook)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#22c55e">Chroma</td>
+          <td style="padding:7px">Simple to use, persistent, Python-native</td>
+          <td style="padding:7px">Open-source, local or hosted</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#a855f7">Pinecone</td>
+          <td style="padding:7px">Production at scale, managed cloud service</td>
+          <td style="padding:7px">Cloud SaaS</td>
+        </tr>
+        <tr>
+          <td style="padding:7px;color:#f59e0b">pgvector</td>
+          <td style="padding:7px">Already using PostgreSQL? Add vector search with an extension</td>
+          <td style="padding:7px">PostgreSQL extension</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">RAG Limitations and Failure Modes</h4>
+      <ul style="line-height:1.9">
+        <li><strong>Retrieval failure:</strong> If the right chunk is not retrieved, the LLM cannot answer correctly (garbage in, garbage out).</li>
+        <li><strong>Chunking quality:</strong> Cutting a document at the wrong boundary can split a sentence that spans chunks, losing context.</li>
+        <li><strong>Embedding quality:</strong> Different embedding models have different strengths. Domain-specific text (medical, legal, code) may need domain-specific embedding models.</li>
+        <li><strong>Context window limit:</strong> If you retrieve 10 chunks × 500 words = 5,000 words. Add system prompt, chat history, and you may exceed the LLM's context window.</li>
+        <li><strong>LLM still hallucinating:</strong> Even with retrieved context, LLMs can sometimes ignore it and hallucinate. Use temperature=0 and explicit prompting ("Answer ONLY based on the provided context").</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s15-visual">
+    <h3 style="color:#38bdf8">The Full RAG Pipeline — Step by Step</h3>
+    <svg viewBox="0 0 620 300" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%;font-family:sans-serif">
+  <rect width="620" height="300" rx="12" fill="#0f172a"/>
+  <text x="310" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">RAG Pipeline — Retrieval Augmented Generation</text>
+  <defs>
+    <marker id="arrowW" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L7,3.5 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  <!-- Step 1: User Query -->
+  <rect x="20" y="55" width="110" height="55" rx="8" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+  <text x="75" y="79" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">1. USER</text>
+  <text x="75" y="95" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">QUERY</text>
+  <text x="75" y="112" text-anchor="middle" fill="#94a3b8" font-size="9">"What is our</text>
+  <text x="75" y="122" text-anchor="middle" fill="#94a3b8" font-size="9">refund policy?"</text>
+  <!-- Arrow 1 -->
+  <line x1="130" y1="82" x2="155" y2="82" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+  <!-- Step 2: Embed Query -->
+  <rect x="155" y="55" width="110" height="55" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <text x="210" y="74" text-anchor="middle" fill="#d8b4fe" font-size="11" font-weight="bold">2. EMBED</text>
+  <text x="210" y="89" text-anchor="middle" fill="#d8b4fe" font-size="11" font-weight="bold">QUERY</text>
+  <text x="210" y="105" text-anchor="middle" fill="#94a3b8" font-size="9">text → vector</text>
+  <text x="210" y="117" text-anchor="middle" fill="#94a3b8" font-size="9">[0.2, -0.5, ...]</text>
+  <!-- Arrow 2 -->
+  <line x1="265" y1="82" x2="290" y2="82" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+  <!-- Step 3: Vector Search -->
+  <rect x="290" y="40" width="120" height="165" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+  <text x="350" y="62" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="bold">3. VECTOR DB</text>
+  <text x="350" y="77" text-anchor="middle" fill="#fde68a" font-size="10">Similarity Search</text>
+  <!-- Mini docs in vector DB -->
+  <rect x="300" y="85" width="100" height="18" rx="3" fill="#0f172a"/>
+  <text x="350" y="98" text-anchor="middle" fill="#94a3b8" font-size="9">Doc: Refund Policy</text>
+  <rect x="300" y="107" width="100" height="18" rx="3" fill="#1e3a5f" stroke="#f59e0b" stroke-width="1"/>
+  <text x="350" y="120" text-anchor="middle" fill="#fbbf24" font-size="9">→ MATCH 0.95</text>
+  <rect x="300" y="129" width="100" height="18" rx="3" fill="#0f172a"/>
+  <text x="350" y="142" text-anchor="middle" fill="#94a3b8" font-size="9">Doc: Payment Terms</text>
+  <rect x="300" y="151" width="100" height="18" rx="3" fill="#0f172a"/>
+  <text x="350" y="164" text-anchor="middle" fill="#94a3b8" font-size="9">Doc: Shipping Guide</text>
+  <rect x="300" y="173" width="100" height="18" rx="3" fill="#1e3a5f" stroke="#f59e0b" stroke-width="1"/>
+  <text x="350" y="186" text-anchor="middle" fill="#fbbf24" font-size="9">→ MATCH 0.82</text>
+  <!-- Arrow 3 -->
+  <line x1="410" y1="100" x2="435" y2="100" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+  <!-- Step 4: Augment Prompt -->
+  <rect x="435" y="55" width="120" height="90" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+  <text x="495" y="76" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">4. AUGMENT</text>
+  <text x="495" y="91" text-anchor="middle" fill="#94a3b8" font-size="9">Combine: query +</text>
+  <text x="495" y="104" text-anchor="middle" fill="#94a3b8" font-size="9">retrieved docs into</text>
+  <text x="495" y="117" text-anchor="middle" fill="#94a3b8" font-size="9">one prompt for LLM</text>
+  <text x="495" y="135" text-anchor="middle" fill="#f59e0b" font-size="9">"Context: [doc1, doc2]</text>
+  <text x="495" y="147" text-anchor="middle" fill="#f59e0b" font-size="9">Question: refund?"</text>
+  <!-- Arrow 4 (down to Generate) -->
+  <line x1="495" y1="145" x2="495" y2="175" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+  <!-- Step 5: LLM Generates -->
+  <rect x="435" y="175" width="120" height="65" rx="8" fill="#3b1a1a" stroke="#ef4444" stroke-width="2"/>
+  <text x="495" y="196" text-anchor="middle" fill="#fca5a5" font-size="11" font-weight="bold">5. LLM</text>
+  <text x="495" y="211" text-anchor="middle" fill="#fca5a5" font-size="11" font-weight="bold">GENERATE</text>
+  <text x="495" y="228" text-anchor="middle" fill="#94a3b8" font-size="9">GPT-4, LLaMA, etc.</text>
+  <!-- Final answer -->
+  <rect x="20" y="185" width="390" height="80" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="215" y="206" text-anchor="middle" fill="#7dd3fc" font-size="11" font-weight="bold">6. GROUNDED ANSWER (not hallucinated)</text>
+  <text x="215" y="224" text-anchor="middle" fill="#f1f5f9" font-size="10">"Our refund policy allows returns within 30 days</text>
+  <text x="215" y="238" text-anchor="middle" fill="#f1f5f9" font-size="10">of purchase. Items must be unused and in original</text>
+  <text x="215" y="252" text-anchor="middle" fill="#f1f5f9" font-size="10">packaging. [Source: Refund Policy Doc, Page 3]"</text>
+  <!-- Arrow from LLM to answer -->
+  <line x1="435" y1="215" x2="410" y2="215" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">1. User asks a question. 2. Question is embedded to a vector. 3. Vector DB finds the most similar document chunks (top-K). 4. Retrieved chunks + question are combined into a prompt. 5. LLM generates an answer grounded in the retrieved facts. 6. User gets an accurate, citable answer.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Vanilla LLM vs RAG</h3>
+    <svg viewBox="0 0 580 240" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="240" rx="12" fill="#0f172a"/>
+  <text x="290" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Vanilla LLM vs RAG — Key Differences</text>
+  <!-- Vanilla LLM -->
+  <rect x="20"  y="40" width="260" height="180" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="150" y="62"  text-anchor="middle" fill="#f87171" font-size="12" font-weight="bold">Vanilla LLM</text>
+  <text x="150" y="80"  text-anchor="middle" fill="#94a3b8" font-size="10">Question → LLM → Answer</text>
+  <text x="150" y="102" text-anchor="middle" fill="#ef4444" font-size="10">✗ Knowledge cutoff (e.g., Oct 2023)</text>
+  <text x="150" y="119" text-anchor="middle" fill="#ef4444" font-size="10">✗ Cannot access private company data</text>
+  <text x="150" y="136" text-anchor="middle" fill="#ef4444" font-size="10">✗ Hallucinations — confident but wrong</text>
+  <text x="150" y="153" text-anchor="middle" fill="#ef4444" font-size="10">✗ No source citations</text>
+  <text x="150" y="170" text-anchor="middle" fill="#ef4444" font-size="10">✗ Retraining required for new info</text>
+  <text x="150" y="190" text-anchor="middle" fill="#94a3b8" font-size="10">Example: "What is our Q3 2024 revenue?"</text>
+  <text x="150" y="205" text-anchor="middle" fill="#ef4444" font-size="10">→ Hallucinated answer or "I don't know"</text>
+  <!-- RAG -->
+  <rect x="300" y="40" width="260" height="180" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="430" y="62"  text-anchor="middle" fill="#86efac" font-size="12" font-weight="bold">RAG System</text>
+  <text x="430" y="80"  text-anchor="middle" fill="#94a3b8" font-size="10">Question → Retrieve Docs → LLM → Answer</text>
+  <text x="430" y="102" text-anchor="middle" fill="#22c55e" font-size="10">✓ Always up-to-date (knowledge base updated)</text>
+  <text x="430" y="119" text-anchor="middle" fill="#22c55e" font-size="10">✓ Access private internal documents</text>
+  <text x="430" y="136" text-anchor="middle" fill="#22c55e" font-size="10">✓ Grounded in retrieved facts</text>
+  <text x="430" y="153" text-anchor="middle" fill="#22c55e" font-size="10">✓ Can cite sources (Doc name, page)</text>
+  <text x="430" y="170" text-anchor="middle" fill="#22c55e" font-size="10">✓ No retraining needed for new docs</text>
+  <text x="430" y="190" text-anchor="middle" fill="#94a3b8" font-size="10">Example: "What is our Q3 2024 revenue?"</text>
+  <text x="430" y="205" text-anchor="middle" fill="#22c55e" font-size="10">→ Retrieves Q3 report → accurate answer</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Vanilla LLMs are frozen at their training cutoff and cannot access private data. RAG makes them dynamic — the knowledge base can be updated without retraining the LLM. This is why RAG is used in almost every enterprise AI application: Q&amp;A bots, document search, customer support, etc.</p>
+  </div>
+
+  <!-- COMPONENTS TAB -->
+  <div class="tab-content" id="s15-components">
+    <h3 style="color:#38bdf8">RAG Component Deep-Dive</h3>
+
+    <div class="param-card">
+      <div class="param-name">Text Splitter (Chunking Strategy)</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> How you split long documents into smaller chunks for embedding and retrieval.<br>
+        <strong>Why it matters:</strong> Too large = retrieve irrelevant context and waste context window. Too small = split important sentences, lose context.<br>
+        <strong>Common strategies:</strong>
+        <ul>
+          <li><code>RecursiveCharacterTextSplitter</code> — Default choice. Tries to split on paragraphs → sentences → words in order. Preserves natural text boundaries.</li>
+          <li><code>TokenTextSplitter</code> — Splits by token count (more accurate for LLM context budgeting).</li>
+          <li><code>MarkdownHeaderTextSplitter</code> — Splits by headers (H1, H2, H3). Best for documentation with clear sections.</li>
+          <li><code>SentenceTransformersTokenTextSplitter</code> — Splits to match the max input size of the embedding model.</li>
+        </ul>
+        <strong>Parameters:</strong> <code>chunk_size=500</code> (characters or tokens), <code>chunk_overlap=50</code> (overlap between consecutive chunks to preserve context at boundaries).
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">Embedding Model</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The model that converts text to vectors. The same model must embed both the documents AND the queries (same vector space).<br>
+        <strong>Popular choices:</strong>
+        <ul>
+          <li><code>text-embedding-ada-002</code> (OpenAI) — 1536 dimensions, excellent quality, costs money per call.</li>
+          <li><code>all-MiniLM-L6-v2</code> (HuggingFace) — 384 dimensions, fast, free, runs locally. Best starting point.</li>
+          <li><code>all-mpnet-base-v2</code> (HuggingFace) — 768 dimensions, higher quality than MiniLM, slightly slower.</li>
+          <li><code>text-embedding-3-small</code> (OpenAI) — Newer, cheaper, better than ada-002.</li>
+        </ul>
+        <strong>Rule:</strong> Use a free local model for development. Switch to OpenAI for production if quality matters.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">Retrieval Strategy (Top-K + Search Type)</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> How many chunks to retrieve and how to rank them.<br>
+        <strong>Top-K:</strong> Number of chunks to retrieve. K=3 is common. More = more context but larger prompt + slower.<br>
+        <strong>Search types:</strong>
+        <ul>
+          <li><strong>Semantic search (default)</strong> — Find most similar vectors using cosine similarity. Best for "meaning-based" queries.</li>
+          <li><strong>MMR (Maximal Marginal Relevance)</strong> — Retrieve diverse chunks, not just the top-K most similar (which might all be from the same section). Reduces redundancy.</li>
+          <li><strong>Hybrid search</strong> — Combine semantic + keyword (BM25) search. Better for specific technical terms (product names, error codes) that semantic search misses.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">Prompt Template (Augmentation)</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The structure of the final prompt sent to the LLM, combining retrieved context and the user's question.<br>
+        <strong>Standard template:</strong><br>
+        <pre style="background:#0f172a;padding:10px;border-radius:6px;font-size:11px;color:#f1f5f9">You are a helpful assistant. Answer the user's question ONLY based on the
+provided context. If the answer is not in the context, say
+"I don't have information about that in the provided documents."
+
+Context:
+{context}
+
+Question: {question}
+Answer:</pre>
+        <strong>Why "only based on context"?</strong> This instruction reduces hallucination by explicitly telling the LLM not to use its general training knowledge for this question.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">LLM (Generator)</div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The language model that reads the augmented prompt and generates the final answer.<br>
+        <strong>Choice depends on:</strong>
+        <ul>
+          <li><strong>Cost:</strong> GPT-4o (best quality, higher cost) → GPT-4o-mini (good quality, cheap) → Llama 3 (free, runs locally)</li>
+          <li><strong>Privacy:</strong> If documents are sensitive/confidential, use a local model (Llama, Mistral via Ollama) to avoid sending data to OpenAI's servers</li>
+          <li><strong>Speed:</strong> Smaller models like Mistral 7B are faster for low-latency applications</li>
+        </ul>
+        <strong>Temperature:</strong> Set to 0 for RAG — you want deterministic answers based on retrieved facts, not creative variation.
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE TAB -->
+  <div class="tab-content" id="s15-code">
+    <h3 style="color:#38bdf8">Build a RAG System from Scratch — Annotated</h3>
+    <pre><code class="language-python">
+# pip install langchain langchain-community chromadb sentence-transformers openai pypdf
+
+from langchain.document_loaders import PyPDFLoader, DirectoryLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.embeddings import HuggingFaceEmbeddings   # free local embeddings
+from langchain.vectorstores import Chroma                 # local vector database
+from langchain.chains import RetrievalQA
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
+import os
+
+# ══════════════════════════════════════════════════════════
+# PHASE 1: INGESTION — Load and chunk your documents
+# ══════════════════════════════════════════════════════════
+
+# Load all PDFs from a folder
+loader = DirectoryLoader(
+    './documents/',       # folder containing your PDFs
+    glob='**/*.pdf',      # match all PDF files recursively
+    loader_cls=PyPDFLoader,  # use PyPDFLoader for each PDF file
+)
+documents = loader.load()   # list of Document objects (page_content + metadata)
+print(f"Loaded {len(documents)} pages from {len(set(d.metadata['source'] for d in documents))} PDFs")
+
+# Split documents into chunks
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500,      # each chunk is approximately 500 characters
+    chunk_overlap=50,    # 50 character overlap between chunks to preserve context at boundaries
+    separators=["
+
+", "
+", ". ", " ", ""],  # try splitting here in order
+)
+chunks = splitter.split_documents(documents)
+print(f"Created {len(chunks)} chunks from {len(documents)} pages")
+
+# ══════════════════════════════════════════════════════════
+# PHASE 2: EMBEDDING — Convert chunks to vectors
+# ══════════════════════════════════════════════════════════
+
+# Free local embedding model (no API key needed)
+# Dimensions: 384. Runs on CPU. Suitable for up to ~50k chunks.
+embedding_model = HuggingFaceEmbeddings(
+    model_name='sentence-transformers/all-MiniLM-L6-v2',
+    model_kwargs={'device': 'cpu'},  # use 'cuda' if GPU available
+    encode_kwargs={'normalize_embeddings': True},  # unit norm → cosine similarity = dot product
+)
+
+# ══════════════════════════════════════════════════════════
+# PHASE 3: VECTOR STORE — Store chunks + vectors
+# ══════════════════════════════════════════════════════════
+
+# Create (or load existing) Chroma vector database
+vectordb = Chroma.from_documents(
+    documents=chunks,             # list of chunk Document objects
+    embedding=embedding_model,    # same embedding model used for queries
+    persist_directory='./chroma_db',  # save to disk so we don't re-embed every run
+)
+vectordb.persist()   # save to disk
+print(f"Vector DB contains {vectordb._collection.count()} chunks")
+
+# Load existing database (on subsequent runs)
+# vectordb = Chroma(persist_directory='./chroma_db', embedding_function=embedding_model)
+
+# ══════════════════════════════════════════════════════════
+# PHASE 4: RETRIEVAL + GENERATION — Answer questions
+# ══════════════════════════════════════════════════════════
+
+# Define a custom prompt template
+prompt_template = """You are a helpful assistant. Answer the question based ONLY
+on the context below. If the answer is not in the context, say
+"I don't have that information in the provided documents."
+
+Context:
+{context}
+
+Question: {question}
+Answer:"""
+
+PROMPT = PromptTemplate(
+    template=prompt_template,
+    input_variables=["context", "question"]
+)
+
+# Create the LLM (GPT-4o-mini for production, or local Llama for free/private)
+llm = ChatOpenAI(
+    model_name='gpt-4o-mini',   # fast, cheap, good quality
+    temperature=0,               # 0 = deterministic answers (no creativity)
+    openai_api_key=os.getenv('OPENAI_API_KEY'),
+)
+
+# Build the RAG chain
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",    # "stuff": concatenate all retrieved chunks into one prompt
+                           # "map_reduce": good for many long chunks (summarises each first)
+    retriever=vectordb.as_retriever(
+        search_type="mmr",         # MMR: diverse results (not all from same section)
+        search_kwargs={
+            "k": 4,                # retrieve 4 most relevant chunks
+            "fetch_k": 20,         # consider top 20 candidates, then pick diverse 4
+        }
+    ),
+    chain_type_kwargs={"prompt": PROMPT},
+    return_source_documents=True,  # include retrieved chunks in response (for citations)
+)
+
+# ── Query the RAG system ────────────────────────────────────────────────────
+query = "What is the company refund policy?"
+result = qa_chain({"query": query})
+
+print(f"Answer:
+{result['result']}")
+print(f"
+Sources used:")
+for doc in result['source_documents']:
+    print(f"  - {doc.metadata['source']} (page {doc.metadata.get('page', '?')})")
+    print(f"    Excerpt: {doc.page_content[:150]}...")
+
+# ══════════════════════════════════════════════════════════
+# BONUS: Semantic similarity search without LLM (pure retrieval)
+# ══════════════════════════════════════════════════════════
+
+# Find top 3 most similar chunks to a query
+query = "employee leave policy"
+similar_docs = vectordb.similarity_search_with_score(query, k=3)
+for doc, score in similar_docs:
+    print(f"Score: {score:.3f} | {doc.page_content[:200]}...")
+# Score is L2 distance (lower = more similar) or cosine similarity (higher = more similar)
+# depending on the distance metric of your vector store
+    </code></pre>
+  </div>
+
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s15-tips">
+    <h3 style="color:#38bdf8">When to Use RAG</h3>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Use RAG When:</h4>
+      <ul style="line-height:1.9">
+        <li>You need the LLM to answer from <strong>private/proprietary documents</strong> (internal policies, product docs, contracts)</li>
+        <li>Your data <strong>changes frequently</strong> — update the knowledge base without retraining</li>
+        <li>You need <strong>citations and source attribution</strong> — "this answer comes from page 3 of the HR handbook"</li>
+        <li>You want to <strong>reduce hallucinations</strong> on factual questions</li>
+        <li>Knowledge is <strong>beyond the LLM's training cutoff</strong></li>
+        <li><strong>Customer support bots</strong> that answer from a product knowledge base</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Avoid RAG When:</h4>
+      <ul style="line-height:1.9">
+        <li>The task requires <strong>creative generation</strong> (story writing, brainstorming) — retrieval constrains creativity</li>
+        <li>The answer requires <strong>reasoning across many documents</strong> simultaneously — RAG retrieves top-K chunks, not all relevant knowledge</li>
+        <li>Your knowledge base is <strong>very small</strong> (&lt; 50 pages) — just put everything in the LLM's context window directly</li>
+        <li>You need <strong>real-time data</strong> (stock prices, live sports scores) — use tool calling / function calling instead</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">RAG vs Fine-Tuning — Critical Distinction</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#1e293b">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Aspect</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">RAG</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">Fine-Tuning</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Update knowledge</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Easy — just update vector DB</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">Hard — retrain model</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Hallucination control</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Strong (grounded in docs)</td>
+          <td style="padding:7px;text-align:center;color:#f59e0b">Moderate</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px">Cost</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Low</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">High (GPU time)</td>
+        </tr>
+        <tr>
+          <td style="padding:7px">Learns new style/behaviour</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">No</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Yes</td>
+        </tr>
+      </table>
+      <p style="margin-top:10px;color:#94a3b8"><strong>Rule of thumb:</strong> Use RAG for adding knowledge. Use fine-tuning to change the model's behaviour, style, or domain-specific reasoning patterns.</p>
+    </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      DS PHASE 1 — Statistics & EDA
 ═══════════════════════════════════════════════════ -->

@@ -4498,322 +4498,1003 @@ bnb = BernoulliNB(
 ═══════════════════════════════════════════════════ -->
 <div class="algo-section" id="s9">
   <div class="algo-header">
-    <div class="algo-number">9</div>
+    <span class="algo-icon">🔵</span>
     <div>
       <div class="algo-title">K-Means Clustering</div>
-      <div class="algo-subtitle">Group similar data points together without any labels — unsupervised</div>
+      <div class="algo-subtitle">Unsupervised Learning — Group Similar Data Points Without Labels</div>
     </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('s9','what')">📖 What Is It</button>
-    <button class="tab-btn" onclick="showTab('s9','how')">⚙️ How It Works</button>
-    <button class="tab-btn" onclick="showTab('s9','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s9','code')">💻 Code & Internals</button>
-    <button class="tab-btn" onclick="showTab('s9','terms')">📚 Key Terms</button>
   </div>
 
-  <div class="tab-content active" id="s9-what">
-    <div class="card">
-      <h3>Unsupervised: No Labels Needed</h3>
-      <p>All algorithms so far were supervised — they needed labelled training data (input + correct answer). K-Means is <strong>unsupervised</strong> — it finds structure in data with NO labels. You don't tell it what groups exist; it discovers them.</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s9','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s9','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s9','params')">Parameters</button>
+    <button class="tab-btn" onclick="showTab('s9','code')">Code</button>
+    <button class="tab-btn" onclick="showTab('s9','tips')">When to Use</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s9-concept">
+    <h3 style="color:#38bdf8">What is K-Means? (Plain English First)</h3>
+    <p>Imagine you have 1,000 customers and you want to group them into 3 types: budget shoppers, mid-range shoppers, and luxury shoppers. But nobody told you which group each customer belongs to. You only have data on their spending patterns.</p>
+    <p>K-Means does exactly this. It looks at the data and asks: <strong>"Can I find K natural groups where points within each group are more similar to each other than to points in other groups?"</strong></p>
+    <p>The key difference from classification: there are <strong>no labels</strong>. K-Means is <em>unsupervised</em> — it discovers structure on its own.</p>
+
+    <div class="concept-box">
+      <h4>The K-Means Algorithm — 4 Simple Steps</h4>
+      <ol style="line-height:2.2">
+        <li><strong>Initialise:</strong> Randomly place K centroids (center points) in the feature space.</li>
+        <li><strong>Assign:</strong> For each data point, calculate its distance to every centroid. Assign the point to the nearest centroid's cluster.</li>
+        <li><strong>Update:</strong> For each cluster, calculate the mean (average position) of all its points. Move the centroid to that mean.</li>
+        <li><strong>Repeat:</strong> Go back to step 2. Keep repeating until centroids stop moving (or barely move below a tolerance threshold).</li>
+      </ol>
     </div>
-    <div class="analogy">
-      <div class="label">🗂️ Analogy — Organizing a Messy Drawer</div>
-      <p>Your kitchen drawer has pens, coins, rubber bands, keys, and screws all mixed together. You didn't need anyone to tell you the categories — you naturally grouped similar items together. K-Means does this automatically: it groups data points that are similar to each other into K clusters.</p>
+
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">What Does "Centroid" Mean?</h4>
+      <p>A centroid is the <strong>centre of a cluster</strong> — the average of all points assigned to that cluster. It's not a real data point — it's a calculated representative point.</p>
+      <p><strong>Example:</strong> If cluster 1 has 3 customers at positions (2,3), (4,5), (3,7), the centroid is at ((2+4+3)/3, (3+5+7)/3) = (3.0, 5.0).</p>
     </div>
-    <div class="card">
-      <h3>You Must Choose K (Number of Clusters)</h3>
-      <p>Unlike supervised learning where the number of classes is defined by your data, in K-Means you must specify how many groups to create. This is both the algorithm's biggest weakness and a design choice.</p>
-      <ul>
-        <li>Use the <strong>Elbow Method</strong> or <strong>Silhouette Score</strong> to find the best K</li>
-        <li>Sometimes business context defines K (e.g., "we want 4 customer segments")</li>
+
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">What is Inertia (WCSS)?</h4>
+      <p>K-Means minimises <strong>inertia</strong> (also called Within-Cluster Sum of Squares — WCSS): the total sum of squared distances from each point to its cluster's centroid.</p>
+      <div style="background:#0f172a;padding:10px;border-radius:6px;text-align:center;font-size:13px;margin:10px 0">
+        <span style="color:#f1f5f9;font-family:monospace">Inertia = Σ Σ (point - centroid)²</span><br>
+        <span style="color:#94a3b8;font-size:11px">Sum over all clusters, then sum over all points in each cluster</span>
+      </div>
+      <p><strong>Lower inertia = tighter clusters = better.</strong> But adding more clusters always reduces inertia. The trick is finding the sweet spot with the <strong>elbow method</strong>.</p>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">The Elbow Method — Choosing K</h3>
+    <p>Since we don't know the "right" K upfront, we run K-Means multiple times with K=1,2,3,...10 and plot the inertia each time:</p>
+    <ul>
+      <li>At K=1: One giant cluster. Very high inertia.</li>
+      <li>At K=3: Inertia drops dramatically — data has 3 natural groups.</li>
+      <li>At K=10: Inertia barely improves — just splitting real clusters unnecessarily.</li>
+    </ul>
+    <p>Look for the <strong>"elbow"</strong> in the plot — the K where the curve bends sharply. That's the optimal K.</p>
+
+    <div class="concept-box" style="border-color:#a855f7">
+      <h4 style="color:#d8b4fe">K-Means++ Initialisation — Why Random Init Fails</h4>
+      <p>If initial centroids are placed randomly, they might all start in the same dense region, leaving other clusters unrepresented. This leads to poor final clusters and is called getting stuck in a <strong>local optimum</strong>.</p>
+      <p><strong>K-Means++ fix:</strong> Place the first centroid randomly. Then for each subsequent centroid, choose a point with probability proportional to its squared distance from the nearest existing centroid. This spreads centroids out intelligently from the start.</p>
+      <p>Result: Faster convergence and better clusters. sklearn uses k-means++ by default (init='k-means++').</p>
+    </div>
+
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Limitations of K-Means</h4>
+      <ul style="line-height:1.9">
+        <li><strong>You must specify K</strong> — the algorithm cannot discover the number of clusters on its own.</li>
+        <li><strong>Assumes spherical clusters</strong> — works poorly with elongated, crescent-shaped, or nested clusters.</li>
+        <li><strong>Sensitive to outliers</strong> — one extreme point can pull a centroid far from the true cluster centre.</li>
+        <li><strong>Feature scaling required</strong> — distance-based, so salary (0-100k) dominates over age (0-100).</li>
+        <li><strong>Assumes similar cluster sizes</strong> — if one cluster has 1000 points and another has 10, it may split the big one and merge the small ones.</li>
       </ul>
     </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">Real-World Use Cases</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Industry</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">What Gets Clustered</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Business Goal</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">E-commerce</td>
+        <td style="padding:8px">Customers (purchase history, frequency, value)</td>
+        <td style="padding:8px">Target each segment with different promotions</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Healthcare</td>
+        <td style="padding:8px">Patient records (symptoms, test results)</td>
+        <td style="padding:8px">Discover disease subtypes for personalised treatment</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Cybersecurity</td>
+        <td style="padding:8px">Network traffic patterns</td>
+        <td style="padding:8px">Identify anomalous behaviour clusters (potential attacks)</td>
+      </tr>
+      <tr>
+        <td style="padding:8px">NLP</td>
+        <td style="padding:8px">Document embeddings</td>
+        <td style="padding:8px">Topic discovery without predefined categories</td>
+      </tr>
+    </table>
   </div>
 
-  <div class="tab-content" id="s9-how">
-    <div class="card">
-      <h3>The K-Means Algorithm — 4 Steps</h3>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Step 1</div><div class="step-txt">Randomly place K centroids (cluster center points) in the data space</div></div>
-        <div class="flow-step"><div class="step-num">Step 2</div><div class="step-txt">Assign each data point to its nearest centroid (using Euclidean distance)</div></div>
-        <div class="flow-step"><div class="step-num">Step 3</div><div class="step-txt">Recalculate each centroid as the mean of all points assigned to it</div></div>
-        <div class="flow-step"><div class="step-num">Step 4</div><div class="step-txt">Repeat Steps 2-3 until centroids stop moving (convergence)</div></div>
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s9-visual">
+    <h3 style="color:#38bdf8">K-Means with 3 Clusters</h3>
+    <svg viewBox="0 0 560 320" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%;font-family:sans-serif">
+  <rect width="560" height="320" rx="12" fill="#0f172a"/>
+  <text x="280" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">K-Means: 3 Clusters After Convergence</text>
+  <!-- Cluster 1: Blue — top left -->
+  <circle cx="95"  cy="80"  r="8" fill="#3b82f6" opacity="0.85"/>
+  <circle cx="120" cy="100" r="8" fill="#3b82f6" opacity="0.85"/>
+  <circle cx="80"  cy="115" r="8" fill="#3b82f6" opacity="0.85"/>
+  <circle cx="110" cy="130" r="8" fill="#3b82f6" opacity="0.85"/>
+  <circle cx="75"  cy="90"  r="8" fill="#3b82f6" opacity="0.85"/>
+  <circle cx="135" cy="75"  r="8" fill="#3b82f6" opacity="0.85"/>
+  <!-- Cluster 1 centroid -->
+  <circle cx="102" cy="98"  r="13" fill="none" stroke="#93c5fd" stroke-width="2.5"/>
+  <text   cx="102" cy="102" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold" x="102">C1</text>
+  <text x="102" y="152" text-anchor="middle" fill="#93c5fd" font-size="10">Centroid 1</text>
+
+  <!-- Cluster 2: Green — bottom center -->
+  <circle cx="250" cy="210" r="8" fill="#22c55e" opacity="0.85"/>
+  <circle cx="280" cy="240" r="8" fill="#22c55e" opacity="0.85"/>
+  <circle cx="225" cy="250" r="8" fill="#22c55e" opacity="0.85"/>
+  <circle cx="270" cy="220" r="8" fill="#22c55e" opacity="0.85"/>
+  <circle cx="240" cy="265" r="8" fill="#22c55e" opacity="0.85"/>
+  <circle cx="295" cy="255" r="8" fill="#22c55e" opacity="0.85"/>
+  <!-- Cluster 2 centroid -->
+  <circle cx="260" cy="240" r="13" fill="none" stroke="#86efac" stroke-width="2.5"/>
+  <text   cx="260" cy="244" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold" x="260">C2</text>
+  <text x="260" y="285" text-anchor="middle" fill="#86efac" font-size="10">Centroid 2</text>
+
+  <!-- Cluster 3: Orange — right -->
+  <circle cx="410" cy="110" r="8" fill="#f97316" opacity="0.85"/>
+  <circle cx="445" cy="90"  r="8" fill="#f97316" opacity="0.85"/>
+  <circle cx="430" cy="140" r="8" fill="#f97316" opacity="0.85"/>
+  <circle cx="460" cy="125" r="8" fill="#f97316" opacity="0.85"/>
+  <circle cx="480" cy="100" r="8" fill="#f97316" opacity="0.85"/>
+  <circle cx="470" cy="155" r="8" fill="#f97316" opacity="0.85"/>
+  <!-- Cluster 3 centroid -->
+  <circle cx="449" cy="120" r="13" fill="none" stroke="#fdba74" stroke-width="2.5"/>
+  <text   cx="449" cy="124" text-anchor="middle" fill="#fdba74" font-size="11" font-weight="bold" x="449">C3</text>
+  <text x="449" y="175" text-anchor="middle" fill="#fdba74" font-size="10">Centroid 3</text>
+
+  <!-- Inertia label -->
+  <rect x="160" y="295" width="240" height="18" rx="4" fill="#1e293b"/>
+  <text x="280" y="308" text-anchor="middle" fill="#94a3b8" font-size="11">Inertia = sum of (point - its centroid)² — lower is better</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Three clusters found: blue (top-left), green (bottom-centre), orange (right). The large circles with "C1/C2/C3" labels are the centroids — the average position of all points in each cluster. Inertia is minimised when points are tightly packed around their centroid.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">The Iterative Process — How K-Means Converges</h3>
+    <svg viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="260" rx="12" fill="#0f172a"/>
+  <text x="290" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">K-Means Algorithm — 4 Iteration Steps</text>
+  <!-- Step boxes -->
+  <!-- Step 1 -->
+  <rect x="15"  y="42" width="125" height="190" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="77"  y="62" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">Step 1</text>
+  <text x="77"  y="78" text-anchor="middle" fill="#f1f5f9" font-size="10">Random Init</text>
+  <circle cx="60" cy="115" r="6" fill="#94a3b8"/>
+  <circle cx="80" cy="130" r="6" fill="#94a3b8"/>
+  <circle cx="70" cy="100" r="6" fill="#94a3b8"/>
+  <circle cx="100" cy="120" r="6" fill="#94a3b8"/>
+  <circle cx="55" cy="145" r="6" fill="#94a3b8"/>
+  <circle cx="95" cy="155" r="6" fill="#94a3b8"/>
+  <!-- Random centroids -->
+  <circle cx="65"  cy="105" r="9" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="90"  cy="140" r="9" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <text x="77" y="210" text-anchor="middle" fill="#94a3b8" font-size="9">Place K centroids</text>
+  <text x="77" y="222" text-anchor="middle" fill="#94a3b8" font-size="9">at random positions</text>
+
+  <!-- Arrow 1→2 -->
+  <text x="148" y="140" text-anchor="middle" fill="#f1f5f9" font-size="18">→</text>
+
+  <!-- Step 2 -->
+  <rect x="160" y="42" width="125" height="190" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="222" y="62" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">Step 2</text>
+  <text x="222" y="78" text-anchor="middle" fill="#f1f5f9" font-size="10">Assign Points</text>
+  <circle cx="200" cy="115" r="6" fill="#ef4444"/>
+  <circle cx="220" cy="130" r="6" fill="#ef4444"/>
+  <circle cx="210" cy="100" r="6" fill="#ef4444"/>
+  <circle cx="240" cy="120" r="6" fill="#22c55e"/>
+  <circle cx="195" cy="145" r="6" fill="#22c55e"/>
+  <circle cx="235" cy="155" r="6" fill="#22c55e"/>
+  <circle cx="210" cy="105" r="9" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="235" cy="140" r="9" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <text x="222" y="210" text-anchor="middle" fill="#94a3b8" font-size="9">Assign each point</text>
+  <text x="222" y="222" text-anchor="middle" fill="#94a3b8" font-size="9">to nearest centroid</text>
+
+  <!-- Arrow 2→3 -->
+  <text x="293" y="140" text-anchor="middle" fill="#f1f5f9" font-size="18">→</text>
+
+  <!-- Step 3 -->
+  <rect x="305" y="42" width="125" height="190" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="367" y="62" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="bold">Step 3</text>
+  <text x="367" y="78" text-anchor="middle" fill="#f1f5f9" font-size="10">Update Centroids</text>
+  <circle cx="345" cy="115" r="6" fill="#ef4444"/>
+  <circle cx="365" cy="130" r="6" fill="#ef4444"/>
+  <circle cx="355" cy="100" r="6" fill="#ef4444"/>
+  <circle cx="385" cy="120" r="6" fill="#22c55e"/>
+  <circle cx="340" cy="145" r="6" fill="#22c55e"/>
+  <circle cx="380" cy="155" r="6" fill="#22c55e"/>
+  <!-- Old centroids (faded) -->
+  <circle cx="355" cy="105" r="9" fill="none" stroke="#ef444466" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle cx="380" cy="140" r="9" fill="none" stroke="#22c55e66" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- New centroids (moved) -->
+  <circle cx="355" cy="115" r="9" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="365" cy="140" r="9" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <text x="367" y="210" text-anchor="middle" fill="#94a3b8" font-size="9">Move centroid to</text>
+  <text x="367" y="222" text-anchor="middle" fill="#94a3b8" font-size="9">mean of its cluster</text>
+
+  <!-- Arrow 3→4 -->
+  <text x="438" y="140" text-anchor="middle" fill="#f1f5f9" font-size="18">→</text>
+
+  <!-- Step 4 -->
+  <rect x="450" y="42" width="115" height="190" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="507" y="62" text-anchor="middle" fill="#d8b4fe" font-size="11" font-weight="bold">Step 4</text>
+  <text x="507" y="78" text-anchor="middle" fill="#f1f5f9" font-size="10">Converged!</text>
+  <circle cx="490" cy="110" r="6" fill="#ef4444"/>
+  <circle cx="510" cy="125" r="6" fill="#ef4444"/>
+  <circle cx="500" cy="97"  r="6" fill="#ef4444"/>
+  <circle cx="525" cy="140" r="6" fill="#22c55e"/>
+  <circle cx="480" cy="148" r="6" fill="#22c55e"/>
+  <circle cx="518" cy="158" r="6" fill="#22c55e"/>
+  <circle cx="500" cy="111" r="9" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="508" cy="149" r="9" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <text x="507" y="205" text-anchor="middle" fill="#22c55e" font-size="9">Centroids stop</text>
+  <text x="507" y="217" text-anchor="middle" fill="#22c55e" font-size="9">moving → done!</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Step 1: Random initialisation of centroids. Step 2: Assign each point to nearest centroid (colour them). Step 3: Move centroid to the mean of its cluster (dashed = old position). Step 4: Repeat until centroids stop moving.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Elbow Method — Choose the Right K</h3>
+    <svg viewBox="0 0 520 280" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;width:100%;font-family:sans-serif">
+  <rect width="520" height="280" rx="12" fill="#0f172a"/>
+  <text x="260" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Elbow Method — How to Choose K</text>
+  <!-- Axes -->
+  <line x1="60" y1="230" x2="480" y2="230" stroke="#475569" stroke-width="1.5"/>
+  <line x1="60" y1="230" x2="60"  y2="40"  stroke="#475569" stroke-width="1.5"/>
+  <!-- Y labels -->
+  <text x="50" y="50"  text-anchor="end" fill="#94a3b8" font-size="10">High</text>
+  <text x="50" y="230" text-anchor="end" fill="#94a3b8" font-size="10">Low</text>
+  <text x="30" y="140" text-anchor="middle" fill="#94a3b8" font-size="11" transform="rotate(-90,30,140)">Inertia (WCSS)</text>
+  <!-- X labels -->
+  <text x="100" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">1</text>
+  <text x="170" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">2</text>
+  <text x="240" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">3</text>
+  <text x="310" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">4</text>
+  <text x="380" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">5</text>
+  <text x="450" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">6</text>
+  <text x="265" y="265" text-anchor="middle" fill="#94a3b8" font-size="11">K (Number of Clusters)</text>
+  <!-- Elbow curve -->
+  <polyline points="100,55 170,100 240,145 310,175 380,195 450,205"
+            fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+  <!-- Dots at each K -->
+  <circle cx="100" cy="55"  r="5" fill="#38bdf8"/>
+  <circle cx="170" cy="100" r="5" fill="#38bdf8"/>
+  <circle cx="240" cy="145" r="5" fill="#38bdf8"/>
+  <circle cx="310" cy="175" r="5" fill="#38bdf8"/>
+  <circle cx="380" cy="195" r="5" fill="#38bdf8"/>
+  <circle cx="450" cy="205" r="5" fill="#38bdf8"/>
+  <!-- Elbow highlight at K=3 -->
+  <circle cx="240" cy="145" r="14" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+  <line x1="240" y1="145" x2="240" y2="230" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <text x="240" y="145" dx="18" dy="-5" fill="#fbbf24" font-size="11" font-weight="bold">← ELBOW</text>
+  <text x="240" y="145" dx="18" dy="9" fill="#fbbf24" font-size="10">Choose K=3</text>
+  <!-- Annotation -->
+  <rect x="60" y="195" width="130" height="28" rx="4" fill="#1e293b"/>
+  <text x="125" y="208" text-anchor="middle" fill="#94a3b8" font-size="10">Adding more clusters gives</text>
+  <text x="125" y="219" text-anchor="middle" fill="#94a3b8" font-size="10">diminishing inertia reduction</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Plot inertia for K=1 to 10. Find where the curve bends sharply (the "elbow"). That K gives the best balance between cluster tightness and simplicity. Here the elbow is at K=3.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">External Reference: K-Means Animation</h3>
+    <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*tWaaZX75oumVwBMcKN-eHA.png"
+         alt="K-Means Clustering Visual"
+         style="max-width:100%;border-radius:8px;border:1px solid #334155"
+         onerror="this.style.display='none'">
+  </div>
+
+  <!-- PARAMS TAB -->
+  <div class="tab-content" id="s9-params">
+    <h3 style="color:#38bdf8">KMeans — Every Parameter Explained</h3>
+
+    <div class="param-card">
+      <div class="param-name">n_clusters <span class="param-default">default=8</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The value of K — how many clusters to find.<br>
+        <strong>This is the most critical parameter.</strong> There is no universally correct K. Use the elbow method or silhouette score to choose.<br>
+        <strong>Impact:</strong>
+        <ul>
+          <li>Too small K: Large, impure clusters that mix different types of points.</li>
+          <li>Too large K: Many tiny clusters; each natural group gets artificially split; overfitting.</li>
+        </ul>
+        <strong>How to find K:</strong> Plot inertia for K=1 to 15, look for the elbow. Or use silhouette score: higher is better (range −1 to 1).<br>
+        <code>from sklearn.metrics import silhouette_score</code>
       </div>
     </div>
-    <div class="card">
-      <h3>Elbow Method — Finding the Right K</h3>
-      <p>Run K-Means for K = 1, 2, 3, ... 10. For each K, record the <strong>inertia</strong> (total distance of points to their cluster center). Plot K vs inertia. The "elbow" — where adding more clusters stops helping much — is the optimal K.</p>
-      <div class="analogy">
-        <div class="label">💪 Elbow Analogy</div>
-        <p>K=1: all in one group, high inertia. K=2: two groups, much lower inertia. K=3: a bit lower. K=10: barely lower than K=9. The sharp bend in the curve (the elbow) is where extra clusters stop adding value.</p>
+
+    <div class="param-card">
+      <div class="param-name">init <span class="param-default">default='k-means++'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> How to initialise the centroids at the start.<br>
+        <strong>Options:</strong>
+        <ul>
+          <li><code>'k-means++'</code> — Smart initialisation. Spreads initial centroids far apart, reducing chance of bad local optima. <strong>Almost always use this.</strong></li>
+          <li><code>'random'</code> — Place centroids at random data points. Fast but more likely to converge to a poor solution.</li>
+          <li><code>ndarray</code> — Pass your own starting centroid positions (useful when you have domain knowledge about cluster centres).</li>
+        </ul>
+        <strong>Rule:</strong> Always use 'k-means++' unless you have a specific reason not to.
       </div>
     </div>
-    <div class="card">
-      <h3>Limitations of K-Means</h3>
-      <ul>
-        <li>Assumes clusters are <strong>spherical</strong> (circular) — doesn't handle elongated or ring-shaped clusters</li>
-        <li>Sensitive to <strong>outliers</strong> — one extreme point can pull the centroid away</li>
-        <li>Results depend on <strong>initial centroid placement</strong> — use init='k-means++' for better initialization</li>
-        <li>Must scale features — distance-based, just like KNN</li>
-      </ul>
+
+    <div class="param-card">
+      <div class="param-name">n_init <span class="param-default">default='auto' (10 in older sklearn)</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> How many times to run the entire K-Means algorithm with different centroid initialisations.<br>
+        <strong>Why multiple runs?</strong> Because of local optima — different starting positions can lead to different final clusters. Running 10 times and picking the best (lowest inertia) reduces this risk dramatically.<br>
+        <strong>Impact:</strong>
+        <ul>
+          <li>Higher n_init: More reliable results, but proportionally slower.</li>
+          <li>n_init=1: Fast but risky — might get stuck in bad local optimum.</li>
+        </ul>
+        <strong>Recommendation:</strong> Keep default (10). Increase to 20-50 for important analyses where you can afford the time.
+      </div>
     </div>
+
+    <div class="param-card">
+      <div class="param-name">max_iter <span class="param-default">default=300</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Maximum number of iterations (assign + update cycles) per single run.<br>
+        <strong>Impact:</strong> Most practical datasets converge well before 300 iterations. If you see warnings about not converging, either increase max_iter or check if your data needs scaling.<br>
+        <strong>When to increase:</strong> Large datasets with many clusters or subtle cluster boundaries may need 500+ iterations.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">tol <span class="param-default">default=1e-4</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Convergence tolerance — if centroid movement between iterations is less than tol, stop early.<br>
+        <strong>Impact:</strong> Smaller tol means run until almost exactly converged (slower but more precise). Larger tol stops earlier (faster, slightly less accurate centroids).<br>
+        <strong>Formula:</strong> Convergence check: max displacement of any centroid &lt; tol × inertia.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">random_state <span class="param-default">default=None</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Seed for the random number generator used in centroid initialisation.<br>
+        <strong>Always set this</strong> to any integer (e.g., 42) so your results are reproducible. Without it, every run produces different clusters.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">algorithm <span class="param-default">default='lloyd'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The algorithm variant to use.<br>
+        <strong>Options:</strong>
+        <ul>
+          <li><code>'lloyd'</code> — Classic K-Means. Works well for most cases.</li>
+          <li><code>'elkan'</code> — Uses triangle inequality to skip some distance calculations. Faster on dense, well-separated clusters. Memory-intensive.</li>
+        </ul>
+        <strong>Practical advice:</strong> Start with 'lloyd'. Try 'elkan' if you have well-separated clusters and want speed.
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Key Attributes After Fitting</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Attribute</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Shape</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Meaning</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">cluster_centers_</td>
+        <td style="padding:8px">[n_clusters, n_features]</td>
+        <td style="padding:8px">Coordinates of each centroid in feature space</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">labels_</td>
+        <td style="padding:8px">[n_samples]</td>
+        <td style="padding:8px">Cluster assignment (0, 1, 2...) for each training point</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">inertia_</td>
+        <td style="padding:8px">scalar</td>
+        <td style="padding:8px">Final WCSS value — sum of squared distances of each point to its centroid</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">n_iter_</td>
+        <td style="padding:8px">int</td>
+        <td style="padding:8px">Number of iterations the best run took to converge</td>
+      </tr>
+    </table>
   </div>
 
-  <div class="tab-content" id="s9-use">
-    <div class="card">
-      <h3>🛒 Real Use Case: Customer Segmentation for Marketing</h3>
-      <p>An e-commerce company has data on 100,000 customers: purchase frequency, average order value, days since last purchase, categories bought. They want to run targeted campaigns but can't create 100,000 individual campaigns.</p>
-    </div>
-    <div class="card">
-      <h3>Discovered Customer Segments</h3>
-      <ul>
-        <li><strong>Cluster 0 — VIP Champions:</strong> High frequency, high value, recent purchase. Send loyalty rewards.</li>
-        <li><strong>Cluster 1 — At-Risk Loyal:</strong> Used to buy often, haven't purchased in 90 days. Send win-back discount.</li>
-        <li><strong>Cluster 2 — Budget Browsers:</strong> Many visits, rare purchases, small orders. Send flash sales.</li>
-        <li><strong>Cluster 3 — New Promising:</strong> Recent first purchase, moderate value. Send onboarding emails.</li>
-      </ul>
-      <div class="highlight"><p>Each cluster gets a different marketing message. Targeted campaigns have 3-5x higher conversion than generic blasts.</p></div>
-    </div>
-  </div>
-
+  <!-- CODE TAB -->
   <div class="tab-content" id="s9-code">
-    <div class="card"><h3>Complete Code: Customer Segmentation</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-<span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd                                       <span class="code-comment"># bring in the pandas as pd toolkit</span>
-<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt
-<span class="c-kw">from</span> sklearn.cluster <span class="c-kw">import</span> <span class="c-cls">KMeans</span>                        <span class="code-comment"># grab KMeans from sklearn.cluster</span>
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>          <span class="code-comment"># grab StandardScaler from sklearn.preprocessing</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> silhouette_score              <span class="code-comment"># grab silhouette_score from sklearn.metrics</span>
-<span class="c-kw">from</span> sklearn.decomposition <span class="c-kw">import</span> <span class="c-cls">PCA</span>                     <span class="code-comment"># grab PCA from sklearn.decomposition</span>
+    <h3 style="color:#38bdf8">Complete K-Means Workflow — Annotated</h3>
+    <pre><code class="language-python">
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+import numpy as np
+import matplotlib.pyplot as plt
 
-np.random.seed(42)                                        <span class="code-comment"># lock in a random seed so results are the same every run</span>
-n = 500
-customers = pd.DataFrame({                                <span class="code-comment"># create a new table from data</span>
-    'recency': np.random.randint(1, 365, n),              <span class="code-comment"># generate random whole numbers in a range</span>
-    'frequency': np.random.randint(1, 50, n),             <span class="code-comment"># generate random whole numbers in a range</span>
-    'monetary': np.random.exponential(5000, n)
-})
+# ── Step 1: Scale features (critical for distance-based algorithms) ───────────
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)   # mean=0, std=1 for every feature
 
-scaler = <span class="c-cls">StandardScaler</span>()                                 <span class="code-comment"># make all features the same scale (mean 0, spread 1)</span>
-X_scaled = scaler.fit_transform(customers)                <span class="code-comment"># learn AND apply the transformation in one step</span>
+# ── Step 2: Find optimal K using elbow method ─────────────────────────────────
+inertias = []           # will store WCSS for each K
+silhouette_scores = []  # optional: another metric for cluster quality
 
-inertias = []
-silhouette_scores = []
-K_range = range(2, 11)                                    <span class="code-comment"># generate numbers from start to end</span>
+K_range = range(2, 12)   # test K=2 through K=11
+for k in K_range:
+    km = KMeans(
+        n_clusters=k,        # try each K value
+        init='k-means++',    # smart initialisation — reduces bad local optima
+        n_init=10,           # run 10 times, keep the best result
+        max_iter=300,        # max assign/update cycles per run
+        random_state=42,     # reproducibility
+    )
+    km.fit(X_scaled)                 # run K-Means
+    inertias.append(km.inertia_)     # store WCSS
+    # Silhouette: measures how well-separated clusters are
+    # Range: -1 (bad) to 1 (perfect); higher = better
+    score = silhouette_score(X_scaled, km.labels_)
+    silhouette_scores.append(score)
 
-for k in K_range:                                         <span class="code-comment"># loop through each item in the list</span>
-    km = <span class="c-cls">KMeans</span>(n_clusters=k, init='k-means++', random_state=42, n_init=10) <span class="code-comment"># group data into K clusters based on closeness</span>
-    km.fit(X_scaled)                                      <span class="code-comment"># learn patterns from this data</span>
-    inertias.append(km.inertia_)
-    silhouette_scores.append(silhouette_score(X_scaled, km.labels_)) # ← # how well-separated clusters are (-1 to 1, higher=better)
+# Plot elbow
+plt.figure(figsize=(12,4))
+plt.subplot(1,2,1)
+plt.plot(K_range, inertias, 'bo-')
+plt.xlabel('K'); plt.ylabel('Inertia (WCSS)')
+plt.title('Elbow Method')
 
-optimal_k = 4
-final_km = <span class="c-cls">KMeans</span>(n_clusters=optimal_k, init='k-means++', n_init=10, max_iter=300, random_state=42) <span class="code-comment"># group data into K clusters based on closeness</span>
-customers['cluster'] = final_km.fit_predict(X_scaled)
+plt.subplot(1,2,2)
+plt.plot(K_range, silhouette_scores, 'ro-')
+plt.xlabel('K'); plt.ylabel('Silhouette Score')
+plt.title('Silhouette Scores — Pick K with highest score')
+plt.show()
 
-cluster_summary = customers.groupby('cluster').agg({      <span class="code-comment"># split data into groups by a column</span>
-    'recency': 'mean',
-    'frequency': 'mean',
-    'monetary': 'mean',
-    'cluster': 'count'
-}).round(0)                                               <span class="code-comment"># round to this many decimal places</span>
-print(cluster_summary)                                    <span class="code-comment"># show this value in the terminal</span>
+# ── Step 3: Train final model with chosen K ────────────────────────────────────
+best_k = 3   # chosen from elbow/silhouette analysis
 
-pca = <span class="c-cls">PCA</span>(n_components=2)                                 <span class="code-comment"># shrink many features into fewer while keeping most info</span>
-X_2d = pca.fit_transform(X_scaled)                        <span class="code-comment"># learn AND apply the transformation in one step</span>
-colors = ['#e63946', '#4fc3f7', '#50c878', '#f4a261']
-plt.figure(figsize=(10, 7))                               <span class="code-comment"># create a blank canvas for the chart</span>
-for i in range(optimal_k):                                <span class="code-comment"># loop through each item in the list</span>
-    mask = customers['cluster'] == i
-    plt.scatter(X_2d[mask, 0], X_2d[mask, 1], c=colors[i], label=f'Cluster {i}', alpha=0.7) # ← # draw individual data points as dots
-plt.legend()                                              <span class="code-comment"># add a colour key explaining each line or bar</span>
-plt.title('Customer Segments (2D PCA Projection)')        <span class="code-comment"># add a title to the chart</span>
-plt.show()                                                <span class="code-comment"># display the chart</span>
-</pre></div>
+kmeans = KMeans(
+    n_clusters=best_k,    # K=3 clusters
+    init='k-means++',     # smart start
+    n_init=10,            # repeat 10 times for reliability
+    max_iter=300,         # converge within 300 iterations
+    tol=1e-4,             # stop if centroid moves less than this
+    algorithm='lloyd',    # classic K-Means (or 'elkan' for dense data)
+    random_state=42,
+)
+kmeans.fit(X_scaled)   # run K-Means clustering
+
+# ── Step 4: Examine results ────────────────────────────────────────────────────
+print(f"Cluster assignments (first 10): {kmeans.labels_[:10]}")
+# e.g. [0, 2, 1, 0, 0, 2, 1, 1, 2, 0] — each point belongs to cluster 0, 1, or 2
+
+print(f"Centroid positions:
+{kmeans.cluster_centers_}")
+# Shape: [3, n_features] — coordinates of each cluster center in feature space
+
+print(f"Inertia: {kmeans.inertia_:.2f}")
+# Lower is better, but must compare across K values
+
+print(f"Converged in {kmeans.n_iter_} iterations")
+
+# ── Step 5: Assign new data points to clusters ────────────────────────────────
+new_data = [[35, 75000]]   # new customer: age=35, salary=75000
+new_data_scaled = scaler.transform(new_data)    # MUST scale with same scaler
+cluster_id = kmeans.predict(new_data_scaled)    # which cluster does this point belong to?
+print(f"New customer belongs to cluster: {cluster_id[0]}")
+
+# Distance to each centroid
+distances = kmeans.transform(new_data_scaled)   # shape: [1, n_clusters]
+print(f"Distances to each centroid: {distances[0].round(3)}")
+# Closest centroid = assigned cluster
+
+# ── Step 6: Interpret clusters ────────────────────────────────────────────────
+import pandas as pd
+df_original = pd.DataFrame(X, columns=['age', 'salary', 'purchase_freq'])
+df_original['cluster'] = kmeans.labels_
+
+# Describe each cluster in original (unscaled) terms
+print(df_original.groupby('cluster').mean())
+# This tells you: "Cluster 0 has average age 25, salary 30k, purchase_freq 5/mo → young budget shoppers"
+    </code></pre>
   </div>
 
-  <div class="tab-content" id="s9-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Centroid</span></td><td>The center point of a cluster — calculated as the mean of all points assigned to that cluster</td><td>Centroid of VIP cluster: recency=15, frequency=45, monetary=15000</td></tr>
-        <tr><td><span class="term-name">Inertia (WCSS)</span></td><td>Within-Cluster Sum of Squares — total distance of each point to its cluster's centroid. Lower = more compact, tighter clusters.</td><td>Inertia drops from 50,000 (K=2) to 30,000 (K=4) to 28,000 (K=5) — elbow at K=4</td></tr>
-        <tr><td><span class="term-name">Elbow Method</span></td><td>Plot K vs inertia. The "elbow" bend in the curve indicates optimal K — beyond it, more clusters add little value.</td><td>Sharp drop from K=3 to K=4, then small drops K=4 to K=7 → choose K=4</td></tr>
-        <tr><td><span class="term-name">Silhouette Score</span></td><td>Measures how similar a point is to its own cluster vs neighboring clusters. Range: -1 to 1. Higher = better defined clusters.</td><td>Score 0.65 = well-separated clusters. Score 0.1 = overlapping clusters</td></tr>
-        <tr><td><span class="term-name">Convergence</span></td><td>When centroids stop moving between iterations — the algorithm has found a stable solution</td><td>Usually happens in 20-50 iterations</td></tr>
-        <tr><td><span class="term-name">k-means++</span></td><td>Smarter initialization that spreads initial centroids far apart — avoids bad random starts and converges faster</td><td>init='k-means++' in sklearn is the default and recommended</td></tr>
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s9-tips">
+    <h3 style="color:#38bdf8">When to Use K-Means</h3>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Use K-Means When:</h4>
+      <ul style="line-height:1.9">
+        <li>You have <strong>no labels</strong> and want to discover natural groupings in data</li>
+        <li>Clusters are <strong>roughly spherical</strong> and <strong>similarly sized</strong></li>
+        <li>You need a fast, scalable algorithm for <strong>large datasets</strong> (K-Means is O(n))</li>
+        <li><strong>Customer segmentation</strong>, <strong>document clustering</strong>, <strong>image compression</strong></li>
+        <li>As a <strong>preprocessing step</strong> before classification (use cluster IDs as features)</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Avoid K-Means When:</h4>
+      <ul style="line-height:1.9">
+        <li>Clusters have <strong>non-spherical shapes</strong> (use DBSCAN or Gaussian Mixture Models)</li>
+        <li>You have <strong>very different cluster sizes</strong> or densities</li>
+        <li>Data has <strong>many outliers</strong> (use DBSCAN which can mark outliers as noise)</li>
+        <li>You <strong>truly don't know</strong> K and the elbow plot is ambiguous (try silhouette score or DBSCAN)</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#38bdf8">
+      <h4 style="color:#7dd3fc">Alternatives for Different Cluster Shapes</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#1e293b">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Algorithm</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Best For</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Handles Outliers</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#3b82f6">K-Means</td>
+          <td style="padding:7px">Spherical, equal-size clusters</td>
+          <td style="padding:7px;color:#ef4444">No</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#22c55e">DBSCAN</td>
+          <td style="padding:7px">Arbitrary shapes, noisy data</td>
+          <td style="padding:7px;color:#22c55e">Yes (marks as noise)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#a855f7">GMM (Gaussian Mixture)</td>
+          <td style="padding:7px">Soft cluster assignments, elliptical shapes</td>
+          <td style="padding:7px;color:#f59e0b">Partial</td>
+        </tr>
+        <tr>
+          <td style="padding:7px;color:#f59e0b">Hierarchical</td>
+          <td style="padding:7px">When you want a tree of clusters at multiple scales</td>
+          <td style="padding:7px;color:#f59e0b">Partial</td>
+        </tr>
       </table>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      10. PCA
 ═══════════════════════════════════════════════════ -->
 <div class="algo-section" id="s10">
   <div class="algo-header">
-    <div class="algo-number">10</div>
+    <span class="algo-icon">📉</span>
     <div>
-      <div class="algo-title">PCA — Principal Component Analysis</div>
-      <div class="algo-subtitle">Compress many features into fewer while keeping most information</div>
+      <div class="algo-title">Principal Component Analysis (PCA)</div>
+      <div class="algo-subtitle">Dimensionality Reduction — Compress Features While Preserving Maximum Information</div>
     </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('s10','what')">📖 What Is It</button>
-    <button class="tab-btn" onclick="showTab('s10','how')">⚙️ How It Works</button>
-    <button class="tab-btn" onclick="showTab('s10','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s10','code')">💻 Code & Internals</button>
-    <button class="tab-btn" onclick="showTab('s10','terms')">📚 Key Terms</button>
   </div>
 
-  <div class="tab-content active" id="s10-what">
-    <div class="card">
-      <h3>The Problem: Too Many Features</h3>
-      <p>Modern datasets can have thousands of features. This causes several problems: slow training, overfitting, and the <strong>curse of dimensionality</strong>. PCA compresses the data into fewer dimensions while preserving as much information as possible.</p>
-    </div>
-    <div class="analogy">
-      <div class="label">📸 Analogy — Photo Compression</div>
-      <p>A 4K photo has 8 million pixels (features). JPEG compression reduces it to a much smaller file by keeping the important visual information and discarding redundant details. You can't see the difference at normal size. PCA does the same for data: compress 10,000 features to 50 "super-features" that capture 95% of the information.</p>
-    </div>
-    <div class="card">
-      <h3>What PCA Does</h3>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s10','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s10','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s10','params')">Parameters</button>
+    <button class="tab-btn" onclick="showTab('s10','code')">Code</button>
+    <button class="tab-btn" onclick="showTab('s10','tips')">When to Use</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s10-concept">
+    <h3 style="color:#38bdf8">What is PCA? (Plain English First)</h3>
+    <p>Imagine your dataset has 100 features (columns). Most of them contain overlapping, redundant information. PCA's job is to <strong>compress those 100 features into, say, 5 "super-features"</strong> that capture most of the important patterns — so you lose very little information but gain massive computational savings.</p>
+    <p>Think of it like taking a 3D sculpture and finding the <strong>best angle to photograph it</strong> that captures the most detail in 2D. Some angles show more of the structure than others — PCA finds those angles mathematically.</p>
+
+    <div class="concept-box">
+      <h4>The Core Idea: Variance = Information</h4>
+      <p>PCA operates on a key insight: <strong>features that vary a lot carry more information than features that barely change</strong>. A feature where every customer has nearly the same value is useless for distinguishing customers.</p>
+      <p>PCA finds directions in the feature space where the data spreads out (varies) the most. These directions are called <strong>Principal Components (PCs)</strong>.</p>
       <ul>
-        <li>Finds new axes (Principal Components) that capture maximum <strong>variance</strong> in the data</li>
-        <li>PC1 explains the most variance, PC2 the second most, and so on</li>
-        <li>Each PC is a linear combination of original features</li>
-        <li>The PCs are <strong>orthogonal</strong> (perpendicular) — no overlap of information</li>
+        <li><strong>PC1</strong> — The single direction that captures the most variance in the data</li>
+        <li><strong>PC2</strong> — The direction perpendicular to PC1 that captures the second-most variance</li>
+        <li><strong>PC3</strong> — Perpendicular to both PC1 and PC2, capturing the third-most variance</li>
+        <li>And so on... Each PC is orthogonal (perpendicular) to all others</li>
       </ul>
-      <div class="highlight"><p>PCA is unsupervised — it doesn't use the target variable. It just looks at the structure of X and finds the most informative directions in that space.</p></div>
     </div>
+
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">PCA Step by Step</h4>
+      <ol style="line-height:2.2">
+        <li><strong>Standardise</strong> — Centre the data (subtract mean) so all features are on equal footing.</li>
+        <li><strong>Covariance Matrix</strong> — Calculate how much each feature varies with every other feature. This reveals which features are correlated.</li>
+        <li><strong>Eigenvectors & Eigenvalues</strong> — Find the "principal axes" (eigenvectors) and how much variance each axis explains (eigenvalues). Eigenvectors define the direction; eigenvalues define the magnitude.</li>
+        <li><strong>Sort</strong> — Sort eigenvectors by their eigenvalues, largest first. PC1 = eigenvector with largest eigenvalue.</li>
+        <li><strong>Project</strong> — Multiply the original data by the top K eigenvectors to get K-dimensional representation.</li>
+      </ol>
+    </div>
+
+    <div class="concept-box" style="border-color:#a855f7">
+      <h4 style="color:#d8b4fe">Explained Variance Ratio — How Much Information Is Preserved?</h4>
+      <p>Each PC explains a fraction of the total variance. <code>explained_variance_ratio_[0]</code> might be 0.40, meaning PC1 alone captures 40% of all information in the dataset.</p>
+      <p><strong>Cumulative explained variance</strong> is what you use to choose how many PCs to keep:</p>
+      <ul>
+        <li>If PC1+PC2+PC3 together explain 95% of variance → keep 3 PCs, discard the rest</li>
+        <li>You're retaining 95% of the information using only 3 numbers instead of 100 features</li>
+      </ul>
+    </div>
+
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Important: PCA Components Are Not Interpretable</h4>
+      <p>Original features have meaning: "age", "salary", "purchase_frequency". But principal components are linear combinations of all features — they have no direct real-world meaning.</p>
+      <p>PC1 might be something like: 0.45×age + 0.72×salary − 0.31×purchase_freq + ... This cannot be labelled as "age" or any other single thing.</p>
+      <p><strong>Trade-off:</strong> You gain computational efficiency and noise reduction but lose the ability to say "this feature drove the prediction."</p>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">When Scaling Is Mandatory Before PCA</h3>
+    <p>PCA finds directions of maximum variance. If "salary" has a range of 0–200,000 and "age" has a range of 0–100, salary will completely dominate the first PC — not because it's more important, but just because it has bigger numbers.</p>
+    <p><strong>Always apply StandardScaler before PCA</strong> unless all features are already on the same scale.</p>
   </div>
 
-  <div class="tab-content" id="s10-how">
-    <div class="card">
-      <h3>How PCA Finds the Best Directions</h3>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Step 1</div><div class="step-txt">Center the data (subtract mean from each feature)</div></div>
-        <div class="flow-step"><div class="step-num">Step 2</div><div class="step-txt">Calculate covariance matrix — how much features vary together</div></div>
-        <div class="flow-step"><div class="step-num">Step 3</div><div class="step-txt">Find eigenvectors — the directions of maximum variance</div></div>
-        <div class="flow-step"><div class="step-num">Step 4</div><div class="step-txt">Sort by eigenvalues (importance). Keep top K eigenvectors.</div></div>
-        <div class="flow-step"><div class="step-num">Step 5</div><div class="step-txt">Project data onto these K directions — your new compressed representation</div></div>
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s10-visual">
+    <h3 style="color:#38bdf8">PCA: Projecting 2D Data onto the First Principal Component</h3>
+    <svg viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%;font-family:sans-serif">
+  <rect width="560" height="300" rx="12" fill="#0f172a"/>
+  <text x="280" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">PCA: Finding the Direction of Maximum Variance</text>
+  <!-- Left panel: original 2D data -->
+  <rect x="20" y="38" width="240" height="235" rx="8" fill="#1e293b"/>
+  <text x="140" y="58" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="bold">Original 2D Data</text>
+  <!-- Axes -->
+  <line x1="45" y1="240" x2="245" y2="240" stroke="#475569" stroke-width="1"/>
+  <line x1="45" y1="240" x2="45"  y2="68"  stroke="#475569" stroke-width="1"/>
+  <text x="145" y="258" text-anchor="middle" fill="#475569" font-size="10">Feature 1</text>
+  <text x="30"  y="155" text-anchor="middle" fill="#475569" font-size="10" transform="rotate(-90,30,155)">Feature 2</text>
+  <!-- Data points (elongated cloud going diagonally) -->
+  <circle cx="75"  cy="215" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="90"  cy="205" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="105" cy="195" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="115" cy="185" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="125" cy="175" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="140" cy="165" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="155" cy="155" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="170" cy="145" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="185" cy="135" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="200" cy="120" r="5" fill="#3b82f6" opacity="0.8"/>
+  <circle cx="210" cy="110" r="5" fill="#3b82f6" opacity="0.8"/>
+  <!-- Off-diagonal scatter -->
+  <circle cx="95"  cy="215" r="4" fill="#60a5fa" opacity="0.6"/>
+  <circle cx="120" cy="190" r="4" fill="#60a5fa" opacity="0.6"/>
+  <circle cx="135" cy="170" r="4" fill="#60a5fa" opacity="0.6"/>
+  <circle cx="160" cy="150" r="4" fill="#60a5fa" opacity="0.6"/>
+  <circle cx="195" cy="130" r="4" fill="#60a5fa" opacity="0.6"/>
+  <!-- PC1 arrow (main direction) -->
+  <line x1="65" y1="225" x2="220" y2="100" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arrowOrange)"/>
+  <text x="165" y="128" fill="#fbbf24" font-size="10" font-weight="bold">PC1</text>
+  <!-- PC2 arrow (perpendicular) -->
+  <line x1="140" y1="165" x2="115" y2="190" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="100" y="195" fill="#d8b4fe" font-size="10">PC2</text>
+  <defs>
+    <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Arrow between panels -->
+  <text x="270" y="160" text-anchor="middle" fill="#f1f5f9" font-size="20">→</text>
+
+  <!-- Right panel: 1D projection -->
+  <rect x="300" y="38" width="240" height="235" rx="8" fill="#1e293b"/>
+  <text x="420" y="58" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="bold">Projected onto PC1 (1D)</text>
+  <!-- PC1 axis line -->
+  <line x1="320" y1="160" x2="520" y2="160" stroke="#f59e0b" stroke-width="2"/>
+  <text x="420" y="180" text-anchor="middle" fill="#fbbf24" font-size="10">Principal Component 1</text>
+  <!-- Projected points on line -->
+  <circle cx="330" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="348" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="368" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="390" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="410" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="432" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="454" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="475" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="495" cy="160" r="5" fill="#3b82f6"/>
+  <circle cx="510" cy="160" r="5" fill="#3b82f6"/>
+  <!-- Variance bar -->
+  <text x="420" y="110" text-anchor="middle" fill="#94a3b8" font-size="10">Variance explained by PC1</text>
+  <rect x="340" y="118" width="160" height="14" rx="4" fill="#334155"/>
+  <rect x="340" y="118" width="128" height="14" rx="4" fill="#22c55e"/>
+  <text x="420" y="129" text-anchor="middle" fill="#0f172a" font-size="9" font-weight="bold">80%</text>
+  <text x="420" y="225" text-anchor="middle" fill="#94a3b8" font-size="10">2 features → 1 component</text>
+  <text x="420" y="240" text-anchor="middle" fill="#94a3b8" font-size="10">80% of info preserved</text>
+  <text x="420" y="255" text-anchor="middle" fill="#94a3b8" font-size="10">20% discarded (PC2)</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Left: original 2D data. The orange arrow (PC1) points in the direction of maximum variance — the "widest spread" of data. The purple arrow (PC2) is perpendicular — it captures the remaining variance. Right: data projected onto PC1. 80% of the original information is preserved in this 1D representation.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Scree Plot — How Many Components to Keep</h3>
+    <svg viewBox="0 0 520 260" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;width:100%;font-family:sans-serif">
+  <rect width="520" height="260" rx="12" fill="#0f172a"/>
+  <text x="260" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Scree Plot — How Many Components to Keep?</text>
+  <!-- Axes -->
+  <line x1="70"  y1="210" x2="490" y2="210" stroke="#475569" stroke-width="1.5"/>
+  <line x1="70"  y1="210" x2="70"  y2="38"  stroke="#475569" stroke-width="1.5"/>
+  <!-- Y labels -->
+  <text x="62" y="42"  text-anchor="end" fill="#94a3b8" font-size="10">40%</text>
+  <text x="62" y="82"  text-anchor="end" fill="#94a3b8" font-size="10">30%</text>
+  <text x="62" y="122" text-anchor="end" fill="#94a3b8" font-size="10">20%</text>
+  <text x="62" y="162" text-anchor="end" fill="#94a3b8" font-size="10">10%</text>
+  <text x="62" y="210" text-anchor="end" fill="#94a3b8" font-size="10">0%</text>
+  <!-- Y gridlines -->
+  <line x1="70" y1="42"  x2="490" y2="42"  stroke="#1e293b" stroke-width="1"/>
+  <line x1="70" y1="82"  x2="490" y2="82"  stroke="#1e293b" stroke-width="1"/>
+  <line x1="70" y1="122" x2="490" y2="122" stroke="#1e293b" stroke-width="1"/>
+  <line x1="70" y1="162" x2="490" y2="162" stroke="#1e293b" stroke-width="1"/>
+  <!-- Bars for 6 PCs -->
+  <!-- PC1: 40% -->
+  <rect x="90"  y="42"  width="50" height="168" rx="4" fill="#3b82f6"/>
+  <text x="115" y="38"  text-anchor="middle" fill="#93c5fd" font-size="10">40%</text>
+  <text x="115" y="225" text-anchor="middle" fill="#94a3b8" font-size="10">PC1</text>
+  <!-- PC2: 25% -->
+  <rect x="165" y="110" width="50" height="100" rx="4" fill="#3b82f6" opacity="0.85"/>
+  <text x="190" y="106" text-anchor="middle" fill="#93c5fd" font-size="10">25%</text>
+  <text x="190" y="225" text-anchor="middle" fill="#94a3b8" font-size="10">PC2</text>
+  <!-- PC3: 15% -->
+  <rect x="240" y="150" width="50" height="60" rx="4" fill="#3b82f6" opacity="0.7"/>
+  <text x="265" y="146" text-anchor="middle" fill="#93c5fd" font-size="10">15%</text>
+  <text x="265" y="225" text-anchor="middle" fill="#94a3b8" font-size="10">PC3</text>
+  <!-- PC4: 10% -->
+  <rect x="315" y="170" width="50" height="40" rx="4" fill="#3b82f6" opacity="0.5"/>
+  <text x="340" y="166" text-anchor="middle" fill="#93c5fd" font-size="10">10%</text>
+  <text x="340" y="225" text-anchor="middle" fill="#94a3b8" font-size="10">PC4</text>
+  <!-- PC5: 7% -->
+  <rect x="390" y="182" width="50" height="28" rx="4" fill="#3b82f6" opacity="0.35"/>
+  <text x="415" y="178" text-anchor="middle" fill="#93c5fd" font-size="10">7%</text>
+  <text x="415" y="225" text-anchor="middle" fill="#94a3b8" font-size="10">PC5</text>
+  <!-- Cumulative line: 40 → 65 → 80 → 90 → 97 -->
+  <polyline points="115,42 190,110 265,150 340,170 415,182" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="430" y="175" fill="#fbbf24" font-size="10">Cumul.</text>
+  <!-- 95% threshold line -->
+  <line x1="70" y1="90" x2="490" y2="90" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="480" y="87" text-anchor="end" fill="#ef4444" font-size="10">95% threshold</text>
+  <!-- Explanation -->
+  <text x="260" y="245" text-anchor="middle" fill="#94a3b8" font-size="10">Keep PCs until cumulative variance ≥ 95%. Here: keep PC1+PC2+PC3 (captures 80%) or add PC4 (90%).</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">Each bar shows how much variance one principal component explains. The orange dashed line shows cumulative variance. Choose the number of components where cumulative variance crosses your threshold (usually 95%). Here: keep PC1+PC2+PC3+PC4 to get 90%.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">External Reference: PCA Visualised</h3>
+    <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*QinDfRawRskupf4mU5bYSA.png"
+         alt="PCA Principal Components"
+         style="max-width:100%;border-radius:8px;border:1px solid #334155"
+         onerror="this.style.display='none'">
+  </div>
+
+  <!-- PARAMS TAB -->
+  <div class="tab-content" id="s10-params">
+    <h3 style="color:#38bdf8">PCA — Every Parameter Explained</h3>
+
+    <div class="param-card">
+      <div class="param-name">n_components <span class="param-default">default=None</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> How many principal components to keep.<br>
+        <strong>Options (3 ways to set this):</strong>
+        <ul>
+          <li><code>n_components=5</code> — Keep exactly 5 PCs regardless of variance explained.</li>
+          <li><code>n_components=0.95</code> — Keep however many PCs are needed to explain 95% of variance. (Float between 0 and 1 triggers this mode.)</li>
+          <li><code>n_components=None</code> — Keep all components = no reduction. Still useful for getting explained_variance_ratio_ to decide how many to use.</li>
+          <li><code>n_components='mle'</code> — Use Maximum Likelihood Estimation to automatically select the optimal number of components.</li>
+        </ul>
+        <strong>Best practice:</strong> First run PCA with None or a large number, examine explained_variance_ratio_, then re-run with n_components=0.95 or a specific int.
       </div>
     </div>
-    <div class="card">
-      <h3>Explained Variance Ratio — How Many Components?</h3>
-      <p>Each Principal Component has an <strong>explained variance ratio</strong> — what % of total information it captures.</p>
-      <ul>
-        <li>PC1: 45% of variance</li>
-        <li>PC2: 22% of variance</li>
-        <li>PC3: 12% of variance</li>
-        <li>... cumulative: 45%, 67%, 79%...</li>
-      </ul>
-      <div class="highlight"><p>Common rule: keep enough components to explain 95% of variance. Plot cumulative explained variance vs number of components — where it crosses 95% line, stop.</p></div>
+
+    <div class="param-card">
+      <div class="param-name">svd_solver <span class="param-default">default='auto'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The mathematical algorithm used to compute principal components.<br>
+        <strong>Options:</strong>
+        <ul>
+          <li><code>'auto'</code> — sklearn picks the best solver based on data shape.</li>
+          <li><code>'full'</code> — Full Singular Value Decomposition. Most accurate. Slow for very large datasets. Use when n_components is large.</li>
+          <li><code>'arpack'</code> — ARPACK algorithm. Efficient when n_components is small relative to n_features. Good for sparse data.</li>
+          <li><code>'randomized'</code> — Randomised SVD. Very fast for large n and small n_components. Slight accuracy trade-off but usually negligible.</li>
+          <li><code>'covariance_eigh'</code> — For small datasets. Uses eigendecomposition of covariance matrix directly.</li>
+        </ul>
+        <strong>Rule:</strong> Use 'randomized' for speed when you have many features (>100) and need few components.
+      </div>
     </div>
-    <div class="card">
-      <h3>Important Notes</h3>
-      <ul>
-        <li>Always <strong>scale before PCA</strong> — features with large values will dominate without scaling</li>
-        <li>PCA components are <strong>not interpretable</strong> like original features — they're mathematical combinations</li>
-        <li>Use PCA for <strong>visualization</strong> (project to 2D/3D) or <strong>preprocessing</strong> before another model</li>
-      </ul>
+
+    <div class="param-card">
+      <div class="param-name">whiten <span class="param-default">default=False</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Whether to divide each component by its standard deviation so all components have unit variance.<br>
+        <strong>Effect:</strong> Without whitening, PC1 has much larger variance than PC2, PC3, etc. With whitening, all components are rescaled to have equal variance.<br>
+        <strong>When to use True:</strong> When feeding PCA output into algorithms sensitive to feature scale (SVMs, neural networks, KNN). Whitening ensures downstream algorithms don't over-weight PC1.<br>
+        <strong>When to keep False:</strong> When you want to preserve the original variance structure (e.g., for visualisation or when downstream algorithm is scale-invariant like Random Forest).
+      </div>
     </div>
+
+    <div class="param-card">
+      <div class="param-name">random_state <span class="param-default">default=None</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Random seed for 'randomized' and 'arpack' solvers.<br>
+        <strong>Set to any integer</strong> for reproducibility. No effect when svd_solver='full'.
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Key Attributes After Fitting</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Attribute</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Shape</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Meaning</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">explained_variance_ratio_</td>
+        <td style="padding:8px">[n_components]</td>
+        <td style="padding:8px">Fraction of variance explained by each PC. Sum should be ≤1.0. Most important attribute.</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">components_</td>
+        <td style="padding:8px">[n_components, n_features]</td>
+        <td style="padding:8px">The eigenvectors (principal axes). Each row is a PC direction in the original feature space.</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">explained_variance_</td>
+        <td style="padding:8px">[n_components]</td>
+        <td style="padding:8px">Eigenvalues — the actual variance amount explained by each PC (not fraction)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">singular_values_</td>
+        <td style="padding:8px">[n_components]</td>
+        <td style="padding:8px">The singular values corresponding to each selected component</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;font-family:monospace;color:#93c5fd">mean_</td>
+        <td style="padding:8px">[n_features]</td>
+        <td style="padding:8px">Per-feature mean used to centre the data. Stored so transform() on new data uses the same mean.</td>
+      </tr>
+    </table>
   </div>
 
-  <div class="tab-content" id="s10-use">
-    <div class="card">
-      <h3>🤖 Real Use Case: Face Recognition</h3>
-      <p>A face image of 100×100 pixels = 10,000 features (one per pixel). Training a model on 10,000 features is slow and prone to overfitting. PCA compresses each face to 50-150 "Eigenfaces" (principal components) that capture the most important facial patterns.</p>
-    </div>
-    <div class="card">
-      <h3>The Numbers</h3>
-      <ul>
-        <li>Original: 10,000 features per image</li>
-        <li>After PCA to 100 components: captures ~95% of variance</li>
-        <li>Training is 100x faster</li>
-        <li>Much less overfitting on small face datasets</li>
-      </ul>
-      <div class="highlight"><p>The first few Eigenfaces (PCA components of face images) literally look like ghostly average faces — they capture the most common facial structure patterns.</p></div>
-    </div>
-    <div class="card">
-      <h3>Other PCA Applications</h3>
-      <ul>
-        <li><strong>Genomics:</strong> 20,000 genes per patient → 50 components → population structure analysis</li>
-        <li><strong>Finance:</strong> Hundreds of stock features → few risk factors</li>
-        <li><strong>NLP:</strong> Word vectors (Latent Semantic Analysis) — reduce 50,000 word vocabulary</li>
-        <li><strong>Visualization:</strong> Project any high-dimensional data to 2D for plotting and cluster discovery</li>
-      </ul>
-    </div>
-  </div>
-
+  <!-- CODE TAB -->
   <div class="tab-content" id="s10-code">
-    <div class="card"><h3>Complete Code: PCA on Breast Cancer Dataset</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt
-<span class="c-kw">from</span> sklearn.datasets <span class="c-kw">import</span> load_breast_cancer           <span class="code-comment"># grab load_breast_cancer from sklearn.datasets</span>
-<span class="c-kw">from</span> sklearn.decomposition <span class="c-kw">import</span> <span class="c-cls">PCA</span>                     <span class="code-comment"># grab PCA from sklearn.decomposition</span>
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>          <span class="code-comment"># grab StandardScaler from sklearn.preprocessing</span>
-<span class="c-kw">from</span> sklearn.linear_model <span class="c-kw">import</span> <span class="c-cls">LogisticRegression</span>       <span class="code-comment"># grab LogisticRegression from sklearn.linear_model</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> cross_val_score       <span class="code-comment"># grab cross_val_score from sklearn.model_selection</span>
+    <h3 style="color:#38bdf8">Complete PCA Workflow — Annotated</h3>
+    <pre><code class="language-python">
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+import numpy as np
+import matplotlib.pyplot as plt
 
-data = load_breast_cancer()
-X, y = data.data, data.target
-print(f"Original data shape: {X.shape}")                  <span class="code-comment"># shows (number of rows, number of columns)</span>
+# ── Step 1: Always scale before PCA ───────────────────────────────────────────
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)   # zero mean, unit variance per feature
 
-scaler = <span class="c-cls">StandardScaler</span>()                                 <span class="code-comment"># make all features the same scale (mean 0, spread 1)</span>
-X_scaled = scaler.fit_transform(X)                        <span class="code-comment"># learn AND apply the transformation in one step</span>
+# ── Step 2: Run PCA with all components to analyse variance ───────────────────
+pca_full = PCA(
+    n_components=None,    # keep all components — for analysis only
+    svd_solver='auto',    # sklearn picks best solver for data shape
+    random_state=42,
+)
+pca_full.fit(X_scaled)
 
-pca_full = <span class="c-cls">PCA</span>()                                          <span class="code-comment"># shrink many features into fewer while keeping most info</span>
-pca_full.fit(X_scaled)                                    <span class="code-comment"># learn patterns from this data</span>
+# Check how much variance each PC explains
+print("Explained variance ratio per PC:")
+print(pca_full.explained_variance_ratio_.round(3))
+# e.g. [0.40, 0.25, 0.15, 0.10, 0.07, ...]
 
-cumsum = np.cumsum(pca_full.explained_variance_ratio_) # ← # cumulative sum of values
-n_95 = np.argmax(cumsum >= 0.95) + 1
-print(f"Components for 95% variance: {n_95}")             <span class="code-comment"># show this value in the terminal</span>
+# Cumulative variance — find how many PCs needed for 95%
+cumulative = np.cumsum(pca_full.explained_variance_ratio_)
+print(f"
+Cumulative variance:")
+for i, cv in enumerate(cumulative):
+    print(f"  {i+1} components: {cv:.3f} ({cv*100:.1f}%)")
+    if cv >= 0.95:
+        print(f"  → Keep {i+1} components for 95% variance")
+        break
 
-pca = <span class="c-cls">PCA</span>(n_components=n_95)                              <span class="code-comment"># shrink many features into fewer while keeping most info</span>
-X_reduced = pca.fit_transform(X_scaled)                   <span class="code-comment"># learn AND apply the transformation in one step</span>
-print(f"Reduced data shape: {X_reduced.shape}")           <span class="code-comment"># shows (number of rows, number of columns)</span>
-print(f"Variance captured: {pca.explained_variance_ratio_.sum():.1%}") # ← # print output to console
+# Scree plot
+plt.bar(range(1, len(pca_full.explained_variance_ratio_)+1),
+        pca_full.explained_variance_ratio_)
+plt.xlabel('Principal Component')
+plt.ylabel('Explained Variance Ratio')
+plt.title('Scree Plot')
+plt.show()
 
-lr = <span class="c-cls">LogisticRegression</span>(max_iter=1000)                    <span class="code-comment"># predict yes/no or which category something belongs to</span>
-score_original = cross_val_score(lr, X_scaled, y, cv=5).mean() # ← # evaluate model using k-fold cross-validation
-score_pca = cross_val_score(lr, X_reduced, y, cv=5).mean() # ← # evaluate model using k-fold cross-validation
-print(f"Accuracy with all 30 features: {score_original:.3f}") # ← # print output to console
-print(f"Accuracy with {n_95} PCA components: {score_pca:.3f}") # ← # print output to console
+# ── Step 3: Apply PCA with chosen number of components ────────────────────────
+pca = PCA(
+    n_components=0.95,     # keep however many PCs explain 95% of variance
+    # OR: n_components=5   — explicitly keep 5 PCs
+    svd_solver='randomized',  # fast for large datasets with few components
+    whiten=False,          # True: rescale PCs to unit variance (useful for SVM/KNN downstream)
+    random_state=42,
+)
+X_reduced = pca.fit_transform(X_scaled)
+# X_scaled: shape [n_samples, n_features] (e.g., 1000 × 100)
+# X_reduced: shape [n_samples, n_components] (e.g., 1000 × 8)
+# We just went from 100 features to 8!
 
-pca2d = <span class="c-cls">PCA</span>(n_components=2)                               <span class="code-comment"># shrink many features into fewer while keeping most info</span>
-X_2d = pca2d.fit_transform(X_scaled)                      <span class="code-comment"># learn AND apply the transformation in one step</span>
-plt.figure(figsize=(10, 7))                               <span class="code-comment"># create a blank canvas for the chart</span>
-for label, color, name in [(0, '#e63946', 'Malignant'), (1, '#4fc3f7', 'Benign')]:
-    mask = y == label
-    plt.scatter(X_2d[mask, 0], X_2d[mask, 1], c=color, label=name, alpha=0.7) # ← # draw individual data points as dots
-plt.xlabel(f'PC1 ({pca2d.explained_variance_ratio_[0]:.1%} variance)') # ← # label for the horizontal (x) axis
-plt.ylabel(f'PC2 ({pca2d.explained_variance_ratio_[1]:.1%} variance)') # ← # label for the vertical (y) axis
-plt.title('30 Features Compressed to 2D with PCA')        <span class="code-comment"># add a title to the chart</span>
-plt.legend()                                              <span class="code-comment"># add a colour key explaining each line or bar</span>
-plt.show()                                                <span class="code-comment"># display the chart</span>
-</pre></div>
+print(f"Original features: {X_scaled.shape[1]}")
+print(f"Reduced features: {X_reduced.shape[1]}")
+print(f"Variance preserved: {pca.explained_variance_ratio_.sum():.3f}")
+
+# ── Step 4: Examine what each PC is made of (loadings) ────────────────────────
+# pca.components_[i] is PC i+1 — a vector of length n_features
+# Large absolute values = that original feature contributes a lot to this PC
+pc1_loadings = pca.components_[0]   # first principal component
+feature_names = ['age', 'salary', 'spend', 'visits', 'items']   # example
+for name, loading in zip(feature_names, pc1_loadings):
+    print(f"  {name}: {loading:.3f}")
+# e.g. salary: 0.72, spend: 0.65, age: 0.21 → PC1 is mostly about financial capacity
+
+# ── Step 5: Use in a ML pipeline (best practice) ──────────────────────────────
+from sklearn.linear_model import LogisticRegression
+
+pipe = Pipeline([
+    ('scaler', StandardScaler()),     # 1. scale features
+    ('pca',    PCA(n_components=0.95, random_state=42)),  # 2. reduce dimensions
+    ('model',  LogisticRegression(max_iter=1000)),         # 3. classify
+])
+pipe.fit(X_train, y_train)
+y_pred = pipe.predict(X_test)
+
+# ── Step 6: Inverse transform — reconstruct approximate original data ──────────
+X_reconstructed = pca.inverse_transform(X_reduced)
+# This is not exactly X_scaled — some information was lost in reduction
+# Useful for: image compression, anomaly detection (high reconstruction error = anomaly)
+
+reconstruction_error = np.mean((X_scaled - X_reconstructed) ** 2)
+print(f"Mean Squared Reconstruction Error: {reconstruction_error:.4f}")
+# 0.0 = perfect reconstruction. Higher = more information lost.
+    </code></pre>
   </div>
 
-  <div class="tab-content" id="s10-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Principal Component</span></td><td>A new axis that captures maximum variance in the data. Each PC is a linear combination of original features.</td><td>PC1 might be 0.4×radius + 0.3×texture + 0.5×perimeter + ...</td></tr>
-        <tr><td><span class="term-name">Explained Variance Ratio</span></td><td>What fraction of total data variance each PC captures. All ratios sum to 1.0.</td><td>PC1: 44.3%, PC2: 18.9%, PC3: 9.5%... cumulative: 44%, 63%, 72%...</td></tr>
-        <tr><td><span class="term-name">Eigenvector</span></td><td>The direction of each Principal Component. Points along the axis of maximum spread in the data.</td><td>Mathematical concept — sklearn handles it automatically</td></tr>
-        <tr><td><span class="term-name">Eigenvalue</span></td><td>The magnitude/importance of each Principal Component. Larger eigenvalue = that PC explains more variance.</td><td>PC1 eigenvalue = 13.3 (most important), PC30 eigenvalue = 0.002 (least)</td></tr>
-        <tr><td><span class="term-name">Dimensionality Reduction</span></td><td>Reducing the number of features while preserving as much information as possible</td><td>30 features → 10 PCA components that explain 95% of variance</td></tr>
-        <tr><td><span class="term-name">Orthogonal</span></td><td>PCs are perpendicular to each other — they capture completely different aspects of variance, no overlap</td><td>PC1 and PC2 are at 90° angles — they're independent of each other</td></tr>
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s10-tips">
+    <h3 style="color:#38bdf8">When to Use PCA</h3>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Use PCA When:</h4>
+      <ul style="line-height:1.9">
+        <li>You have <strong>many features</strong> (>50) and suspect many are correlated</li>
+        <li>Model is <strong>slow to train</strong> due to high dimensionality</li>
+        <li>You want to <strong>visualise high-dimensional data</strong> in 2D or 3D (use n_components=2 or 3)</li>
+        <li><strong>Noise reduction</strong> — lower PCs often capture noise; discarding them can improve model performance</li>
+        <li>Upstream of <strong>distance-based algorithms</strong> (KNN, SVM with RBF kernel) to reduce the curse of dimensionality</li>
+        <li><strong>Image data</strong> — faces, scans. PCA on pixel values is a classic application.</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Avoid PCA When:</h4>
+      <ul style="line-height:1.9">
+        <li>You need <strong>feature interpretability</strong> — PCA components are not explainable</li>
+        <li>You have <strong>categorical features</strong> — PCA assumes continuous numeric data</li>
+        <li>Your features are <strong>already few and uncorrelated</strong> — PCA adds complexity without benefit</li>
+        <li>You're using <strong>tree-based models</strong> (Random Forest, XGBoost) — they handle high dimensionality natively and are not distance-based</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">PCA vs Other Dimensionality Reduction Techniques</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#1e293b">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Method</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Type</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Best For</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Captures</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#3b82f6">PCA</td>
+          <td style="padding:7px">Linear</td>
+          <td style="padding:7px">Preprocessing, noise reduction</td>
+          <td style="padding:7px">Global linear structure</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#22c55e">t-SNE</td>
+          <td style="padding:7px">Non-linear</td>
+          <td style="padding:7px">2D/3D visualisation</td>
+          <td style="padding:7px">Local cluster structure</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#a855f7">UMAP</td>
+          <td style="padding:7px">Non-linear</td>
+          <td style="padding:7px">Fast visualisation + preprocessing</td>
+          <td style="padding:7px">Both local and global</td>
+        </tr>
+        <tr>
+          <td style="padding:7px;color:#f59e0b">LDA</td>
+          <td style="padding:7px">Linear (supervised)</td>
+          <td style="padding:7px">Before classification</td>
+          <td style="padding:7px">Class-discriminating directions</td>
+        </tr>
       </table>
+    </div>
+    <div class="concept-box" style="border-color:#a855f7">
+      <h4 style="color:#d8b4fe">PCA for Anomaly Detection</h4>
+      <p>An elegant use of PCA: train PCA on normal data. For new data points, project to PCA space and reconstruct. <strong>Normal points reconstruct accurately. Anomalies reconstruct poorly</strong> (high reconstruction error) because they don't fit the patterns learned from normal data.</p>
+      <code style="font-size:11px">recon_error = np.mean((X_scaled - pca.inverse_transform(pca.transform(X_scaled)))**2, axis=1)<br>anomalies = X[recon_error > threshold]</code>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      11. NEURAL NETWORKS (ANN)
 ═══════════════════════════════════════════════════ -->

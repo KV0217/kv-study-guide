@@ -8619,7 +8619,212 @@ for col in cat_cols:
   <div class="phase-content">
 
     <div class="topic-card">
-      <h3>Window Functions</h3>
+      <h3>What SQL Does &amp; Why It Matters</h3>
+      <p style="line-height:1.7;color:#333;">
+        SQL (Structured Query Language) is <strong>the language you use to talk to a database</strong>.
+        Think of a database as a collection of Excel-like tables.
+        SQL lets you <em>filter rows</em> (WHERE), <em>group and summarise</em> (GROUP BY + SUM/COUNT),
+        <em>combine tables</em> (JOIN), and <em>compute rolling stats without losing detail</em> (Window Functions).
+        In a DA/DS interview you will almost certainly write at least one SQL query.
+        The four sections below cover everything you need: joins, window functions, CTEs, and
+        real interview patterns like RFM, cohort analysis, and sessionisation.
+      </p>
+    </div>
+
+    <div class="topic-card">
+      <h3>JOIN Types — Visual Guide</h3>
+      <p style="color:#555;font-size:0.93em;margin-bottom:0.5rem;">
+        A JOIN combines rows from two tables on a shared key.
+        Which join you pick decides <em>what happens to rows that don’t match</em>.
+      </p>
+
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif;">
+  <!-- Panel labels -->
+  <text x="68"  y="18" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">INNER JOIN</text>
+  <text x="223" y="18" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">LEFT JOIN</text>
+  <text x="378" y="18" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">RIGHT JOIN</text>
+  <text x="538" y="18" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">FULL OUTER</text>
+
+  <!-- INNER JOIN: only overlap shaded -->
+  <circle cx="52"  cy="105" r="38" fill="rgba(100,149,237,0.25)" stroke="#4169e1" stroke-width="1.5"/>
+  <circle cx="84"  cy="105" r="38" fill="rgba(100,149,237,0.25)" stroke="#4169e1" stroke-width="1.5"/>
+  <clipPath id="cl1"><circle cx="84" cy="105" r="38"/></clipPath>
+  <circle cx="52"  cy="105" r="38" fill="rgba(65,105,225,0.55)" clip-path="url(#cl1)"/>
+  <text x="68"  y="109" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">match</text>
+  <text x="36"  y="155" text-anchor="middle" font-size="8" fill="#555">Table A</text>
+  <text x="100" y="155" text-anchor="middle" font-size="8" fill="#555">Table B</text>
+
+  <!-- LEFT JOIN: full left + overlap shaded -->
+  <circle cx="207" cy="105" r="38" fill="rgba(65,105,225,0.50)" stroke="#4169e1" stroke-width="1.5"/>
+  <circle cx="239" cy="105" r="38" fill="rgba(100,149,237,0.18)" stroke="#4169e1" stroke-width="1.5"/>
+  <clipPath id="cl2"><circle cx="239" cy="105" r="38"/></clipPath>
+  <circle cx="207" cy="105" r="38" fill="rgba(65,105,225,0.55)" clip-path="url(#cl2)"/>
+  <text x="200" y="109" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">ALL</text>
+  <text x="252" y="109" text-anchor="middle" font-size="8" fill="#888">null</text>
+  <text x="191" y="155" text-anchor="middle" font-size="8" fill="#555">Table A</text>
+  <text x="255" y="155" text-anchor="middle" font-size="8" fill="#555">Table B</text>
+
+  <!-- RIGHT JOIN: full right + overlap shaded -->
+  <circle cx="362" cy="105" r="38" fill="rgba(100,149,237,0.18)" stroke="#4169e1" stroke-width="1.5"/>
+  <circle cx="394" cy="105" r="38" fill="rgba(65,105,225,0.50)" stroke="#4169e1" stroke-width="1.5"/>
+  <clipPath id="cl3"><circle cx="362" cy="105" r="38"/></clipPath>
+  <circle cx="394" cy="105" r="38" fill="rgba(65,105,225,0.55)" clip-path="url(#cl3)"/>
+  <text x="348" y="109" text-anchor="middle" font-size="8" fill="#888">null</text>
+  <text x="401" y="109" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">ALL</text>
+  <text x="346" y="155" text-anchor="middle" font-size="8" fill="#555">Table A</text>
+  <text x="410" y="155" text-anchor="middle" font-size="8" fill="#555">Table B</text>
+
+  <!-- FULL OUTER: both circles shaded -->
+  <circle cx="517" cy="105" r="38" fill="rgba(65,105,225,0.45)" stroke="#4169e1" stroke-width="1.5"/>
+  <circle cx="559" cy="105" r="38" fill="rgba(65,105,225,0.45)" stroke="#4169e1" stroke-width="1.5"/>
+  <clipPath id="cl4"><circle cx="559" cy="105" r="38"/></clipPath>
+  <circle cx="517" cy="105" r="38" fill="rgba(65,105,225,0.55)" clip-path="url(#cl4)"/>
+  <text x="504" y="109" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">ALL</text>
+  <text x="572" y="109" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">ALL</text>
+  <text x="501" y="155" text-anchor="middle" font-size="8" fill="#555">Table A</text>
+  <text x="575" y="155" text-anchor="middle" font-size="8" fill="#555">Table B</text>
+
+  <!-- Bottom legend -->
+  <text x="310" y="190" text-anchor="middle" font-size="9" fill="#777">Shaded area = rows returned. NULL fills unmatched columns in LEFT/RIGHT/FULL.</text>
+</svg>
+
+      <table class="term-table" style="margin-top:0.5rem;">
+        <tr><th>Join Type</th><th>Returns</th><th>Typical Use</th></tr>
+        <tr><td>INNER JOIN</td><td>Only rows that match in BOTH tables</td><td>Orders that have a customer on file</td></tr>
+        <tr><td>LEFT JOIN</td><td>All rows from left + matching rows from right (NULL if no match)</td><td>All customers — even those with no orders</td></tr>
+        <tr><td>RIGHT JOIN</td><td>All rows from right + matching rows from left (NULL if no match)</td><td>All products — even those never sold</td></tr>
+        <tr><td>FULL OUTER JOIN</td><td>All rows from both, NULLs where no match</td><td>Find records missing from either table</td></tr>
+      </table>
+      <div class="code-block"><pre>
+-- INNER: only matching rows
+SELECT o.order_id, c.name
+FROM orders o INNER JOIN customers c ON o.customer_id = c.id;
+
+-- LEFT: all customers, NULL order columns if no orders
+SELECT c.name, o.order_total
+FROM customers c LEFT JOIN orders o ON c.id = o.customer_id;
+
+-- FULL OUTER: find gaps in either direction
+SELECT c.name, o.order_id
+FROM customers c FULL OUTER JOIN orders o ON c.id = o.customer_id
+WHERE c.id IS NULL OR o.customer_id IS NULL;  -- unmatched rows only
+</pre></div>
+    </div>
+
+    <div class="topic-card">
+      <h3>Window Functions — Visual Guide</h3>
+      <p style="color:#555;font-size:0.93em;margin-bottom:0.5rem;">
+        Window functions compute a value <strong>across a set of related rows without collapsing them</strong>.
+        Unlike GROUP BY which turns 10 rows into 1, a window function keeps all 10 rows
+        and <em>adds a new column</em> with the result.
+        The key clause is <code>OVER (PARTITION BY ... ORDER BY ...)</code>.
+      </p>
+
+<svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif;">
+  <!-- Title -->
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a5f">Window Functions — How They Work</text>
+
+  <!-- Table header -->
+  <rect x="10" y="28" width="600" height="22" rx="3" fill="#1e3a5f"/>
+  <text x="55"  y="43" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">dept</text>
+  <text x="115" y="43" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">employee</text>
+  <text x="180" y="43" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">salary</text>
+  <text x="255" y="43" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">ROW_NUMBER()</text>
+  <text x="340" y="43" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">RANK()</text>
+  <text x="415" y="43" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">LAG(salary)</text>
+  <text x="505" y="43" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">SUM OVER()</text>
+
+  <!-- Partition A rows (Eng) -->
+  <rect x="10" y="50" width="600" height="18" fill="#dce8f8"/>
+  <rect x="10" y="68" width="600" height="18" fill="#eef4fc"/>
+  <rect x="10" y="86" width="600" height="18" fill="#dce8f8"/>
+  <!-- Partition bracket A -->
+  <rect x="10" y="50" width="4"   height="54" fill="#4169e1"/>
+  <text x="7" y="80" text-anchor="end" font-size="8" fill="#4169e1" transform="rotate(-90,7,80)">PARTITION: Eng</text>
+
+  <!-- Partition B rows (HR) -->
+  <rect x="10" y="104" width="600" height="18" fill="#fde8d8"/>
+  <rect x="10" y="122" width="600" height="18" fill="#fef4ee"/>
+  <!-- Partition bracket B -->
+  <rect x="10" y="104" width="4"  height="36" fill="#e06020"/>
+  <text x="7" y="124" text-anchor="end" font-size="8" fill="#e06020" transform="rotate(-90,7,124)">HR</text>
+
+  <!-- Data rows -->
+  <!-- eng rows -->
+  <text x="55"  y="63"  text-anchor="middle" font-size="10" fill="#333">Eng</text>
+  <text x="115" y="63"  text-anchor="middle" font-size="10" fill="#333">Alice</text>
+  <text x="180" y="63"  text-anchor="middle" font-size="10" fill="#333">90000</text>
+  <text x="255" y="63"  text-anchor="middle" font-size="10" fill="#2255aa">1</text>
+  <text x="340" y="63"  text-anchor="middle" font-size="10" fill="#2255aa">1</text>
+  <text x="415" y="63"  text-anchor="middle" font-size="10" fill="#888">NULL</text>
+  <text x="505" y="63"  text-anchor="middle" font-size="10" fill="#2255aa">90000</text>
+
+  <text x="55"  y="81"  text-anchor="middle" font-size="10" fill="#333">Eng</text>
+  <text x="115" y="81"  text-anchor="middle" font-size="10" fill="#333">Bob</text>
+  <text x="180" y="81"  text-anchor="middle" font-size="10" fill="#333">90000</text>
+  <text x="255" y="81"  text-anchor="middle" font-size="10" fill="#2255aa">2</text>
+  <text x="340" y="81"  text-anchor="middle" font-size="10" fill="#2255aa">1</text>
+  <text x="415" y="81"  text-anchor="middle" font-size="10" fill="#2255aa">90000</text>
+  <text x="505" y="81"  text-anchor="middle" font-size="10" fill="#2255aa">180000</text>
+
+  <text x="55"  y="99"  text-anchor="middle" font-size="10" fill="#333">Eng</text>
+  <text x="115" y="99"  text-anchor="middle" font-size="10" fill="#333">Carol</text>
+  <text x="180" y="99"  text-anchor="middle" font-size="10" fill="#333">75000</text>
+  <text x="255" y="99"  text-anchor="middle" font-size="10" fill="#2255aa">3</text>
+  <text x="340" y="99"  text-anchor="middle" font-size="10" fill="#2255aa">3</text>
+  <text x="415" y="99"  text-anchor="middle" font-size="10" fill="#2255aa">90000</text>
+  <text x="505" y="99"  text-anchor="middle" font-size="10" fill="#2255aa">255000</text>
+
+  <!-- HR rows -->
+  <text x="55"  y="117" text-anchor="middle" font-size="10" fill="#333">HR</text>
+  <text x="115" y="117" text-anchor="middle" font-size="10" fill="#333">Dan</text>
+  <text x="180" y="117" text-anchor="middle" font-size="10" fill="#333">60000</text>
+  <text x="255" y="117" text-anchor="middle" font-size="10" fill="#c04000">1</text>
+  <text x="340" y="117" text-anchor="middle" font-size="10" fill="#c04000">1</text>
+  <text x="415" y="117" text-anchor="middle" font-size="10" fill="#888">NULL</text>
+  <text x="505" y="117" text-anchor="middle" font-size="10" fill="#c04000">60000</text>
+
+  <text x="55"  y="135" text-anchor="middle" font-size="10" fill="#333">HR</text>
+  <text x="115" y="135" text-anchor="middle" font-size="10" fill="#333">Eve</text>
+  <text x="180" y="135" text-anchor="middle" font-size="10" fill="#333">55000</text>
+  <text x="255" y="135" text-anchor="middle" font-size="10" fill="#c04000">2</text>
+  <text x="340" y="135" text-anchor="middle" font-size="10" fill="#c04000">2</text>
+  <text x="415" y="135" text-anchor="middle" font-size="10" fill="#c04000">60000</text>
+  <text x="505" y="135" text-anchor="middle" font-size="10" fill="#c04000">115000</text>
+
+  <!-- Divider line -->
+  <line x1="14" y1="100" x2="610" y2="100" stroke="#aac" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Key notes -->
+  <rect x="10" y="148" width="600" height="14" rx="3" fill="#f0f4ff"/>
+  <text x="310" y="159" text-anchor="middle" font-size="9" fill="#555">
+    ROW_NUMBER: always unique. RANK: ties get same rank, skips next. LAG: previous row in partition. SUM OVER: running total resets per partition.
+  </text>
+
+  <!-- OVER() clause breakdown -->
+  <rect x="10" y="168" width="600" height="82" rx="4" fill="#fafafa" stroke="#ccd"/>
+  <text x="20" y="182" font-size="10" fill="#1e3a5f" font-weight="bold">OVER ( PARTITION BY dept  ORDER BY salary DESC )</text>
+  <!-- arrows -->
+  <line x1="85"  y1="184" x2="85"  y2="205" stroke="#4169e1" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="230" y1="184" x2="230" y2="205" stroke="#e06020" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="85"  y="220" text-anchor="middle" font-size="9" fill="#4169e1">Split rows into groups.</text>
+  <text x="85"  y="232" text-anchor="middle" font-size="9" fill="#4169e1">Function resets for each group.</text>
+  <text x="230" y="220" text-anchor="middle" font-size="9" fill="#e06020">Sort within each partition</text>
+  <text x="230" y="232" text-anchor="middle" font-size="9" fill="#e06020">before applying function.</text>
+  <text x="430" y="215" text-anchor="middle" font-size="9" fill="#555">Without PARTITION BY, the</text>
+  <text x="430" y="227" text-anchor="middle" font-size="9" fill="#555">whole table is one partition.</text>
+  <text x="430" y="239" text-anchor="middle" font-size="9" fill="#555">ROWS BETWEEN adds frame.</text>
+
+  <!-- arrowhead marker -->
+  <defs>
+    <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#555"/>
+    </marker>
+  </defs>
+</svg>
+
       <div class="code-block"><pre>
 -- Syntax: function() OVER (PARTITION BY col ORDER BY col ROWS/RANGE ...)
 SELECT employee_id, dept, salary,                         <span class="code-comment">-- pick which columns to show</span>
@@ -8746,7 +8951,7 @@ FROM gaps;                                                <span class="code-comm
       <h3>Top 12 SQL Interview Questions</h3>
       <div class="code-block"><pre>
 -- Q1: Second highest salary
-SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees); -- choose which columns to retrieve <span class="code-comment">-- pick which columns to show</span>
+SELECT MAX(salary) FROM employees WHERE salary &lt; (SELECT MAX(salary) FROM employees); -- choose which columns to retrieve <span class="code-comment">-- pick which columns to show</span>
 -- OR: SELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;
 SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET N-1; -- retrieve only unique combinations of these columns <span class="code-comment">-- fetch only unique combinations</span>
 SELECT e.name, e.salary, m.salary as manager_salary       <span class="code-comment">-- pick which columns to show</span>
@@ -8772,7 +8977,7 @@ WITH ranked AS (                                          <span class="code-comm
            RANK() OVER (PARTITION BY category ORDER BY SUM(revenue) DESC) as rnk -- sort the results by these columns <span class="code-comment">-- sort the results by this column</span>
     FROM sales GROUP BY 1,2                               <span class="code-comment">-- the table to read from</span>
 )
-SELECT * FROM ranked WHERE rnk <= 3;                      <span class="code-comment">-- pick which columns to show</span>
+SELECT * FROM ranked WHERE rnk &lt;= 3;                      <span class="code-comment">-- pick which columns to show</span>
 SELECT date, revenue,                                     <span class="code-comment">-- pick which columns to show</span>
        AVG(revenue) OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) as rolling_7d -- sort the results by these columns <span class="code-comment">-- sort the results by this column</span>
 FROM daily_sales;                                         <span class="code-comment">-- the table to read from</span>
@@ -9764,14 +9969,88 @@ Top N Products: RANK(SUM([Sales])) &lt;= [Top N Parameter]
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════════
      DS PHASE 6 — Case Studies
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p6">
   <div class="phase-header">
     <h2>Phase 6 — End-to-End Case Studies</h2>
   </div>
   <div class="phase-content">
+
+    <div class="topic-card">
+      <h3>How to Answer Any Case Study — The 7-Step Framework</h3>
+      <p style="line-height:1.7;color:#333;">
+        Every DS/DA interview case study — churn, fraud, forecasting, NLP —
+        can be solved with the same structured 7-step approach.
+        Interviewers are not just checking if you know XGBoost.
+        They want to see that you think like an <strong>end-to-end problem solver</strong>:
+        you clarify scope, worry about data quality, pick the right metric, and think about what happens
+        6 months after the model ships. Use this framework as your mental checklist every time.
+      </p>
+
+<svg viewBox="0 0 620 390" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif;">
+  <defs>
+    <marker id="flarr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#4169e1"/>
+    </marker>
+  </defs>
+  <text x="310" y="18" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a5f">7-Step Case Study Framework</text>
+
+  <!-- Step boxes: x=60, width=500, heights at y=28,78,128,178,228,278,328 -->
+  <!-- Step 1: CLARIFY -->
+  <rect x="60" y="25"  width="500" height="42" rx="8" fill="#1e3a5f"/>
+  <text x="155" y="50" font-size="13" font-weight="bold" fill="#fff">1. CLARIFY</text>
+  <text x="260" y="50" font-size="11" fill="#b8cfe8">"What is the business goal? What metric matters most?"</text>
+
+  <!-- arrow -->
+  <line x1="310" y1="67" x2="310" y2="76" stroke="#4169e1" stroke-width="2" marker-end="url(#flarr)"/>
+
+  <!-- Step 2: DATA -->
+  <rect x="60" y="77"  width="500" height="42" rx="8" fill="#164a8c"/>
+  <text x="155" y="102" font-size="13" font-weight="bold" fill="#fff">2. DATA</text>
+  <text x="218" y="102" font-size="11" fill="#b8cfe8">"What data do I have? Missing values? Imbalance? Leakage?"</text>
+
+  <line x1="310" y1="119" x2="310" y2="128" stroke="#4169e1" stroke-width="2" marker-end="url(#flarr)"/>
+
+  <!-- Step 3: BASELINE -->
+  <rect x="60" y="129" width="500" height="42" rx="8" fill="#1a5fa0"/>
+  <text x="155" y="154" font-size="13" font-weight="bold" fill="#fff">3. BASELINE</text>
+  <text x="260" y="154" font-size="11" fill="#cce0f8">"Start simple — Logistic Regression, Decision Tree — then improve"</text>
+
+  <line x1="310" y1="171" x2="310" y2="180" stroke="#4169e1" stroke-width="2" marker-end="url(#flarr)"/>
+
+  <!-- Step 4: EVALUATE -->
+  <rect x="60" y="181" width="500" height="42" rx="8" fill="#2272b5"/>
+  <text x="155" y="206" font-size="13" font-weight="bold" fill="#fff">4. EVALUATE</text>
+  <text x="264" y="206" font-size="11" fill="#cce0f8">"Which metric? Precision vs Recall — why? AUC, RMSE, F1?"</text>
+
+  <line x1="310" y1="223" x2="310" y2="232" stroke="#4169e1" stroke-width="2" marker-end="url(#flarr)"/>
+
+  <!-- Step 5: EXPLAIN -->
+  <rect x="60" y="233" width="500" height="42" rx="8" fill="#2e85c8"/>
+  <text x="155" y="258" font-size="13" font-weight="bold" fill="#fff">5. EXPLAIN</text>
+  <text x="250" y="258" font-size="11" fill="#e0f0ff">"SHAP / feature importance — can a non-technical manager understand?"</text>
+
+  <line x1="310" y1="275" x2="310" y2="284" stroke="#4169e1" stroke-width="2" marker-end="url(#flarr)"/>
+
+  <!-- Step 6: DEPLOY -->
+  <rect x="60" y="285" width="500" height="42" rx="8" fill="#0e7c4a"/>
+  <text x="155" y="310" font-size="13" font-weight="bold" fill="#fff">6. DEPLOY</text>
+  <text x="240" y="310" font-size="11" fill="#b8f0d4">"Flask API / batch scoring / how does this run in production?"</text>
+
+  <line x1="310" y1="327" x2="310" y2="336" stroke="#4169e1" stroke-width="2" marker-end="url(#flarr)"/>
+
+  <!-- Step 7: MONITOR -->
+  <rect x="60" y="337" width="500" height="42" rx="8" fill="#b35000"/>
+  <text x="155" y="362" font-size="13" font-weight="bold" fill="#fff">7. MONITOR</text>
+  <text x="252" y="362" font-size="11" fill="#ffd8a8">"Data drift (PSI &gt; 0.2 = retrain). Schedule retraining pipeline."</text>
+
+  <text x="310" y="386" text-anchor="middle" font-size="9" fill="#888">Use this exact sequence in every interview — it shows production-level thinking.</text>
+</svg>
+
+    </div>
 
     <div class="topic-card">
       <h3>Case Study 1: Customer Churn Prediction</h3>
@@ -9782,7 +10061,7 @@ Top N Products: RANK(SUM([Sales])) &lt;= [Top N Parameter]
 # Why Recall? Missing a churner (FN) costs more than false alarm (FP)
 
 # Key EDA Findings: Month-to-month contract: 42% churn | Annual: 11%
-# Fiber optic: 41% churn | No TechSupport: 41% churn | Tenure <12mo: 47% churn
+# Fiber optic: 41% churn | No TechSupport: 41% churn | Tenure &lt;12mo: 47% churn
 
 df['avg_monthly_charge'] = df['TotalCharges'] / (df['tenure'] + 1)
 df['num_services'] = (df[service_cols] == 1).sum(axis=1) # ← # sum all elements
@@ -9848,7 +10127,7 @@ for group, label in [(1,'OverTime'),(0,'No OverTime')]: # ← # loop over each i
     kmf.plot_survival_function()
 
 # Key EDA: OverTime=Yes attrition rate: 54% | No: 25%
-# Tenure <5yr: most at-risk window
+# Tenure &lt;5yr: most at-risk window
 # ROI: Without action: $4.2M exposure. With 40% retention: save $1.68M.
 </pre></div>
     </div>
@@ -12257,6 +12536,144 @@ print(f"MAE: {mae:.0f}, MAPE: {mape:.1f}%")
   <div class="phase-content">
 
     <div class="topic-card">
+      <h3>Why Excel Still Matters at 12 LPA</h3>
+      <p style="line-height:1.7;color:#333;">
+        Even in 2024, a surprising number of DA rounds include an Excel or Google Sheets task.
+        Interviewers use it to test <strong>structured thinking with data</strong>:
+        can you clean a messy column, use VLOOKUP without help, build a pivot in 5 minutes?
+        The good news: you only need about 15 formulas and 1 solid pivot table workflow
+        to pass any Excel round at the 12 LPA level.
+      </p>
+    </div>
+
+    <div class="topic-card">
+      <h3>Pivot Tables — Visual Guide</h3>
+      <p style="color:#555;font-size:0.93em;margin-bottom:0.4rem;">
+        A Pivot Table summarises raw data by dragging fields into four zones.
+        The diagram below shows what each zone does and the output it creates.
+      </p>
+
+<svg viewBox="0 0 620 225" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif;">
+  <text x="310" y="16" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a5f">How a Pivot Table is Built</text>
+
+  <!-- Raw data table (left) -->
+  <rect x="8" y="24" width="195" height="18" rx="3" fill="#217346"/>
+  <text x="105" y="36" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">Raw Data Table</text>
+  <!-- headers -->
+  <rect x="8"  y="42" width="65" height="15" fill="#e8f4ec" stroke="#b0c8b8" stroke-width=".5"/>
+  <rect x="73" y="42" width="65" height="15" fill="#e8f4ec" stroke="#b0c8b8" stroke-width=".5"/>
+  <rect x="138" y="42" width="65" height="15" fill="#e8f4ec" stroke="#b0c8b8" stroke-width=".5"/>
+  <text x="40"  y="53" text-anchor="middle" font-size="9" font-weight="bold" fill="#217346">Region</text>
+  <text x="105" y="53" text-anchor="middle" font-size="9" font-weight="bold" fill="#217346">Product</text>
+  <text x="170" y="53" text-anchor="middle" font-size="9" font-weight="bold" fill="#217346">Sales</text>
+  <!-- data rows -->
+  <rect x="8"   y="57" width="65" height="13" fill="#fff" stroke="#ccc" stroke-width=".5"/>
+  <rect x="73"  y="57" width="65" height="13" fill="#fff" stroke="#ccc" stroke-width=".5"/>
+  <rect x="138" y="57" width="65" height="13" fill="#fff" stroke="#ccc" stroke-width=".5"/>
+  <text x="40"  y="67" text-anchor="middle" font-size="8" fill="#333">North</text>
+  <text x="105" y="67" text-anchor="middle" font-size="8" fill="#333">Laptop</text>
+  <text x="170" y="67" text-anchor="middle" font-size="8" fill="#333">1200</text>
+
+  <rect x="8"   y="70" width="65" height="13" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <rect x="73"  y="70" width="65" height="13" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <rect x="138" y="70" width="65" height="13" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <text x="40"  y="80" text-anchor="middle" font-size="8" fill="#333">South</text>
+  <text x="105" y="80" text-anchor="middle" font-size="8" fill="#333">Phone</text>
+  <text x="170" y="80" text-anchor="middle" font-size="8" fill="#333">800</text>
+
+  <rect x="8"   y="83" width="65" height="13" fill="#fff" stroke="#ccc" stroke-width=".5"/>
+  <rect x="73"  y="83" width="65" height="13" fill="#fff" stroke="#ccc" stroke-width=".5"/>
+  <rect x="138" y="83" width="65" height="13" fill="#fff" stroke="#ccc" stroke-width=".5"/>
+  <text x="40"  y="93" text-anchor="middle" font-size="8" fill="#333">North</text>
+  <text x="105" y="93" text-anchor="middle" font-size="8" fill="#333">Phone</text>
+  <text x="170" y="93" text-anchor="middle" font-size="8" fill="#333">950</text>
+
+  <rect x="8"   y="96" width="65" height="13" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <rect x="73"  y="96" width="65" height="13" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <rect x="138" y="96" width="65" height="13" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <text x="40"  y="106" text-anchor="middle" font-size="8" fill="#333">South</text>
+  <text x="105" y="106" text-anchor="middle" font-size="8" fill="#333">Laptop</text>
+  <text x="170" y="106" text-anchor="middle" font-size="8" fill="#333">1500</text>
+  <text x="105" y="125" text-anchor="middle" font-size="8" fill="#888">... more rows ...</text>
+
+  <!-- Arrow -->
+  <line x1="210" y1="90" x2="248" y2="90" stroke="#217346" stroke-width="2.5" marker-end="url(#xlarr)"/>
+  <defs>
+    <marker id="xlarr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#217346"/>
+    </marker>
+  </defs>
+
+  <!-- Field chooser panel -->
+  <rect x="252" y="24" width="110" height="175" rx="4" fill="#f0f7f2" stroke="#217346" stroke-width="1.2"/>
+  <text x="307" y="38" text-anchor="middle" font-size="9" font-weight="bold" fill="#217346">Field List</text>
+  <!-- field pills -->
+  <rect x="262" y="44"  width="90" height="16" rx="4" fill="#217346"/>
+  <text x="307" y="55"  text-anchor="middle" font-size="8" fill="#fff">Region</text>
+  <rect x="262" y="64"  width="90" height="16" rx="4" fill="#217346"/>
+  <text x="307" y="75"  text-anchor="middle" font-size="8" fill="#fff">Product</text>
+  <rect x="262" y="84"  width="90" height="16" rx="4" fill="#217346"/>
+  <text x="307" y="95"  text-anchor="middle" font-size="8" fill="#fff">Sales</text>
+  <!-- zones -->
+  <rect x="262" y="108" width="90" height="14" rx="3" fill="#d4edda" stroke="#5a9"/>
+  <text x="307" y="118" text-anchor="middle" font-size="7.5" fill="#217346">ROWS: Region</text>
+  <rect x="262" y="126" width="90" height="14" rx="3" fill="#cce5ff" stroke="#66a"/>
+  <text x="307" y="136" text-anchor="middle" font-size="7.5" fill="#1a3a8c">COLUMNS: Product</text>
+  <rect x="262" y="144" width="90" height="14" rx="3" fill="#fff3cd" stroke="#aa6"/>
+  <text x="307" y="154" text-anchor="middle" font-size="7.5" fill="#7a5000">VALUES: Sum of Sales</text>
+  <rect x="262" y="162" width="90" height="14" rx="3" fill="#f8d7da" stroke="#a66"/>
+  <text x="307" y="172" text-anchor="middle" font-size="7.5" fill="#6b0000">FILTERS: (optional)</text>
+
+  <!-- Arrow 2 -->
+  <line x1="368" y1="90" x2="400" y2="90" stroke="#217346" stroke-width="2.5" marker-end="url(#xlarr)"/>
+
+  <!-- Output Pivot Table -->
+  <rect x="403" y="24" width="210" height="18" rx="3" fill="#217346"/>
+  <text x="508" y="36" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">Pivot Output</text>
+
+  <!-- column headers -->
+  <rect x="403" y="42" width="70" height="16" fill="#e8f4ec" stroke="#b0c8b8" stroke-width=".5"/>
+  <rect x="473" y="42" width="70" height="16" fill="#cce5ff" stroke="#b0c8b8" stroke-width=".5"/>
+  <rect x="543" y="42" width="70" height="16" fill="#cce5ff" stroke="#b0c8b8" stroke-width=".5"/>
+  <text x="438" y="53" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#217346">Region</text>
+  <text x="508" y="53" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#1a3a8c">Laptop</text>
+  <text x="578" y="53" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#1a3a8c">Phone</text>
+
+  <!-- data rows -->
+  <rect x="403" y="58" width="70" height="16" fill="#d4edda" stroke="#ccc" stroke-width=".5"/>
+  <rect x="473" y="58" width="70" height="16" fill="#fff"    stroke="#ccc" stroke-width=".5"/>
+  <rect x="543" y="58" width="70" height="16" fill="#fff"    stroke="#ccc" stroke-width=".5"/>
+  <text x="438" y="69" text-anchor="middle" font-size="8.5" fill="#333">North</text>
+  <text x="508" y="69" text-anchor="middle" font-size="8.5" fill="#333">1200</text>
+  <text x="578" y="69" text-anchor="middle" font-size="8.5" fill="#333">950</text>
+
+  <rect x="403" y="74" width="70" height="16" fill="#d4edda" stroke="#ccc" stroke-width=".5"/>
+  <rect x="473" y="74" width="70" height="16" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <rect x="543" y="74" width="70" height="16" fill="#f9f9f9" stroke="#ccc" stroke-width=".5"/>
+  <text x="438" y="84" text-anchor="middle" font-size="8.5" fill="#333">South</text>
+  <text x="508" y="84" text-anchor="middle" font-size="8.5" fill="#333">1500</text>
+  <text x="578" y="84" text-anchor="middle" font-size="8.5" fill="#333">800</text>
+
+  <!-- Grand Total -->
+  <rect x="403" y="90" width="70" height="16" fill="#fff3cd" stroke="#ccc" stroke-width=".5"/>
+  <rect x="473" y="90" width="70" height="16" fill="#fff3cd" stroke="#ccc" stroke-width=".5"/>
+  <rect x="543" y="90" width="70" height="16" fill="#fff3cd" stroke="#ccc" stroke-width=".5"/>
+  <text x="438" y="101" text-anchor="middle" font-size="8" font-weight="bold" fill="#7a5000">Grand Total</text>
+  <text x="508" y="101" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#7a5000">2700</text>
+  <text x="578" y="101" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#7a5000">1750</text>
+
+  <!-- Tips below -->
+  <text x="310" y="150" text-anchor="middle" font-size="9" fill="#1e3a5f" font-weight="bold">Key shortcuts:</text>
+  <text x="310" y="163" text-anchor="middle" font-size="9" fill="#555">Ctrl+T = make Table (dynamic range)  |  Alt+D+P = Pivot wizard</text>
+  <text x="310" y="176" text-anchor="middle" font-size="9" fill="#555">Right-click value = Show Values As % of Row/Column/Grand Total</text>
+  <text x="310" y="189" text-anchor="middle" font-size="9" fill="#555">Pivot Analyze tab = Calculated Field (add custom formula to pivot)</text>
+  <text x="310" y="205" text-anchor="middle" font-size="9" fill="#888">Always Ctrl+T your data first — new rows auto-include when you refresh the pivot.</text>
+</svg>
+
+    </div>
+
+    <div class="topic-card">
       <h3>Must-Know Formulas</h3>
       <table class="term-table">
         <tr><th>Formula</th><th>Syntax</th><th>Use Case</th></tr>
@@ -12277,32 +12694,87 @@ print(f"MAE: {mae:.0f}, MAPE: {mape:.1f}%")
         <tr><td>RANK</td><td>=RANK(A1, $A$1:$A$100, 0)</td><td>Rank within a list</td></tr>
         <tr><td>PERCENTILE</td><td>=PERCENTILE(range, 0.75)</td><td>Find Q3 / any percentile</td></tr>
       </table>
+    </div>
+
+    <div class="topic-card">
+      <h3>Annotated Formula Examples — Plain English</h3>
       <div class="code-block"><pre>
+-- VLOOKUP: "Look up the customer name from the customer table using customer_id as the key"
+= VLOOKUP(A2,          -- the value to search for (customer_id in this row)
+          Customers!$A:$C,  -- the table to search in (columns A to C on Customers sheet)
+          2,           -- return column 2 (name)
+          FALSE)       -- FALSE = exact match only (always use FALSE for data work)
+
+-- INDEX/MATCH: same job but can look LEFT and is faster on large data
+= INDEX(Customers!$B:$B,   -- the column to return values FROM
+        MATCH(A2,           -- the value to find
+              Customers!$A:$A, -- the column to search IN
+              0))            -- 0 = exact match
+
+-- SUMIF: "Add up sales where the region column equals 'North'"
+= SUMIF($B:$B,    -- range to check condition on (Region column)
+        "North",  -- the condition
+        $C:$C)    -- range to sum (Sales column)
+
+-- COUNTIFS: "Count rows where Region=North AND Sales > 1000"
+= COUNTIFS($B:$B, "North",   -- condition 1
+            $C:$C, "&gt;1000")   -- condition 2
+
+-- IFERROR: "If VLOOKUP fails (no match), show 0 instead of #N/A"
+= IFERROR(VLOOKUP(A2, Customers!$A:$C, 2, FALSE), 0)
+
+-- TEXT + DATE: "Show date as Jan-2024 format"
+= TEXT(B2, "mmm-yyyy")
+
+-- DATEDIF: "How many complete months between hire date and today?"
+= DATEDIF(HireDate, TODAY(), "M")   -- "M" = months | "D" = days | "Y" = years
+
 -- Real interview scenario: Sales data — find top 10% customers by spend
--- Step 1: Calculate total spend per customer with SUMIF
-= SUMIF($B:$B, E2, $C:$C)
-= PERCENTILE($F:$F, 0.9)
-= IF(F2 >= $H$1, "Top 10%", "Other")
-= INDEX(C:C, MATCH(F2, A:A, 0))                           <span class="code-comment">-- speed up lookups on this column</span>
--- Returns value from C where A matches F2
--- Unlike VLOOKUP: works with lookup column on right, not slower with large data
+= SUMIF($B:$B, E2, $C:$C)        -- Step 1: total spend per customer
+= PERCENTILE($F:$F, 0.9)          -- Step 2: the 90th percentile threshold
+= IF(F2 >= $H$1, "Top 10%", "Other")  -- Step 3: flag top customers
+= INDEX(C:C, MATCH(F2, A:A, 0))   -- Step 4: look up name from ID
 </pre></div>
     </div>
 
     <div class="topic-card">
-      <h3>Pivot Tables &amp; Data Analysis</h3>
+      <h3>Pivot Tables &amp; Data Analysis Shortcuts</h3>
       <div class="code-block"><pre>
--- Pivot Table interview questions:
+-- Pivot Table interview answers:
+-- Q: How do you create a pivot by region and product?
 -- A: Insert → PivotTable → Rows: Region, Columns: Product, Values: Sum of Sales
--- A: Right-click value → Show Values As → % of Row Total
+
+-- Q: How do you show % of total in a pivot?
+-- A: Right-click value → Show Values As → % of Grand Total (or % of Row/Column)
+
+-- Q: How do you add a custom calculated field?
 -- A: PivotTable Analyze → Fields, Items → Calculated Field → enter formula
+
+-- Power shortcuts:
 -- Ctrl+Shift+L  → Toggle AutoFilter
 -- Ctrl+T        → Create Table (essential for dynamic ranges)
 -- Alt+D+P       → PivotTable wizard
 -- F5 → Go To Special → Blanks (select all blank cells at once)
--- Ctrl+` (backtick) → Show all formulas
+-- Ctrl+` (backtick) → Show all formulas in cells
+-- Ctrl+D        → Fill down (copy formula from cell above)
+-- F4            → Toggle absolute/relative reference ($A$1 vs A1 vs $A1)
 </pre></div>
       <div class="note-box"><strong>Tip:</strong> Always convert raw data to a Table (Ctrl+T) before creating PivotTables. This makes ranges dynamic — adding new rows auto-updates the pivot when refreshed.</div>
+    </div>
+
+    <div class="topic-card">
+      <h3>Excel DA Interview Q&amp;A</h3>
+      <table class="term-table">
+        <tr><th>Question</th><th>Strong Answer</th></tr>
+        <tr><td>VLOOKUP vs INDEX-MATCH — which is better?</td><td>INDEX-MATCH: works when lookup column is NOT the leftmost column, faster on large data, and doesn't break when you insert columns.</td></tr>
+        <tr><td>How do you remove duplicates?</td><td>Data tab → Remove Duplicates. Or use a pivot to count occurrences and filter to &gt;1 to find them first.</td></tr>
+        <tr><td>How do you handle #N/A errors in VLOOKUP?</td><td>Wrap in IFERROR: =IFERROR(VLOOKUP(...), "Not found"). Shows clean output instead of error.</td></tr>
+        <tr><td>How do you calculate MoM growth in Excel?</td><td>=(B2-B1)/B1 where B1=last month and B2=this month. Format as percentage. Use LAG equivalent by referencing the row above.</td></tr>
+        <tr><td>What is a Calculated Field in a pivot?</td><td>A custom formula added to a PivotTable (e.g., Profit = Revenue - Cost) that Excel computes from existing fields.</td></tr>
+        <tr><td>How do you find the top 10 values in a column?</td><td>Use LARGE(range, 1) through LARGE(range, 10). Or sort descending and take top 10. Or use RANK().</td></tr>
+        <tr><td>How do you clean a column with mixed case / spaces?</td><td>=TRIM(PROPER(A1)) — TRIM removes extra spaces, PROPER capitalises first letter of each word.</td></tr>
+        <tr><td>What is conditional formatting? When would you use it?</td><td>Highlight cells based on values (e.g., red for negative, green for positive). Use for dashboards to make trends instantly visible.</td></tr>
+      </table>
     </div>
 
   </div>
@@ -12318,6 +12790,109 @@ print(f"MAE: {mae:.0f}, MAPE: {mape:.1f}%")
   <div class="phase-content">
 
     <div class="topic-card">
+      <h3>What Git Does &amp; Why You Need It</h3>
+      <p style="line-height:1.7;color:#333;">
+        Git is a <strong>version control system</strong> — it keeps a full history of every change
+        you make to your code, lets you work on separate features without breaking the main codebase
+        (branches), and makes collaboration with teammates safe.
+        Every DS/DA job expects you to have your projects on GitHub.
+        In interviews you will be asked how you use Git day-to-day, how you handle merge conflicts,
+        and what a Pull Request is. The branching diagram and Q&amp;A below cover all of it.
+      </p>
+    </div>
+
+    <div class="topic-card">
+      <h3>Git Branching Workflow — Visual Guide</h3>
+      <p style="color:#555;font-size:0.93em;margin-bottom:0.4rem;">
+        The diagram below shows the standard feature-branch workflow used at real companies.
+        You branch off main, commit changes, push, open a PR, and merge back.
+      </p>
+
+<svg viewBox="0 0 620 205" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif;">
+  <defs>
+    <marker id="garr" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#333"/>
+    </marker>
+    <marker id="garr_b" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#1a7fc1"/>
+    </marker>
+    <marker id="garr_g" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+      <path d="M0,0.5 L6,3.5 L0,6.5 Z" fill="#217346"/>
+    </marker>
+  </defs>
+
+  <text x="310" y="16" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a5f">Git Branching Workflow</text>
+
+  <!-- ── MAIN branch line ── -->
+  <text x="18" y="68" font-size="9" font-weight="bold" fill="#555">main</text>
+  <!-- commits on main -->
+  <!-- C1 -->
+  <circle cx="80"  cy="70" r="14" fill="#1e3a5f" stroke="#fff" stroke-width="2"/>
+  <text   x="80"  y="74" text-anchor="middle" font-size="8" fill="#fff">C1</text>
+  <text   x="80"  y="92" text-anchor="middle" font-size="7.5" fill="#555">init</text>
+  <!-- C2 -->
+  <line x1="94"  y1="70" x2="126" y2="70" stroke="#555" stroke-width="1.8" marker-end="url(#garr)"/>
+  <circle cx="140" cy="70" r="14" fill="#1e3a5f" stroke="#fff" stroke-width="2"/>
+  <text   x="140" y="74" text-anchor="middle" font-size="8" fill="#fff">C2</text>
+  <text   x="140" y="92" text-anchor="middle" font-size="7.5" fill="#555">feat A</text>
+
+  <!-- branch off to feature -->
+  <path d="M154,64 Q190,40 220,40" stroke="#1a7fc1" stroke-width="2" fill="none" marker-end="url(#garr_b)"/>
+  <text x="185" y="35" text-anchor="middle" font-size="8" fill="#1a7fc1">git checkout -b feature/churn</text>
+
+  <!-- ── FEATURE branch line ── -->
+  <text x="18" y="42" font-size="9" font-weight="bold" fill="#1a7fc1">feature</text>
+  <!-- F1 -->
+  <circle cx="232" cy="40" r="14" fill="#1a7fc1" stroke="#fff" stroke-width="2"/>
+  <text   x="232" y="44" text-anchor="middle" font-size="8" fill="#fff">F1</text>
+  <!-- F2 -->
+  <line x1="246" y1="40" x2="278" y2="40" stroke="#1a7fc1" stroke-width="1.8" marker-end="url(#garr_b)"/>
+  <circle cx="292" cy="40" r="14" fill="#1a7fc1" stroke="#fff" stroke-width="2"/>
+  <text   x="292" y="44" text-anchor="middle" font-size="8" fill="#fff">F2</text>
+  <!-- F3 -->
+  <line x1="306" y1="40" x2="338" y2="40" stroke="#1a7fc1" stroke-width="1.8" marker-end="url(#garr_b)"/>
+  <circle cx="352" cy="40" r="14" fill="#1a7fc1" stroke="#fff" stroke-width="2"/>
+  <text   x="352" y="44" text-anchor="middle" font-size="8" fill="#fff">F3</text>
+
+  <!-- labels under feature commits -->
+  <text x="232" y="62" text-anchor="middle" font-size="7" fill="#1a7fc1">add model</text>
+  <text x="292" y="62" text-anchor="middle" font-size="7" fill="#1a7fc1">add SHAP</text>
+  <text x="352" y="62" text-anchor="middle" font-size="7" fill="#1a7fc1">fix recall</text>
+
+  <!-- merge back to main -->
+  <path d="M366,46 Q400,64 418,70" stroke="#217346" stroke-width="2" fill="none" marker-end="url(#garr_g)"/>
+  <text x="406" y="50" text-anchor="middle" font-size="8" fill="#217346">git merge / PR</text>
+
+  <!-- C3 merge commit -->
+  <circle cx="432" cy="70" r="14" fill="#217346" stroke="#fff" stroke-width="2"/>
+  <text   x="432" y="74" text-anchor="middle" font-size="8" fill="#fff">M</text>
+  <text   x="432" y="92" text-anchor="middle" font-size="7.5" fill="#555">merge</text>
+
+  <!-- C4 -->
+  <line x1="446" y1="70" x2="478" y2="70" stroke="#555" stroke-width="1.8" marker-end="url(#garr)"/>
+  <circle cx="492" cy="70" r="14" fill="#1e3a5f" stroke="#fff" stroke-width="2"/>
+  <text   x="492" y="74" text-anchor="middle" font-size="8" fill="#fff">C4</text>
+  <text   x="492" y="92" text-anchor="middle" font-size="7.5" fill="#555">release</text>
+
+  <!-- HEAD tag -->
+  <rect x="476" y="92" width="32" height="12" rx="3" fill="#e06020"/>
+  <text x="492" y="101" text-anchor="middle" font-size="7" fill="#fff" font-weight="bold">HEAD</text>
+
+  <!-- Legend area -->
+  <rect x="8" y="108" width="604" height="88" rx="5" fill="#f8f9fc" stroke="#dde"/>
+  <text x="310" y="123" text-anchor="middle" font-size="10" font-weight="bold" fill="#1e3a5f">Command sequence for this workflow</text>
+
+  <text x="20" y="138" font-size="9" fill="#555">1. git checkout -b feature/churn</text>
+  <text x="20" y="151" font-size="9" fill="#555">2. (work, work, work)  git add .  git commit -m "feat: add SHAP to churn model"</text>
+  <text x="20" y="164" font-size="9" fill="#555">3. git push origin feature/churn</text>
+  <text x="20" y="177" font-size="9" fill="#555">4. Open Pull Request on GitHub → team reviews → approve → merge into main</text>
+  <text x="20" y="190" font-size="9" fill="#555">5. git checkout main  git pull origin main  git branch -d feature/churn</text>
+</svg>
+
+    </div>
+
+    <div class="topic-card">
       <h3>Essential Git Commands</h3>
       <div class="code-block"><pre>
 # ── Setup ──
@@ -12326,7 +12901,7 @@ git config --global user.email "kv.sherly0217@gmail.com"
 
 # ── Start ──
 git init                      # new repo in current folder
-git clone <url>               # clone remote repo
+git clone &lt;url&gt;               # clone remote repo
 
 # ── Daily workflow ──
 git status                    # see what changed
@@ -12334,7 +12909,7 @@ git add filename.py           # stage specific file
 git add .                     # stage all changes
 git commit -m "feat: add churn prediction endpoint"
 git push origin main          # push to remote
-git pull origin main          # pull latest from remote -- specify the source table <span class="code-comment">-- the table to read from</span>
+git pull origin main          # pull latest from remote
 
 # ── Branching ──
 git branch feature/new-model  # create branch
@@ -12351,7 +12926,7 @@ git diff HEAD~1               # diff vs previous commit
 # ── Undo ──
 git restore filename.py       # discard unstaged changes
 git reset HEAD filename.py    # unstage a file
-git revert <commit-hash>      # undo commit safely (creates new commit)
+git revert &lt;commit-hash&gt;      # undo commit safely (creates new commit)
 git stash                     # save work-in-progress temporarily
 git stash pop                 # restore stashed changes
 
@@ -12373,6 +12948,21 @@ git stash pop                 # restore stashed changes
         <tr><td>Rebase</td><td>Replay your commits on top of another branch — cleaner history than merge</td></tr>
       </table>
       <div class="note-box"><strong>Interview tip:</strong> "I use Git daily — all 5 projects are version-controlled on GitHub. I work on feature branches and merge via PRs. I write descriptive commit messages like 'feat: add SHAP explainability to churn dashboard' rather than 'updated stuff'."</div>
+    </div>
+
+    <div class="topic-card">
+      <h3>Git Interview Q&amp;A</h3>
+      <table class="term-table">
+        <tr><th>Question</th><th>Strong Answer</th></tr>
+        <tr><td>What is the difference between git pull and git fetch?</td><td>git fetch downloads changes from remote but does NOT merge them. git pull = fetch + merge in one step. Use fetch when you want to review changes first.</td></tr>
+        <tr><td>How do you resolve a merge conflict?</td><td>Open the conflicted file, look for &lt;&lt;&lt;&lt;&lt;&lt;&lt; markers, manually keep the correct version, remove the markers, then git add and git commit.</td></tr>
+        <tr><td>What is git stash used for?</td><td>Temporarily save uncommitted changes so you can switch branches without losing work. git stash pop brings them back.</td></tr>
+        <tr><td>git reset vs git revert — what's the difference?</td><td>git reset rewrites history (dangerous on shared branches). git revert creates a NEW commit that undoes changes — safe for shared branches.</td></tr>
+        <tr><td>What is a Pull Request and why use it?</td><td>A PR is a request to merge your branch into main. It triggers code review by teammates. This catches bugs before they reach production.</td></tr>
+        <tr><td>What goes in .gitignore?</td><td>Files you never want to commit: .env (secrets), *.pkl (large model files), data/*.csv (large data), venv/ (environment), __pycache__/</td></tr>
+        <tr><td>How do you see the history of a file?</td><td>git log --follow -p filename.py — shows all commits that touched that file with the actual diffs.</td></tr>
+        <tr><td>What is git rebase vs git merge?</td><td>Merge preserves full history with a merge commit. Rebase replays your commits on top of the target branch for a linear history. Use merge for shared branches, rebase for local cleanup.</td></tr>
+      </table>
     </div>
 
   </div>

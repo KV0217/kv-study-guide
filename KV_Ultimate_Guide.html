@@ -2804,7 +2804,7 @@ for n_trees in [10, 50, 100, 200, 500]:
     <div class="algo-number">5</div>
     <div>
       <div class="algo-title">XGBoost / LightGBM</div>
-      <div class="algo-subtitle">Sequential learning — each tree fixes the mistakes of the previous ones</div>
+      <div class="algo-subtitle">Sequential trees each correcting previous errors — the go-to for tabular data competitions and production</div>
     </div>
   </div>
   <div class="tab-bar">
@@ -2814,156 +2814,348 @@ for n_trees in [10, 50, 100, 200, 500]:
     <button class="tab-btn" onclick="showTab('s5','code')">💻 Code &amp; Internals</button>
     <button class="tab-btn" onclick="showTab('s5','terms')">📚 Key Terms</button>
   </div>
-
   <div class="tab-content active" id="s5-what">
     <div class="card">
-      <h3>XGBoost vs Random Forest — A Critical Difference</h3>
-      <p>Random Forest builds all 500 trees <strong>in parallel</strong>, independently. XGBoost builds trees <strong>sequentially</strong> — each new tree specifically targets and corrects the errors left by all previous trees.</p>
+      <h3>What is XGBoost? (Plain English)</h3>
+      <p>XGBoost (Extreme Gradient Boosting) is currently the most powerful algorithm for structured/tabular data — the kind stored in spreadsheets or databases. It wins most Kaggle competitions on tabular data and is used widely in industry.</p>
+      <p>The core idea is <strong>boosting</strong>: instead of building trees independently (like Random Forest), build them one by one, where each new tree specifically focuses on correcting the errors the previous trees made.</p>
+      <p>Think of it like this: you hire a team of specialists. The first specialist makes predictions. The second specialist only looks at the cases the first got wrong and tries to fix them. The third specialist fixes what the first two still got wrong. And so on. The final answer is all their predictions added together.</p>
+      <div class="highlight"><p><strong>Why it's called "Gradient" Boosting:</strong> at each step, the new tree is fitted to the <em>gradients</em> (derivatives) of the loss function — the mathematical direction of the error. This is a principled way to know exactly which examples to focus on.</p></div>
     </div>
-    <div class="analogy">
-      <div class="label">🎓 Analogy — Learning From Mistakes</div>
-      <p>Imagine you're studying for an exam. After the first practice test, you look at which questions you got wrong. You study those specific topics harder. Next test — again focus on remaining weak spots. Keep repeating. By test 5, you've specifically addressed every weakness. That's XGBoost: Tree 1 makes predictions. Tree 2 focuses on what Tree 1 got wrong. Tree 3 focuses on what Trees 1+2 still got wrong. And so on.</p>
-    </div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 540 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:540px;background:#0f172a;border-radius:12px;">
+  <defs><marker id="bx" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#475569"/></marker></defs>
+  <!-- Step 1: Initial prediction -->
+  <rect x="10" y="30" width="100" height="55" rx="8" fill="#1e293b" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="60" y="50"  text-anchor="middle" fill="#60a5fa" font-size="9"  font-weight="700">Step 1</text>
+  <text x="60" y="63"  text-anchor="middle" fill="#94a3b8" font-size="8">Predict mean</text>
+  <text x="60" y="75"  text-anchor="middle" fill="#fbbf24" font-size="9">Error: 0.45</text>
+  <!-- Arrow -->
+  <line x1="110" y1="57" x2="140" y2="57" stroke="#475569" stroke-width="1.5" marker-end="url(#bx)"/>
+  <!-- Step 2: Tree on residuals -->
+  <rect x="143" y="30" width="110" height="55" rx="8" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="198" y="50"  text-anchor="middle" fill="#a78bfa" font-size="9"  font-weight="700">Tree 1 on Errors</text>
+  <text x="198" y="63"  text-anchor="middle" fill="#94a3b8" font-size="8">Learns residuals</text>
+  <text x="198" y="75"  text-anchor="middle" fill="#fbbf24" font-size="9">Error: 0.31</text>
+  <!-- Arrow -->
+  <line x1="253" y1="57" x2="283" y2="57" stroke="#475569" stroke-width="1.5" marker-end="url(#bx)"/>
+  <!-- Step 3 -->
+  <rect x="286" y="30" width="110" height="55" rx="8" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5"/>
+  <text x="341" y="50"  text-anchor="middle" fill="#a78bfa" font-size="9"  font-weight="700">Tree 2 on Errors</text>
+  <text x="341" y="63"  text-anchor="middle" fill="#94a3b8" font-size="8">Corrects remaining</text>
+  <text x="341" y="75"  text-anchor="middle" fill="#fbbf24" font-size="9">Error: 0.18</text>
+  <!-- Arrow -->
+  <line x1="396" y1="57" x2="426" y2="57" stroke="#475569" stroke-width="1.5" marker-end="url(#bx)"/>
+  <!-- Step 4: final -->
+  <rect x="429" y="30" width="100" height="55" rx="8" fill="#065f46" stroke="#34d399" stroke-width="2"/>
+  <text x="479" y="50"  text-anchor="middle" fill="#34d399" font-size="9"  font-weight="700">Tree N on Errors</text>
+  <text x="479" y="63"  text-anchor="middle" fill="#a7f3d0" font-size="8">Near perfect fit</text>
+  <text x="479" y="75"  text-anchor="middle" fill="#fbbf24" font-size="9">Error: 0.04</text>
+  <!-- Sum box at bottom -->
+  <rect x="160" y="140" width="220" height="50" rx="8" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <text x="270" y="161" text-anchor="middle" fill="white"   font-size="10" font-weight="700">Final Prediction =</text>
+  <text x="270" y="178" text-anchor="middle" fill="#bfdbfe" font-size="9">Mean + Tree1 + Tree2 + ... + TreeN</text>
+  <!-- Arrows down to sum box -->
+  <line x1="60"  y1="85" x2="190" y2="140" stroke="#334155" stroke-width="1.2"/>
+  <line x1="198" y1="85" x2="230" y2="140" stroke="#334155" stroke-width="1.2"/>
+  <line x1="341" y1="85" x2="280" y2="140" stroke="#334155" stroke-width="1.2"/>
+  <line x1="479" y1="85" x2="350" y2="140" stroke="#334155" stroke-width="1.2"/>
+  <!-- Labels -->
+  <text x="270" y="20"  text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif" font-weight="600">Boosting: Each tree corrects the errors of all previous trees</text>
+  <text x="270" y="210" text-anchor="middle" fill="#64748b" font-size="9">Unlike Random Forest (parallel trees), boosting trains trees SEQUENTIALLY — each one focuses on mistakes</text>
+</svg></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+<div style="background:#0f172a;border-radius:10px;padding:14px">
+<p style="color:#60a5fa;font-weight:700;margin:0 0 8px;font-size:12px">🌲 Bagging (Random Forest)</p>
+<ul style="color:#94a3b8;font-size:11px;margin:0;padding-left:16px;line-height:1.8">
+<li>Trees built <strong style="color:#e2e8f0">in parallel</strong></li>
+<li>Each tree trains on <strong style="color:#e2e8f0">random sample</strong></li>
+<li>Trees are <strong style="color:#e2e8f0">independent</strong></li>
+<li>Final answer = <strong style="color:#e2e8f0">majority vote</strong></li>
+<li>Reduces <strong style="color:#e2e8f0">variance</strong></li>
+<li>Less prone to overfitting</li>
+<li>Parallelisable → fast</li>
+</ul>
+</div>
+<div style="background:#0f172a;border-radius:10px;padding:14px">
+<p style="color:#f97316;font-weight:700;margin:0 0 8px;font-size:12px">⚡ Boosting (XGBoost)</p>
+<ul style="color:#94a3b8;font-size:11px;margin:0;padding-left:16px;line-height:1.8">
+<li>Trees built <strong style="color:#e2e8f0">sequentially</strong></li>
+<li>Each tree trains on <strong style="color:#e2e8f0">previous errors</strong></li>
+<li>Trees are <strong style="color:#e2e8f0">dependent</strong></li>
+<li>Final answer = <strong style="color:#e2e8f0">weighted sum</strong></li>
+<li>Reduces <strong style="color:#e2e8f0">bias</strong></li>
+<li>Can overfit if not regularised</li>
+<li>Sequential → slower, but more accurate</li>
+</ul>
+</div></div>
     <div class="card">
-      <h3>Why XGBoost Dominates Kaggle</h3>
-      <ul>
-        <li><strong>Best accuracy</strong> on tabular (structured) data in practice</li>
-        <li><strong>Built-in regularization</strong> (L1 + L2) prevents overfitting automatically</li>
-        <li><strong>Handles missing values</strong> natively — no need to impute</li>
-        <li><strong>Early stopping</strong> — automatically stops when performance plateaus</li>
-        <li><strong>Speed</strong> — optimized C++ implementation, much faster than sklearn's GradientBoostingClassifier</li>
-      </ul>
-      <div class="highlight"><p>XGBoost won ~60% of Kaggle competitions between 2015-2018. Even today with neural networks, XGBoost remains the go-to for tabular data.</p></div>
+      <h3>XGBoost vs LightGBM vs CatBoost</h3>
+      <table class="term-table">
+        <tr><th>Library</th><th>Speed</th><th>Accuracy</th><th>Best For</th><th>Key Difference</th></tr>
+        <tr><td><strong>XGBoost</strong></td><td>Fast</td><td>Excellent</td><td>General tabular data, competitions</td><td>Level-wise tree growth. Well-tested, most documentation.</td></tr>
+        <tr><td><strong>LightGBM</strong></td><td>Fastest</td><td>Excellent</td><td>Large datasets (&gt;100K rows), high cardinality</td><td>Leaf-wise tree growth. Much faster than XGBoost. Microsoft.</td></tr>
+        <tr><td><strong>CatBoost</strong></td><td>Moderate</td><td>Excellent</td><td>Datasets with many categorical features</td><td>Handles categorical features natively without encoding. Yandex.</td></tr>
+      </table>
+      <div class="highlight"><p>Default recommendation: <strong>LightGBM</strong> for large datasets (&gt;50K rows), <strong>XGBoost</strong> for medium datasets, <strong>CatBoost</strong> when you have many categorical columns. All three are very close in accuracy.</p></div>
     </div>
-  </div>
-
+</div>
   <div class="tab-content" id="s5-how">
     <div class="card">
-      <h3>Gradient Boosting: The Core Idea</h3>
-      <p>At each step, XGBoost fits a new tree on the <strong>residuals</strong> (errors) of the current combined prediction:</p>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Round 1</div><div class="step-txt">Tree 1 predicts. Errors = actual - predicted (residuals)</div></div>
-        <div class="flow-step"><div class="step-num">Round 2</div><div class="step-txt">Tree 2 fits on those residuals. Now combined prediction = Tree1 + Tree2</div></div>
-        <div class="flow-step"><div class="step-num">Round N</div><div class="step-txt">Tree N fits on remaining errors. Final = sum of all trees × learning rate</div></div>
+      <h3>How Gradient Boosting Works (Step by Step)</h3>
+      <ol>
+        <li><strong>Start:</strong> predict the mean (for regression) or log-odds (for classification) for every example</li>
+        <li><strong>Compute residuals:</strong> how wrong is each prediction? residual = actual − predicted</li>
+        <li><strong>Fit a shallow tree to the residuals:</strong> this tree learns to predict the errors</li>
+        <li><strong>Update predictions:</strong> add this tree's predictions × learning_rate to current predictions</li>
+        <li><strong>Compute new residuals</strong> (the errors have gotten smaller)</li>
+        <li><strong>Repeat steps 3–5</strong> for n_estimators trees</li>
+        <li><strong>Final prediction</strong> = initial + (lr × tree1) + (lr × tree2) + ... + (lr × treeN)</li>
+      </ol>
+      <div class="highlight"><p>The learning_rate controls how much each tree contributes. Small lr (0.01–0.1) + many trees = slow but more accurate. Large lr (0.3+) + few trees = fast but may miss optimal solution. XGBoost default lr is 0.3.</p></div>
+    </div>
+    <div class="card">
+      <h3>XGBoost — ALL Key Parameters Explained</h3>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:8px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">XGBClassifier / XGBRegressor — Most Important Parameters</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>Impact if changed</th></tr>
+          <tr>
+            <td><code>n_estimators</code></td>
+            <td>Number of trees (boosting rounds). More trees = more accuracy but more overfitting risk. Always use with early_stopping.</td>
+            <td>100</td>
+            <td>Set high (500–2000) and let early stopping find the optimal. Don't guess this number.</td>
+          </tr>
+          <tr>
+            <td><code>learning_rate</code> (eta)</td>
+            <td>Contribution of each tree to the final prediction. Lower = each tree contributes less = need more trees = better generalisation.</td>
+            <td>0.3</td>
+            <td><strong>0.3:</strong> XGBoost default — fast but may overfit. <strong>0.1:</strong> standard for competitions. <strong>0.01:</strong> very slow learning, needs 1000+ trees, often best accuracy. Lower lr + more trees = the general rule for best results.</td>
+          </tr>
+          <tr>
+            <td><code>max_depth</code></td>
+            <td>Maximum depth of each tree. XGBoost uses shallow trees (3–6) unlike Random Forest which often uses deep trees.</td>
+            <td>6</td>
+            <td><strong>3–4:</strong> underfitting, simple model. <strong>6:</strong> good default. <strong>8–10:</strong> captures complex patterns but risks overfitting. Try 4, 6, 8 and cross-validate.</td>
+          </tr>
+          <tr>
+            <td><code>subsample</code></td>
+            <td>Fraction of training rows randomly sampled for each tree. Like Random Forest's bootstrap, but without replacement.</td>
+            <td>1.0</td>
+            <td><strong>1.0:</strong> use all rows. <strong>0.8:</strong> use 80% — adds randomness, reduces overfitting, slightly faster. Common: 0.7–0.9.</td>
+          </tr>
+          <tr>
+            <td><code>colsample_bytree</code></td>
+            <td>Fraction of features randomly sampled for each tree. Like Random Forest's max_features.</td>
+            <td>1.0</td>
+            <td><strong>1.0:</strong> use all features. <strong>0.8:</strong> use 80% of features per tree — adds randomness, reduces overfitting. Try 0.6–0.9.</td>
+          </tr>
+          <tr>
+            <td><code>min_child_weight</code></td>
+            <td>Minimum sum of instance weights (number of samples) in a leaf. Higher = more conservative splits = less overfitting.</td>
+            <td>1</td>
+            <td><strong>1:</strong> any split allowed. <strong>3–5:</strong> requires more samples per leaf. <strong>10+:</strong> very conservative. Increase if overfitting.</td>
+          </tr>
+          <tr>
+            <td><code>gamma</code></td>
+            <td>Minimum loss reduction required to split a node. Higher = more conservative — fewer splits made.</td>
+            <td>0</td>
+            <td><strong>0:</strong> any split that reduces loss. <strong>0.1–1:</strong> only split if gain exceeds threshold. Increase to reduce overfitting.</td>
+          </tr>
+          <tr>
+            <td><code>reg_alpha</code></td>
+            <td>L1 regularisation on leaf weights. Drives some weights to 0 (sparse).</td>
+            <td>0</td>
+            <td>Increase (0.01–10) to reduce overfitting and create sparser trees.</td>
+          </tr>
+          <tr>
+            <td><code>reg_lambda</code></td>
+            <td>L2 regularisation on leaf weights. Shrinks weights, smoother predictions.</td>
+            <td>1</td>
+            <td>Higher = more regularisation. Default 1 is usually good. Try 1–10.</td>
+          </tr>
+          <tr>
+            <td><code>scale_pos_weight</code></td>
+            <td>Weight for positive class. Use for imbalanced datasets. Set to: (count of negative samples) / (count of positive samples).</td>
+            <td>1</td>
+            <td>If 95% negative, 5% positive: scale_pos_weight = 95/5 = 19. Model pays 19× more attention to positive class.</td>
+          </tr>
+          <tr>
+            <td><code>tree_method</code></td>
+            <td>Algorithm for building trees. 'hist' is fastest for large datasets.</td>
+            <td>'auto'</td>
+            <td><strong>'hist':</strong> histogram-based — fast, recommended for large data. <strong>'gpu_hist':</strong> GPU version. <strong>'exact':</strong> precise but slow.</td>
+          </tr>
+        </table>
       </div>
     </div>
     <div class="card">
-      <h3>What Makes XGBoost Special vs Plain Gradient Boosting</h3>
-      <ul>
-        <li><strong>Second-order gradients:</strong> Uses both first AND second derivative of loss function (Newton's method)</li>
-        <li><strong>L1 + L2 regularization:</strong> Penalizes tree complexity built into the loss function</li>
-        <li><strong>Column subsampling:</strong> Like Random Forest, randomly selects features</li>
-        <li><strong>Approximate tree learning:</strong> Uses histograms for speed on large datasets</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>LightGBM vs XGBoost</h3>
-      <table class="cmp-table">
-        <tr><th>Feature</th><th>XGBoost</th><th>LightGBM</th></tr>
-        <tr><td>Speed</td><td>Fast</td><td>Faster (3-10x on large data)</td></tr>
-        <tr><td>Memory</td><td>Moderate</td><td>Lower (uses histograms)</td></tr>
-        <tr><td>Accuracy</td><td>Excellent</td><td>Comparable or better</td></tr>
-        <tr><td>Tree Growth</td><td>Level-wise (row by row)</td><td>Leaf-wise (best leaf first)</td></tr>
-        <tr><td>Best for</td><td>Medium datasets, well-studied</td><td>Large datasets, production</td></tr>
+      <h3>LightGBM — Key Differences from XGBoost</h3>
+      <table class="term-table">
+        <tr><th>LightGBM Parameter</th><th>XGBoost Equivalent</th><th>LightGBM Default</th><th>Notes</th></tr>
+        <tr><td>num_leaves</td><td>(no direct equivalent)</td><td>31</td><td>Controls tree complexity. Max leaves per tree. More important than max_depth in LightGBM.</td></tr>
+        <tr><td>learning_rate</td><td>learning_rate</td><td>0.1</td><td>Same concept, similar values.</td></tr>
+        <tr><td>n_estimators</td><td>n_estimators</td><td>100</td><td>Same concept.</td></tr>
+        <tr><td>feature_fraction</td><td>colsample_bytree</td><td>1.0</td><td>Fraction of features per tree.</td></tr>
+        <tr><td>bagging_fraction</td><td>subsample</td><td>1.0</td><td>Fraction of rows per tree.</td></tr>
+        <tr><td>min_child_samples</td><td>min_child_weight</td><td>20</td><td>Minimum samples in leaf.</td></tr>
+        <tr><td>reg_alpha / reg_lambda</td><td>reg_alpha / reg_lambda</td><td>0 / 0</td><td>L1/L2 regularisation.</td></tr>
       </table>
     </div>
-  </div>
-
+    <div class="card">
+      <h3>Early Stopping — The Most Important XGBoost Trick</h3>
+      <p>Instead of guessing n_estimators, use early stopping: train with a large number and automatically stop when the validation score stops improving.</p>
+      <div class="highlight"><p>early_stopping_rounds=50 means: stop training if validation metric doesn't improve for 50 consecutive rounds. The model automatically keeps the best weights seen.</p></div>
+    </div>
+</div>
   <div class="tab-content" id="s5-use">
     <div class="card">
-      <h3>📱 Real Use Case: Telecom Customer Churn Prediction</h3>
-      <p>A telecom company like Airtel or Jio wants to identify customers likely to switch to a competitor (churn) before they leave. Retaining a customer costs 5x less than acquiring a new one.</p>
-    </div>
-    <div class="card">
-      <h3>Features That Predict Churn</h3>
-      <ul>
-        <li><strong>Contract type</strong> — month-to-month vs annual (month-to-month churns more)</li>
-        <li><strong>Tenure</strong> — how long they've been a customer</li>
-        <li><strong>Monthly charges</strong> — high bills → more likely to shop around</li>
-        <li><strong>Number of support calls</strong> — frustrated customers call more before leaving</li>
-        <li><strong>Service bundle</strong> — internet + phone + streaming → more locked in</li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Business Action</h3>
-      <div class="highlight"><p>Model flags 1,000 customers with &gt;70% churn probability. Retention team calls them with special offers: 3-month discount or free upgrade. Even saving 20% of them = significant revenue retained.</p></div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s5-code">
-    <div class="card"><h3>Complete Code: Customer Churn with XGBoost</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd -- rename the column or table with an alias <span class="code-comment">-- give this column or table a nickname</span>
-<span class="c-kw">from</span> xgboost <span class="c-kw">import</span> <span class="c-cls">XGBClassifier</span> -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> classification_report, roc_auc_score -- specify the source table <span class="code-comment">-- the table to read from</span>
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">LabelEncoder</span> -- specify the source table <span class="code-comment">-- the table to read from</span>
-
-np.random.seed(<span class="c-num">42</span>)
-n = <span class="c-num">5000</span>
-df = pd.<span class="c-fn">DataFrame</span>({
-    <span class="c-str">'tenure'</span>: np.random.randint(<span class="c-num">1</span>, <span class="c-num">72</span>, n),
-    <span class="c-str">'monthly_charges'</span>: np.random.uniform(<span class="c-num">20</span>, <span class="c-num">120</span>, n),
-    <span class="c-str">'support_calls'</span>: np.random.poisson(<span class="c-num">2</span>, n),
-    <span class="c-str">'contract'</span>: np.random.choice([<span class="c-str">'month-to-month'</span>,<span class="c-str">'one-year'</span>,<span class="c-str">'two-year'</span>], n),
-    <span class="c-str">'churn'</span>: np.random.choice([<span class="c-num">0</span>,<span class="c-num">1</span>], n, p=[<span class="c-num">0.73</span>,<span class="c-num">0.27</span>])
-})
-
-le = <span class="c-cls">LabelEncoder</span>()
-df[<span class="c-str">'contract_encoded'</span>] = le.fit_transform(df[<span class="c-str">'contract'</span>])
-
-X = df[[<span class="c-str">'tenure'</span>, <span class="c-str">'monthly_charges'</span>, <span class="c-str">'support_calls'</span>, <span class="c-str">'contract_encoded'</span>]]
-y = df[<span class="c-str">'churn'</span>]
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="c-num">0.2</span>, random_state=<span class="c-num">42</span>)
-
-neg = (y_train == <span class="c-num">0</span>).sum()                                <span class="code-comment">-- add up all values in this column</span>
-pos = (y_train == <span class="c-num">1</span>).sum()                                <span class="code-comment">-- add up all values in this column</span>
-scale_pw = neg / pos
-
-xgb = <span class="c-cls">XGBClassifier</span>(
-    n_estimators=<span class="c-num">500</span>,
-    learning_rate=<span class="c-num">0.05</span>,
-    max_depth=<span class="c-num">6</span>,
-    subsample=<span class="c-num">0.8</span>,
-    colsample_bytree=<span class="c-num">0.8</span>,
-    scale_pos_weight=scale_pw,
-    reg_alpha=<span class="c-num">0.1</span>,
-    reg_lambda=<span class="c-num">1.0</span>,
-    eval_metric=<span class="c-str">'auc'</span>,
-    random_state=<span class="c-num">42</span>
-)
-
-xgb.fit(X_train, y_train, eval_set=[(X_test, y_test)], early_stopping_rounds=<span class="c-num">30</span>, verbose=<span class="c-num">50</span>)
-
-y_pred = xgb.predict(X_test)
-y_prob = xgb.predict_proba(X_test)[:, <span class="c-num">1</span>]
-<span class="c-fn">print</span>(classification_report(y_test, y_pred))
-<span class="c-fn">print</span>(<span class="c-str">f"AUC: {roc_auc_score(y_test, y_prob):.3f}"</span>)
-
-X_test_df = X_test.copy()
-X_test_df[<span class="c-str">'churn_probability'</span>] = y_prob
-high_risk = X_test_df[X_test_df[<span class="c-str">'churn_probability'</span>] > <span class="c-num">0.7</span>]
-<span class="c-fn">print</span>(<span class="c-str">f"High-risk customers to target: {len(high_risk)}"</span>) -- number of characters in the string <span class="code-comment">-- count how many characters are in the text</span>
-</pre></div>
-  </div>
-
-  <div class="tab-content" id="s5-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
+      <h3>Real-World Applications</h3>
       <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Boosting</span></td><td>Sequential ensemble method where each model fixes errors of previous models. Opposite of bagging (parallel).</td><td>Tree 2 trains specifically on what Tree 1 got wrong</td></tr>
-        <tr><td><span class="term-name">Residuals</span></td><td>The errors (actual - predicted) after each round. The next tree is fit on these residuals.</td><td>Predicted churn prob = 0.3, actual = 1, residual = 0.7</td></tr>
-        <tr><td><span class="term-name">Learning Rate</span></td><td>How much each tree's contribution is shrunk before adding to the ensemble.</td><td>learning_rate=0.05: each tree contributes only 5% of its full prediction</td></tr>
-        <tr><td><span class="term-name">Early Stopping</span></td><td>Automatically stop training when validation metric stops improving for N rounds.</td><td>early_stopping_rounds=30: stop if AUC doesn't improve for 30 consecutive trees</td></tr>
-        <tr><td><span class="term-name">scale_pos_weight</span></td><td>Ratio of negative to positive class samples. Tells XGBoost to give extra weight to the minority class.</td><td>90% legitimate, 10% fraud: scale_pos_weight = 9</td></tr>
-        <tr><td><span class="term-name">Column Subsampling</span></td><td>Using a random subset of features for each tree. Creates diversity. Reduces correlation between trees.</td><td>colsample_bytree=0.8: each tree sees 80% of features randomly</td></tr>
-        <tr><td><span class="term-name">L1/L2 Regularization</span></td><td>Penalties added to loss function to prevent overfitting. L1 drives small weights to zero. L2 shrinks all weights.</td><td>reg_alpha=0.1 (L1), reg_lambda=1.0 (L2)</td></tr>
+        <tr><th>Industry</th><th>Use Case</th><th>Why XGBoost/LightGBM</th></tr>
+        <tr><td>Fintech / Banking</td><td>Loan default, credit scoring, fraud</td><td>Top accuracy on tabular features; handles missing values natively; fast inference</td></tr>
+        <tr><td>E-Commerce</td><td>Click-through prediction, conversion</td><td>Scales to billions of rows; LightGBM's speed is critical at this scale</td></tr>
+        <tr><td>Healthcare</td><td>Patient readmission, drug response</td><td>Handles mixed data types; built-in feature importance for clinical insight</td></tr>
+        <tr><td>Retail / Supply Chain</td><td>Demand forecasting, inventory</td><td>Handles categorical features (store, product) + numerical (price, promo)</td></tr>
+        <tr><td>Ridesharing / Transport</td><td>ETA prediction, surge pricing</td><td>Real-time inference; handles thousands of features; CatBoost for many categoricals</td></tr>
+        <tr><td>ML Competitions (Kaggle)</td><td>Almost all tabular competitions</td><td>Winner in 90%+ of structured data competitions since 2015</td></tr>
       </table>
     </div>
-  </div>
+    <div class="card">
+      <h3>When to Use XGBoost vs Random Forest</h3>
+      <table class="term-table">
+        <tr><th>Scenario</th><th>Prefer</th><th>Reason</th></tr>
+        <tr><td>Want best possible accuracy on tabular data</td><td>XGBoost / LightGBM</td><td>Usually 2–5% better than Random Forest with tuning</td></tr>
+        <tr><td>Want fast training with minimal tuning</td><td>Random Forest</td><td>Works well with defaults; no early stopping needed</td></tr>
+        <tr><td>Very large dataset (&gt;1M rows)</td><td>LightGBM</td><td>10–20× faster than XGBoost at scale</td></tr>
+        <tr><td>Many categorical features</td><td>CatBoost</td><td>Handles them natively; no OHE or label encoding needed</td></tr>
+        <tr><td>Need interpretability</td><td>Either + SHAP</td><td>Both work well with SHAP values for feature importance</td></tr>
+      </table>
+    </div>
+</div>
+  <div class="tab-content" id="s5-code">
+    <div class="card"><h3>Complete Annotated Code — XGBoost + LightGBM Comparison</h3></div>
+    <div class="code-block"><pre>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+<span class="c-kw">from</span> xgboost  <span class="c-kw">import</span> <span class="c-cls">XGBClassifier</span>
+<span class="c-kw">from</span> lightgbm <span class="c-kw">import</span> <span class="c-cls">LGBMClassifier</span>
+<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split, cross_val_score
+<span class="c-kw">from</span> sklearn.metrics         <span class="c-kw">import</span> classification_report, roc_auc_score
+
+<span class="code-comment"># ── 1. DATA ─────────────────────────────────────────────────────────</span>
+np.random.seed(42)
+n = 3000
+X = np.random.randn(n, 15)
+<span class="code-comment"># Complex non-linear target (shows where boosting shines vs simpler models)</span>
+y = ((X[:,0]**2 + np.abs(X[:,1]) + X[:,2]*X[:,3]
+      - 0.5*X[:,4] + np.sin(X[:,5]) ) &gt; 1.5).astype(int)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+X_tr, X_val, y_tr, y_val = train_test_split(
+    X_train, y_train, test_size=0.2, random_state=42  <span class="code-comment"># for early stopping</span>
+)
+
+<span class="code-comment"># ── 2. XGBOOST ──────────────────────────────────────────────────────</span>
+xgb = <span class="c-cls">XGBClassifier</span>(
+    n_estimators=1000,       <span class="code-comment"># set high — early stopping will find the right number</span>
+    learning_rate=0.05,      <span class="code-comment"># low lr + many trees = better generalisation</span>
+    max_depth=4,             <span class="code-comment"># shallow trees — prevents overfitting</span>
+    subsample=0.8,           <span class="code-comment"># use 80% of rows per tree</span>
+    colsample_bytree=0.8,    <span class="code-comment"># use 80% of features per tree</span>
+    min_child_weight=3,      <span class="code-comment"># min 3 samples per leaf — conservative</span>
+    gamma=0.1,               <span class="code-comment"># min gain needed to split — extra regularisation</span>
+    reg_alpha=0.1,           <span class="code-comment"># L1 regularisation</span>
+    reg_lambda=1.0,          <span class="code-comment"># L2 regularisation</span>
+    scale_pos_weight=1,      <span class="code-comment"># 1 = balanced classes. Set to neg/pos ratio if imbalanced.</span>
+    tree_method='hist',      <span class="code-comment"># fastest method — recommended for large data</span>
+    eval_metric='auc',       <span class="code-comment"># metric to monitor during early stopping</span>
+    early_stopping_rounds=50,<span class="code-comment"># stop if no improvement for 50 rounds</span>
+    random_state=42,
+    verbosity=0
+)
+xgb.fit(
+    X_tr, y_tr,
+    eval_set=[(X_val, y_val)],  <span class="code-comment"># validation set for early stopping</span>
+    verbose=False
+)
+print(f"XGB best iteration: {xgb.best_iteration}")
+print(f"XGB AUC: {roc_auc_score(y_test, xgb.predict_proba(X_test)[:,1]):.4f}")
+
+<span class="code-comment"># ── 3. LIGHTGBM (usually faster, often similar/better accuracy) ─────</span>
+lgbm = <span class="c-cls">LGBMClassifier</span>(
+    n_estimators=1000,
+    learning_rate=0.05,
+    num_leaves=31,           <span class="code-comment"># KEY parameter for LightGBM (like max_depth but different)</span>
+                              <span class="code-comment"># more leaves = more complex model. 31 is default.</span>
+    max_depth=-1,            <span class="code-comment"># -1 = no limit (num_leaves controls complexity instead)</span>
+    feature_fraction=0.8,    <span class="code-comment"># = colsample_bytree in XGBoost</span>
+    bagging_fraction=0.8,    <span class="code-comment"># = subsample in XGBoost</span>
+    bagging_freq=5,          <span class="code-comment"># apply bagging every 5 iterations</span>
+    min_child_samples=20,    <span class="code-comment"># = min_child_weight in XGBoost</span>
+    reg_alpha=0.1,
+    reg_lambda=1.0,
+    class_weight='balanced', <span class="code-comment"># handles imbalanced classes</span>
+    random_state=42,
+    verbosity=-1
+)
+lgbm.fit(
+    X_tr, y_tr,
+    eval_set=[(X_val, y_val)],
+    callbacks=[__import__('lightgbm').early_stopping(50, verbose=False)]
+)
+print(f"LGBM AUC: {roc_auc_score(y_test, lgbm.predict_proba(X_test)[:,1]):.4f}")
+
+<span class="code-comment"># ── 4. FEATURE IMPORTANCE ───────────────────────────────────────────</span>
+print("
+XGB Feature Importances (gain):")
+importances = xgb.feature_importances_
+for i, imp in sorted(enumerate(importances), key=lambda x: -x[1])[:5]:
+    print(f"  Feature {i:2d}: {imp:.4f}")
+
+<span class="code-comment"># ── 5. HYPERPARAMETER TUNING (grid search) ──────────────────────────</span>
+<span class="code-comment"># Quick manual grid to show tuning approach:</span>
+best_auc, best_params = 0, {}
+for lr in [0.1, 0.05]:
+    for depth in [3, 5]:
+        for sub in [0.7, 0.9]:
+            m = <span class="c-cls">XGBClassifier</span>(
+                n_estimators=200, learning_rate=lr, max_depth=depth,
+                subsample=sub, tree_method='hist', verbosity=0, random_state=42
+            )
+            auc = cross_val_score(m, X_train, y_train, cv=3, scoring='roc_auc').mean()
+            if auc &gt; best_auc:
+                best_auc = auc
+                best_params = {'lr': lr, 'depth': depth, 'sub': sub}
+print(f"Best CV AUC: {best_auc:.4f} | Params: {best_params}")
+
+<span class="code-comment"># ── 6. SHAP VALUES (model interpretability) ─────────────────────────</span>
+<span class="code-comment"># pip install shap</span>
+<span class="code-comment"># import shap</span>
+<span class="code-comment"># explainer = shap.TreeExplainer(xgb)</span>
+<span class="code-comment"># shap_values = explainer.shap_values(X_test)</span>
+<span class="code-comment"># shap.summary_plot(shap_values, X_test)  # shows feature importance + direction of effect</span>
+</pre></div>
+</div>
+  <div class="tab-content" id="s5-terms">
+    <div class="card"><h3>Key Terms — XGBoost / LightGBM</h3>
+    <table class="term-table">
+      <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
+      <tr><td><span class="term-name">Boosting</span></td><td>Training trees sequentially where each tree corrects the errors of previous trees. More accurate than bagging but slower.</td><td>XGBoost, LightGBM, CatBoost, AdaBoost</td></tr>
+      <tr><td><span class="term-name">Residual</span></td><td>The error remaining after current predictions. Each new tree is fitted to these residuals.</td><td>Actual=1, Predicted=0.3 → Residual=0.7 → next tree tries to predict 0.7</td></tr>
+      <tr><td><span class="term-name">learning_rate (eta)</span></td><td>How much each tree contributes to the final prediction. Lower = more trees needed but better generalisation.</td><td>lr=0.05: each tree contributes 5% of its prediction. Need 200+ trees.</td></tr>
+      <tr><td><span class="term-name">Early Stopping</span></td><td>Automatically stops adding trees when validation score stops improving. Prevents overfitting and removes need to tune n_estimators.</td><td>early_stopping_rounds=50: stop after 50 rounds with no improvement</td></tr>
+      <tr><td><span class="term-name">subsample</span></td><td>Fraction of training rows used for each tree. Like bootstrap in RF but without replacement.</td><td>subsample=0.8: each tree sees 80% of training rows randomly</td></tr>
+      <tr><td><span class="term-name">colsample_bytree</span></td><td>Fraction of features used for each tree. Like max_features='fraction' in RF.</td><td>colsample_bytree=0.7: each tree considers 70% of features</td></tr>
+      <tr><td><span class="term-name">min_child_weight</span></td><td>Minimum number of samples required in a leaf. Higher = more conservative = less overfitting.</td><td>min_child_weight=5: each leaf must cover at least 5 training samples</td></tr>
+      <tr><td><span class="term-name">gamma</span></td><td>Minimum loss reduction required to split a node. Increases tree conservatism.</td><td>gamma=0.5: only split if doing so reduces loss by at least 0.5</td></tr>
+      <tr><td><span class="term-name">scale_pos_weight</span></td><td>Upweights positive class samples. Fix for imbalanced datasets.</td><td>scale_pos_weight=20: model pays 20× more attention to minority class</td></tr>
+      <tr><td><span class="term-name">num_leaves (LightGBM)</span></td><td>Maximum number of leaves per tree. Controls model complexity. More important than max_depth in LightGBM.</td><td>num_leaves=63: tree can have at most 63 leaf nodes</td></tr>
+      <tr><td><span class="term-name">SHAP Values</span></td><td>Shapley Additive Explanations — explains each individual prediction by showing how much each feature pushed it up or down. Most reliable feature importance method.</td><td>Feature "credit_score" pushed this prediction +0.23 (toward approval)</td></tr>
+      <tr><td><span class="term-name">Gradient</span></td><td>The mathematical derivative of the loss function with respect to predictions. Points in the direction of steepest error increase — so moving opposite to it reduces error.</td><td>Gradient descent for trees: each tree fitted to negative gradients</td></tr>
+    </table></div>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════
@@ -2974,133 +3166,310 @@ high_risk = X_test_df[X_test_df[<span class="c-str">'churn_probability'</span>] 
     <div class="algo-number">6</div>
     <div>
       <div class="algo-title">SVM — Support Vector Machine</div>
-      <div class="algo-subtitle">Finds the widest possible road between two classes</div>
+      <div class="algo-subtitle">Find the widest margin boundary between classes — powerful for text, images, and small high-dimensional datasets</div>
     </div>
   </div>
   <div class="tab-bar">
     <button class="tab-btn active" onclick="showTab('s6','what')">📖 What Is It</button>
     <button class="tab-btn" onclick="showTab('s6','how')">⚙️ How It Works</button>
     <button class="tab-btn" onclick="showTab('s6','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s6','code')">💻 Code & Internals</button>
+    <button class="tab-btn" onclick="showTab('s6','code')">💻 Code &amp; Internals</button>
     <button class="tab-btn" onclick="showTab('s6','terms')">📚 Key Terms</button>
   </div>
-
   <div class="tab-content active" id="s6-what">
     <div class="card">
-      <h3>What is SVM?</h3>
-      <p>SVM finds the decision boundary (hyperplane) that has the <strong>maximum margin</strong> — the widest possible gap between the two classes. A wider road = more confident separation = better generalization to new data.</p>
+      <h3>What is an SVM? (Plain English)</h3>
+      <p>A Support Vector Machine (SVM) classifies data by finding the <strong>best dividing line</strong> (or plane, or curve) between two classes. What makes it special: it doesn't just find any dividing line — it finds the one with the <strong>maximum margin</strong> — the widest possible gap between the boundary and the nearest data points from either class.</p>
+      <p>The data points that sit right on the edge of this margin (closest to the boundary) are called <strong>support vectors</strong>. These are the only points that matter for defining the boundary. Move any other point — the boundary doesn't change. Only the support vectors affect the decision boundary. This is why the algorithm is named after them.</p>
+      <div class="highlight"><p><strong>Key insight:</strong> Maximising the margin = maximising generalisation. A boundary with a wide margin is less likely to misclassify points that are slightly off their training positions. It's more robust to noise.</p></div>
     </div>
-    <div class="analogy">
-      <div class="label">🛣️ Analogy — The Widest Road Between Two Groups</div>
-      <p>Imagine red dots (spam) and blue dots (not spam) on a map. Many lines could separate them. SVM finds the line that has the maximum empty space on both sides — like drawing the widest road possible between two neighborhoods. The specific data points touching the edges of this road are called <strong>support vectors</strong> — they literally define where the road goes.</p>
-    </div>
-    <div class="card">
-      <h3>SVM Strengths and Weaknesses</h3>
-      <table class="cmp-table">
-        <tr><th>Strengths</th><th>Weaknesses</th></tr>
-        <tr><td>Works well in high-dimensional spaces (thousands of features)</td><td>Slow on large datasets (millions of rows)</td></tr>
-        <tr><td>Effective when features &gt; samples</td><td>Sensitive to feature scaling</td></tr>
-        <tr><td>Kernel trick handles non-linear data</td><td>Difficult to interpret</td></tr>
-        <tr><td>Robust to outliers (only support vectors matter)</td><td>Hyperparameter tuning needed</td></tr>
-      </table>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s6-how">
-    <div class="card">
-      <h3>The Margin — Why Wider is Better</h3>
-      <p>If the decision boundary passes very close to some training points, a slight change in those points (noise) could misclassify them. A wider margin means the model is more robust to noise and generalizes better to unseen data.</p>
-    </div>
+    <div style="text-align:center;margin:16px 0">
+<svg viewBox="0 0 480 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;background:#0f172a;border-radius:12px;">
+  <!-- Hyperplane (decision boundary) -->
+  <line x1="80" y1="220" x2="400" y2="30" stroke="#fbbf24" stroke-width="2.5"/>
+  <!-- Margin lines (dashed) -->
+  <line x1="40"  y1="220" x2="360" y2="30" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="6,3"/>
+  <line x1="120" y1="220" x2="440" y2="30" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="6,3"/>
+  <!-- Margin annotation -->
+  <line x1="140" y1="155" x2="200" y2="145" stroke="#f97316" stroke-width="1.5"/>
+  <line x1="200" y1="145" x2="260" y2="130" stroke="#f97316" stroke-width="1.5"/>
+  <text x="205" y="135" fill="#f97316" font-size="9" font-family="sans-serif">← margin →</text>
+  <!-- Class 0 points (blue, bottom-left) -->
+  <circle cx="60"  cy="190" r="7" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <circle cx="95"  cy="175" r="7" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <circle cx="70"  cy="150" r="7" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <circle cx="115" cy="200" r="7" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <circle cx="130" cy="165" r="7" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2"/>
+  <!-- Support vectors (class 0) — on margin line -->
+  <circle cx="100" cy="155" r="8" fill="#1d4ed8" stroke="#60a5fa" stroke-width="2.5"/>
+  <circle cx="100" cy="155" r="13" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="60" y="136" fill="#60a5fa" font-size="8">support vector</text>
+  <!-- Class 1 points (red, top-right) -->
+  <circle cx="330" cy="65"  r="7" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+  <circle cx="360" cy="85"  r="7" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+  <circle cx="390" cy="55"  r="7" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+  <circle cx="350" cy="110" r="7" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+  <circle cx="410" cy="80"  r="7" fill="#7f1d1d" stroke="#f87171" stroke-width="2"/>
+  <!-- Support vectors (class 1) -->
+  <circle cx="310" cy="95"  r="8" fill="#7f1d1d" stroke="#f87171" stroke-width="2.5"/>
+  <circle cx="310" cy="95"  r="13" fill="none" stroke="#f87171" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="320" y="115" fill="#f87171" font-size="8">support vector</text>
+  <!-- Labels -->
+  <text x="55"  y="232" fill="#60a5fa" font-size="10" font-family="sans-serif">Class 0 →</text>
+  <text x="380" y="45"  fill="#f87171" font-size="10" font-family="sans-serif">← Class 1</text>
+  <text x="210" y="215" fill="#fbbf24" font-size="10" font-family="sans-serif">Decision Boundary</text>
+  <text x="240" y="243" text-anchor="middle" fill="#64748b" font-size="9">SVM maximises the margin (gap between boundary and nearest points). Only support vectors matter.</text>
+</svg></div>
     <div class="card">
       <h3>The Kernel Trick — Handling Non-Linear Data</h3>
-      <p>What if the data isn't linearly separable? (Can't draw a straight line between classes.) The <strong>kernel trick</strong> mathematically transforms the data into a higher dimension where a linear boundary does separate the classes — then transforms back.</p>
-      <div class="analogy">
-        <div class="label">🎪 Analogy — Lifting Points Off the Paper</div>
-        <p>Imagine red dots surrounding blue dots in a circle — no straight line separates them. But if you "lift" each point off the paper into 3D (z = x² + y²), the red dots and blue dots are now at different heights. A flat plane in 3D separates them perfectly. That's the kernel trick!</p>
+      <p>What if the data can't be separated by a straight line? (Most real data.) The kernel trick maps data into a higher-dimensional space where it becomes linearly separable, solves it there, and maps the decision boundary back to the original space — appearing as a curve.</p>
+      <p>Crucially, you never actually compute the high-dimensional coordinates. The "kernel function" computes the similarity between points directly, avoiding the expensive calculation. This is the mathematical trick that makes SVMs powerful.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0">
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#f87171;font-weight:700;margin:0 0 6px;font-size:12px">Non-linear data in 2D — not separable</p>
+<svg viewBox="0 0 180 140" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <!-- Inner circle class 0 (blue) -->
+  <circle cx="90" cy="70" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="75" cy="60" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="105" cy="75" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="80" cy="82" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="100" cy="58" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <!-- Outer ring class 1 (red) -->
+  <circle cx="40"  cy="35"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="140" cy="40"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="30"  cy="100" r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="150" cy="105" r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="90"  cy="130" r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="90"  cy="20"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="165" cy="70"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="15"  cy="70"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <text x="90" y="150" text-anchor="middle" fill="#f87171" font-size="8">No straight line can separate these!</text>
+</svg>
+</div>
+<div style="background:#0f172a;border-radius:10px;padding:12px;text-align:center">
+<p style="color:#34d399;font-weight:700;margin:0 0 6px;font-size:12px">RBF Kernel — circular boundary in 2D</p>
+<svg viewBox="0 0 180 140" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <!-- Same data but with circular decision boundary -->
+  <circle cx="90" cy="70" r="45" fill="none" stroke="#fbbf24" stroke-width="2" stroke-dasharray="5,3"/>
+  <!-- Inner class (blue) -->
+  <circle cx="90" cy="70" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="75" cy="60" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="105" cy="75" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="80" cy="82" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="100" cy="58" r="5" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1.5"/>
+  <!-- Outer class (red) -->
+  <circle cx="40"  cy="35"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="140" cy="40"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="30"  cy="100" r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="150" cy="105" r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="90"  cy="130" r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="90"  cy="20"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="165" cy="70"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <circle cx="15"  cy="70"  r="5" fill="#7f1d1d" stroke="#f87171" stroke-width="1.5"/>
+  <text x="90" y="150" text-anchor="middle" fill="#34d399" font-size="8">RBF kernel finds circular/curved boundaries</text>
+</svg>
+</div></div>
+</div>
+  <div class="tab-content" id="s6-how">
+    <div class="card">
+      <h3>sklearn SVC — ALL Parameters Explained</h3>
+      <div style="background:#1e293b;border-radius:8px;padding:12px;margin:8px 0">
+        <p style="color:#fbbf24;font-weight:700;margin:0 0 8px">SVC(C, kernel, degree, gamma, coef0, probability, class_weight, ...)</p>
+        <table class="term-table" style="font-size:12px">
+          <tr><th>Parameter</th><th>What it means</th><th>Default</th><th>Impact if changed</th></tr>
+          <tr>
+            <td><code>C</code></td>
+            <td>Regularisation parameter. Controls the trade-off between maximising the margin and correctly classifying every training point. C=soft margin width inverse.</td>
+            <td>1.0</td>
+            <td><strong>Small C (e.g. 0.01):</strong> wider margin, allows some misclassifications, better generalisation (underfits if too small). <strong>Large C (e.g. 100):</strong> narrow margin, tries to classify everything correctly — may overfit. Start with 1.0, tune with CV.</td>
+          </tr>
+          <tr>
+            <td><code>kernel</code></td>
+            <td>The kernel function that transforms the feature space. Controls what shapes the decision boundary can take.</td>
+            <td>'rbf'</td>
+            <td><strong>'linear':</strong> straight line/plane boundary. Use when data is linearly separable or high-dimensional text. <strong>'rbf':</strong> Radial Basis Function — circular/curved boundaries. Best general default. <strong>'poly':</strong> polynomial boundary. <strong>'sigmoid':</strong> similar to neural network.</td>
+          </tr>
+          <tr>
+            <td><code>degree</code></td>
+            <td>Degree of the polynomial kernel. Only used when kernel='poly'.</td>
+            <td>3</td>
+            <td>degree=2: quadratic boundary. degree=3: cubic. Higher = more complex curve = more overfitting risk.</td>
+          </tr>
+          <tr>
+            <td><code>gamma</code></td>
+            <td>Kernel coefficient for 'rbf', 'poly', 'sigmoid'. Controls how far the influence of a single training example reaches.</td>
+            <td>'scale'</td>
+            <td><strong>'scale':</strong> 1/(n_features × X.var()) — good default. <strong>'auto':</strong> 1/n_features. <strong>Small gamma:</strong> far reach, smooth boundary (may underfit). <strong>Large gamma:</strong> close reach, wiggly boundary (may overfit). Most important RBF hyperparameter.</td>
+          </tr>
+          <tr>
+            <td><code>coef0</code></td>
+            <td>Independent term in kernel function. Only significant for 'poly' and 'sigmoid'.</td>
+            <td>0.0</td>
+            <td>Rarely need to change. Affects the shape of poly/sigmoid kernels. Leave as 0 unless specifically tuning polynomial kernels.</td>
+          </tr>
+          <tr>
+            <td><code>probability</code></td>
+            <td>Whether to enable probability estimates (predict_proba()). Uses 5-fold cross-validation internally — slower training.</td>
+            <td>False</td>
+            <td>Set True if you need probability output (not just class labels). Adds significant training time. For just class predictions, leave False.</td>
+          </tr>
+          <tr>
+            <td><code>class_weight</code></td>
+            <td>Weights for each class. 'balanced' adjusts C by class frequency.</td>
+            <td>None</td>
+            <td>Use 'balanced' for imbalanced datasets.</td>
+          </tr>
+          <tr>
+            <td><code>tol</code></td>
+            <td>Stopping tolerance. Training stops when improvement is smaller than this.</td>
+            <td>1e-3</td>
+            <td>Decrease (e.g. 1e-5) for more precise solution. Increase to speed up training.</td>
+          </tr>
+          <tr>
+            <td><code>max_iter</code></td>
+            <td>Maximum iterations. -1 = no limit.</td>
+            <td>-1</td>
+            <td>Set a limit (e.g. 1000) if training is taking too long. May get ConvergenceWarning — increase tol or scale your data.</td>
+          </tr>
+        </table>
       </div>
     </div>
     <div class="card">
-      <h3>C Parameter: Margin vs Misclassification Tradeoff</h3>
-      <ul>
-        <li><strong>Small C (e.g., 0.1)</strong> → Wide margin, allows some misclassifications. Simpler boundary. Better generalization if data is noisy.</li>
-        <li><strong>Large C (e.g., 100)</strong> → Narrow margin, tries to classify everything correctly. Can overfit.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s6-use">
-    <div class="card">
-      <h3>🐱 Real Use Case: Image Classification (Cats vs Dogs)</h3>
-      <p>Before deep learning dominated, SVM was the state-of-the-art for image classification. Each pixel of an image becomes a feature. An image with 100×100 pixels = 10,000 features. SVM excels in this high-dimensional space.</p>
+      <h3>Critical: SVM REQUIRES Feature Scaling</h3>
+      <p>SVM uses distances to find the margin. If one feature is 0–1 and another is 0–100,000, the large-scale feature completely dominates the distance calculation. The model will effectively ignore the small-scale feature.</p>
+      <div class="highlight"><p><strong>Always:</strong> StandardScaler().fit_transform(X_train) before SVM. This is not optional. It's the single most important preprocessing step for SVM. Without it, results are often terrible.</p></div>
     </div>
     <div class="card">
-      <h3>Also Used For</h3>
-      <ul>
-        <li><strong>Text Classification:</strong> Spam detection using word frequencies (TF-IDF vectors)</li>
-        <li><strong>Bioinformatics:</strong> Classifying gene expression profiles (thousands of genes = features)</li>
-        <li><strong>Face Detection:</strong> Classifying face vs non-face patches in images</li>
-        <li><strong>Handwriting Recognition:</strong> Digit classification (0-9)</li>
-      </ul>
-      <div class="highlight"><p>SVM was the go-to algorithm for text classification before transformers. It handles high-dimensional sparse vectors (TF-IDF) extremely well.</p></div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s6-code">
-    <div class="card"><h3>Complete Code: SVM with Pipeline and GridSearch</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">from</span> sklearn.svm <span class="c-kw">import</span> <span class="c-cls">SVC</span>                               <span class="code-comment"># grab SVC from sklearn.svm</span>
-<span class="c-kw">from</span> sklearn.pipeline <span class="c-kw">import</span> <span class="c-cls">Pipeline</span>                     <span class="code-comment"># grab Pipeline from sklearn.pipeline</span>
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>          <span class="code-comment"># grab StandardScaler from sklearn.preprocessing</span>
-<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> GridSearchCV, train_test_split <span class="code-comment"># grab GridSearchCV, train_test_split from sklearn.model_selection</span>
-<span class="c-kw">from</span> sklearn.datasets <span class="c-kw">import</span> load_breast_cancer           <span class="code-comment"># grab load_breast_cancer from sklearn.datasets</span>
-<span class="c-kw">from</span> sklearn.metrics <span class="c-kw">import</span> classification_report         <span class="code-comment"># grab classification_report from sklearn.metrics</span>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-
-data = load_breast_cancer()
-X, y = data.data, data.target
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) # ← # split data into training set and test set
-
-pipeline = <span class="c-cls">Pipeline</span>([                                     <span class="code-comment"># chain preprocessing + model steps into one object</span>
-    ('scaler', <span class="c-cls">StandardScaler</span>()),                         <span class="code-comment"># make all features the same scale (mean 0, spread 1)</span>
-    ('svm', <span class="c-cls">SVC</span>(kernel='rbf', probability=True, random_state=42)) <span class="code-comment"># draw a boundary that best separates the two groups</span>
-])
-
-param_grid = {
-    'svm__C': [0.1, 1, 10, 100],
-    'svm__gamma': ['scale', 'auto', 0.001, 0.01]
-}
-
-grid_search = <span class="c-cls">GridSearchCV</span>(pipeline, param_grid, cv=5, scoring='roc_auc', n_jobs=-1) <span class="code-comment"># try every combination of settings to find the best</span>
-grid_search.fit(X_train, y_train)                         <span class="code-comment"># teach the model using training examples</span>
-
-print(f"Best params: {grid_search.best_params_}")         <span class="code-comment"># the settings that gave the best score</span>
-print(f"Best CV AUC: {grid_search.best_score_:.3f}")      <span class="code-comment"># the best score found during tuning</span>
-
-best_model = grid_search.best_estimator_
-y_pred = best_model.predict(X_test)                       <span class="code-comment"># let the model guess labels for test data</span>
-print(classification_report(y_test, y_pred, target_names=['Malignant', 'Benign'])) # ← # precision, recall and F1-score for each class
-
-svm_model = best_model.named_steps['svm']
-print(f"Number of support vectors: {svm_model.n_support_}") # ← # print output to console
-</pre></div>
-  </div>
-
-  <div class="tab-content" id="s6-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
+      <h3>SVM Limitations</h3>
       <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Hyperplane</span></td><td>The decision boundary in N dimensions. A line in 2D, a plane in 3D, a hyperplane in higher dimensions.</td><td>In 2D: the line separating spam from not-spam</td></tr>
-        <tr><td><span class="term-name">Margin</span></td><td>The total width of the empty road between classes. SVM maximizes this.</td><td>Margin = 2 / ||w|| where w is the weight vector</td></tr>
-        <tr><td><span class="term-name">Support Vectors</span></td><td>The training points closest to the decision boundary — on the edges of the road. These alone define the boundary.</td><td>Remove non-support-vector points → boundary doesn't change</td></tr>
-        <tr><td><span class="term-name">Kernel Trick</span></td><td>A mathematical function that computes dot products in higher dimensions without explicitly transforming the data</td><td>RBF kernel: makes non-linearly separable data separable</td></tr>
-        <tr><td><span class="term-name">C Parameter</span></td><td>Penalty for misclassification. High C = strict (narrow margin, more overfit). Low C = lenient (wide margin, more robust).</td><td>C=0.1 → ignore a few misclassifications, keep margin wide</td></tr>
-        <tr><td><span class="term-name">Gamma (RBF)</span></td><td>Controls how far the influence of a single training point reaches. High gamma = complex, wiggly boundary.</td><td>gamma=0.001: smooth boundary. gamma=10: very complex boundary</td></tr>
-        <tr><td><span class="term-name">Hard Margin</span></td><td>No misclassifications allowed — only possible if data is perfectly separable. Rarely used in practice.</td><td>Works perfectly only on clean, linearly separable data</td></tr>
-        <tr><td><span class="term-name">Soft Margin</span></td><td>Allows some points to be on the wrong side of the margin. Controlled by C parameter. Used in practice.</td><td>The default SVC behavior</td></tr>
+        <tr><th>Problem</th><th>Detail</th><th>Workaround</th></tr>
+        <tr><td>Slow on large datasets</td><td>O(n²) to O(n³) training time — very slow beyond ~50,000 samples</td><td>Use LinearSVC (much faster for linear kernel) or switch to XGBoost</td></tr>
+        <tr><td>No native probability output</td><td>SVM outputs class labels, not probabilities. Getting probabilities requires probability=True which is slow.</td><td>Use Logistic Regression instead when probabilities are needed</td></tr>
+        <tr><td>Sensitive to feature scale</td><td>Must scale features — not optional</td><td>Always use StandardScaler first</td></tr>
+        <tr><td>Hard to tune</td><td>C and gamma interact — wrong combination = very bad results</td><td>Use GridSearchCV over C and gamma; try log scale: [0.001, 0.01, 0.1, 1, 10, 100]</td></tr>
       </table>
     </div>
-  </div>
+</div>
+  <div class="tab-content" id="s6-use">
+    <div class="card">
+      <h3>Real-World Applications</h3>
+      <table class="term-table">
+        <tr><th>Industry</th><th>Use Case</th><th>Why SVM</th></tr>
+        <tr><td>Text Classification</td><td>Spam detection, sentiment analysis, document classification</td><td>Linear SVM works extremely well in high-dimensional sparse text feature spaces (TF-IDF vectors)</td></tr>
+        <tr><td>Bioinformatics</td><td>Protein classification, gene expression analysis</td><td>Handles high-dimensional data well; small datasets where SVM shines</td></tr>
+        <tr><td>Image Recognition (pre-deep learning)</td><td>Face detection, handwriting recognition</td><td>RBF SVM was state-of-the-art before CNNs; still used for small image datasets</td></tr>
+        <tr><td>Anomaly Detection</td><td>One-Class SVM for detecting outliers</td><td>Can learn the boundary of "normal" data; flags anything outside as anomalous</td></tr>
+        <tr><td>Finance</td><td>Stock direction prediction, risk classification</td><td>Works well on small, carefully engineered feature sets</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>When to Use SVM vs Other Algorithms</h3>
+      <table class="term-table">
+        <tr><th>Use SVM when</th><th>Avoid SVM when</th></tr>
+        <tr><td>Dataset is small to medium (&lt;50K rows)</td><td>Dataset has &gt;100K rows (too slow)</td></tr>
+        <tr><td>High-dimensional data (text, genomics)</td><td>You need probability estimates quickly</td></tr>
+        <tr><td>Clear margin of separation expected</td><td>You need fast inference in production at scale</td></tr>
+        <tr><td>Number of features &gt; number of samples</td><td>Features need to be scaled (sometimes not possible)</td></tr>
+      </table>
+    </div>
+</div>
+  <div class="tab-content" id="s6-code">
+    <div class="card"><h3>Complete Annotated Code — SVM Classification</h3></div>
+    <div class="code-block"><pre>
+<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+<span class="c-kw">from</span> sklearn.svm           <span class="c-kw">import</span> <span class="c-cls">SVC</span>, <span class="c-cls">LinearSVC</span>
+<span class="c-kw">from</span> sklearn.preprocessing  <span class="c-kw">import</span> <span class="c-cls">StandardScaler</span>
+<span class="c-kw">from</span> sklearn.model_selection <span class="c-kw">import</span> train_test_split, GridSearchCV, cross_val_score
+<span class="c-kw">from</span> sklearn.metrics        <span class="c-kw">import</span> classification_report
+
+<span class="code-comment"># ── 1. DATA ─────────────────────────────────────────────────────────</span>
+np.random.seed(42)
+n = 1000
+X = np.random.randn(n, 10)   <span class="code-comment"># 10 features</span>
+<span class="code-comment"># Non-linear target (SVM with RBF will handle this; linear won't)</span>
+y = ((X[:,0]**2 + X[:,1]**2 &lt; 2) | (X[:,2] + X[:,3] &gt; 2)).astype(int)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+<span class="code-comment"># ── 2. SCALE — MANDATORY FOR SVM ────────────────────────────────────</span>
+scaler = <span class="c-cls">StandardScaler</span>()
+X_train_s = scaler.fit_transform(X_train)  <span class="code-comment"># SVM without scaling = usually terrible results</span>
+X_test_s  = scaler.transform(X_test)
+
+<span class="code-comment"># ── 3. TRAIN SVM (RBF kernel — good default) ────────────────────────</span>
+svm = <span class="c-cls">SVC</span>(
+    C=1.0,              <span class="code-comment"># regularisation: higher = smaller margin, fits training harder</span>
+    kernel='rbf',       <span class="code-comment"># RBF: handles non-linear boundaries — good default</span>
+    gamma='scale',      <span class="code-comment"># 'scale' = 1/(n_features × variance) — usually best</span>
+    probability=True,   <span class="code-comment"># enable predict_proba() — slower but gives confidence scores</span>
+    class_weight='balanced',
+    random_state=42
+)
+svm.fit(X_train_s, y_train)
+
+<span class="code-comment"># ── 4. EVALUATE ─────────────────────────────────────────────────────</span>
+y_pred = svm.predict(X_test_s)
+print(classification_report(y_test, y_pred))
+print(f"Support vectors: {svm.n_support_}")  <span class="code-comment"># [n_sv_class0, n_sv_class1] — only these points define boundary</span>
+
+<span class="code-comment"># ── 5. TUNE C AND GAMMA VIA GRID SEARCH ─────────────────────────────</span>
+<span class="code-comment"># Use log-scale grid — C and gamma work over many orders of magnitude</span>
+param_grid = {
+    'C':     [0.01, 0.1, 1, 10, 100],    <span class="code-comment"># 5 values × 5 values = 25 combinations</span>
+    'gamma': [0.001, 0.01, 0.1, 1, 10]   <span class="code-comment"># each evaluated with 5-fold CV = 125 fits</span>
+}
+grid_search = GridSearchCV(
+    <span class="c-cls">SVC</span>(kernel='rbf', probability=True),
+    param_grid,
+    cv=5,
+    scoring='f1',      <span class="code-comment"># tune for F1 — good for imbalanced data</span>
+    n_jobs=-1          <span class="code-comment"># parallel — each CV fold runs on separate core</span>
+)
+grid_search.fit(X_train_s, y_train)
+print(f"Best C: {grid_search.best_params_['C']}")
+print(f"Best gamma: {grid_search.best_params_['gamma']}")
+print(f"Best CV F1: {grid_search.best_score_:.3f}")
+
+best_svm = grid_search.best_estimator_
+print(classification_report(y_test, best_svm.predict(X_test_s)))
+
+<span class="code-comment"># ── 6. LINEAR SVM (much faster for large datasets or text) ──────────</span>
+linear_svm = <span class="c-cls">LinearSVC</span>(
+    C=1.0,
+    max_iter=5000,     <span class="code-comment"># increase if ConvergenceWarning</span>
+    class_weight='balanced',
+    random_state=42
+)
+linear_svm.fit(X_train_s, y_train)
+print(f"LinearSVC F1: {cross_val_score(linear_svm, X_train_s, y_train, cv=5, scoring='f1').mean():.3f}")
+<span class="code-comment"># LinearSVC is ~100x faster than SVC(kernel='rbf') on large data</span>
+
+<span class="code-comment"># ── 7. PREDICT PROBABILITIES ────────────────────────────────────────</span>
+proba = svm.predict_proba(X_test_s[:3])   <span class="code-comment"># requires probability=True at init</span>
+print(f"P(class 0), P(class 1) for first 3 samples:
+{proba.round(3)}")
+</pre></div>
+</div>
+  <div class="tab-content" id="s6-terms">
+    <div class="card"><h3>Key Terms — SVM</h3>
+    <table class="term-table">
+      <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
+      <tr><td><span class="term-name">Hyperplane</span></td><td>The decision boundary. In 2D = a line. In 3D = a plane. In n-dimensional space = an (n-1)-dimensional surface.</td><td>A line separating spam from non-spam emails in 2D feature space</td></tr>
+      <tr><td><span class="term-name">Margin</span></td><td>The gap between the decision boundary and the nearest points (support vectors) from each class. SVM maximises this gap.</td><td>Wider margin = more robust model = less sensitive to individual point positions</td></tr>
+      <tr><td><span class="term-name">Support Vectors</span></td><td>The training points closest to the decision boundary. ONLY these points define where the boundary is. All other points are irrelevant.</td><td>If you remove a non-support-vector point from training data, the boundary doesn't change</td></tr>
+      <tr><td><span class="term-name">C (regularisation)</span></td><td>Controls margin width vs training error. Small C = wider margin, accepts some misclassifications (better generalisation). Large C = narrow margin, tries to classify everything (overfits).</td><td>C=0.1: wide, forgiving. C=1000: narrow, strict.</td></tr>
+      <tr><td><span class="term-name">Kernel</span></td><td>A function that computes similarity between data points. Different kernels allow SVM to find different shaped boundaries.</td><td>RBF kernel: similarity decreases with distance. Enables circular/curved boundaries.</td></tr>
+      <tr><td><span class="term-name">RBF Kernel</span></td><td>Radial Basis Function — the most common kernel. Measures similarity as a Gaussian function of distance. Enables highly non-linear boundaries.</td><td>Two points very close = high similarity. Far apart = near-zero similarity.</td></tr>
+      <tr><td><span class="term-name">Kernel Trick</span></td><td>Computing similarity in a high-dimensional space without actually computing the high-dimensional coordinates. Makes non-linear SVM computationally feasible.</td><td>RBF kernel implicitly maps to infinite dimensions but only computes exp(−γ||x−x'||²)</td></tr>
+      <tr><td><span class="term-name">gamma</span></td><td>RBF kernel parameter — controls the reach of each training point's influence. Small = far reach (smooth boundary). Large = close reach (complex wiggly boundary).</td><td>gamma=0.001: point influences wide region. gamma=100: point only influences immediate neighbourhood.</td></tr>
+      <tr><td><span class="term-name">Hard Margin</span></td><td>Requires ALL training points to be correctly classified and outside the margin. Only works if data is perfectly linearly separable (no noise).</td><td>Fails if even one outlier is on the wrong side</td></tr>
+      <tr><td><span class="term-name">Soft Margin</span></td><td>Allows some misclassifications in exchange for a wider margin. C controls this trade-off. This is what sklearn SVC uses by default.</td><td>C=1: allows reasonable misclassifications for a wider margin</td></tr>
+      <tr><td><span class="term-name">LinearSVC</span></td><td>SVM with linear kernel, implemented differently (using liblinear). Much faster than SVC(kernel='linear') for large datasets.</td><td>For text classification with 100K+ samples, always use LinearSVC</td></tr>
+    </table></div>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════

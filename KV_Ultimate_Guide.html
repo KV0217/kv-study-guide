@@ -11161,139 +11161,351 @@ I'm now targeting data analyst and data science roles where I can bring both tec
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════
      DS PHASE 14 — Core DS Theory
-═══════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════ -->
 <div class="phase-section" id="p14">
   <div class="phase-header">
     <h2>Phase 14 — Core DS Theory (Verbal Interview Questions)</h2>
   </div>
   <div class="phase-content">
 
+    <!-- INTRO -->
     <div class="topic-card">
-      <h3>Gradient Descent — Explained Simply</h3>
-      <div class="note-box"><strong>Interview analogy:</strong> "Imagine you're blindfolded on a hilly terrain and want to reach the lowest valley. Each step you take is in the direction that feels most downhill from where you stand. Gradient descent does the same — it looks at the slope of the loss function and moves the weights in the direction that reduces loss most."</div>
+      <h3>Why These Theory Questions Matter</h3>
+      <p style="line-height:1.7">At 12 LPA+ roles, interviewers don't just want you to run code — they want to know you understand <em>why</em> algorithms work. These verbal questions reveal whether you can debug a model, explain a decision to a non-technical stakeholder, and reason about trade-offs. Practice answering each in 2–3 sentences: start with the intuition, then mention when it matters, then give a concrete example.</p>
+    </div>
+
+    <!-- GRADIENT DESCENT -->
+    <div class="topic-card">
+      <h3>Gradient Descent — How Models Learn</h3>
+      <p style="line-height:1.7"><strong>The analogy:</strong> Imagine standing on a hilly terrain blindfolded, trying to reach the lowest valley. You feel the slope under your feet and take a step in the direction that feels most downhill. Gradient descent does the same thing mathematically — it looks at the slope of the loss function (how wrong the model currently is) and adjusts the weights in the direction that reduces loss most. The <strong>learning rate</strong> controls how big each step is.</p>
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Gradient Descent — Learning Rate Effect on Convergence</text>
+  <!-- Just right -->
+  <rect x="15" y="30" width="180" height="215" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="105" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Just Right LR</text>
+  <!-- bowl curve -->
+  <path d="M30,185 Q105,80 180,185" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+  <!-- path to minimum -->
+  <circle cx="45" cy="175" r="4" fill="#22c55e"/>
+  <circle cx="65" cy="148" r="4" fill="#22c55e"/>
+  <circle cx="85" cy="126" r="4" fill="#22c55e"/>
+  <circle cx="98" cy="112" r="4" fill="#22c55e"/>
+  <circle cx="105" cy="105" r="4" fill="#22c55e"/>
+  <line x1="45" y1="175" x2="65" y2="148" stroke="#22c55e" stroke-width="1.5"/>
+  <line x1="65" y1="148" x2="85" y2="126" stroke="#22c55e" stroke-width="1.5"/>
+  <line x1="85" y1="126" x2="98" y2="112" stroke="#22c55e" stroke-width="1.5"/>
+  <line x1="98" y1="112" x2="105" y2="105" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="105" y="100" text-anchor="middle" font-size="9" fill="#059669">minimum</text>
+  <text x="105" y="215" text-anchor="middle" font-size="10" fill="#374151">Smooth descent</text>
+  <text x="105" y="228" text-anchor="middle" font-size="10" fill="#374151">to global minimum</text>
+  <text x="105" y="242" text-anchor="middle" font-size="10" font-weight="bold" fill="#059669">✓ Converges well</text>
+  <!-- Too high LR -->
+  <rect x="215" y="30" width="190" height="215" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+  <text x="310" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">Too High LR</text>
+  <path d="M230,185 Q310,80 390,185" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+  <!-- bouncing path -->
+  <circle cx="245" cy="175" r="4" fill="#dc2626"/>
+  <circle cx="355" cy="165" r="4" fill="#dc2626"/>
+  <circle cx="255" cy="178" r="4" fill="#dc2626"/>
+  <circle cx="365" cy="170" r="4" fill="#dc2626"/>
+  <circle cx="250" cy="180" r="4" fill="#dc2626"/>
+  <polyline points="245,175 355,165 255,178 365,170 250,180" fill="none" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="310" y="215" text-anchor="middle" font-size="10" fill="#374151">Overshoots minimum,</text>
+  <text x="310" y="228" text-anchor="middle" font-size="10" fill="#374151">bounces back and forth</text>
+  <text x="310" y="242" text-anchor="middle" font-size="10" font-weight="bold" fill="#dc2626">✗ Diverges / oscillates</text>
+  <!-- Too low LR -->
+  <rect x="425" y="30" width="180" height="215" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="515" y="52" text-anchor="middle" font-size="11" font-weight="bold" fill="#a16207">Too Low LR</text>
+  <path d="M440,185 Q515,80 590,185" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+  <!-- tiny steps -->
+  <circle cx="445" cy="183" r="3" fill="#d97706"/>
+  <circle cx="455" cy="179" r="3" fill="#d97706"/>
+  <circle cx="465" cy="175" r="3" fill="#d97706"/>
+  <circle cx="475" cy="170" r="3" fill="#d97706"/>
+  <circle cx="485" cy="165" r="3" fill="#d97706"/>
+  <polyline points="445,183 455,179 465,175 475,170 485,165" fill="none" stroke="#d97706" stroke-width="1.5"/>
+  <text x="515" y="215" text-anchor="middle" font-size="10" fill="#374151">Takes forever —</text>
+  <text x="515" y="228" text-anchor="middle" font-size="10" fill="#374151">tiny steps toward min</text>
+  <text x="515" y="242" text-anchor="middle" font-size="10" font-weight="bold" fill="#a16207">✗ Very slow convergence</text>
+</svg>
+      <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="18" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Gradient Descent Variants — Batch vs SGD vs Mini-batch</text>
+  <!-- Batch GD -->
+  <rect x="10" y="28" width="190" height="150" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="105" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">Batch GD</text>
+  <text x="105" y="65" text-anchor="middle" font-size="10" fill="#374151">Use ALL data per update</text>
+  <!-- smooth line -->
+  <polyline points="25,145 55,130 80,118 100,110 115,106 125,104" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+  <circle cx="125" cy="104" r="4" fill="#059669"/>
+  <text x="105" y="170" text-anchor="middle" font-size="10" fill="#059669">✓ Stable, smooth path</text>
+  <text x="105" y="184" text-anchor="middle" font-size="10" fill="#dc2626">✗ Slow on large datasets</text>
+  <!-- SGD -->
+  <rect x="215" y="28" width="190" height="150" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+  <text x="310" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#dc2626">Stochastic GD (SGD)</text>
+  <text x="310" y="65" text-anchor="middle" font-size="10" fill="#374151">Use 1 sample per update</text>
+  <!-- noisy line -->
+  <polyline points="230,148 250,120 268,138 282,112 295,128 305,105 315,120 320,104" fill="none" stroke="#dc2626" stroke-width="2"/>
+  <circle cx="320" cy="104" r="4" fill="#059669"/>
+  <text x="310" y="170" text-anchor="middle" font-size="10" fill="#059669">✓ Fast, can escape local min</text>
+  <text x="310" y="184" text-anchor="middle" font-size="10" fill="#dc2626">✗ Noisy, may not converge</text>
+  <!-- Mini-batch -->
+  <rect x="420" y="28" width="190" height="150" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="515" y="48" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Mini-batch GD</text>
+  <text x="515" y="65" text-anchor="middle" font-size="10" fill="#374151">Use batch of 32–256</text>
+  <!-- slightly noisy but converging -->
+  <polyline points="435,148 455,128 472,118 487,110 498,108 507,105 516,104" fill="none" stroke="#22c55e" stroke-width="2.5"/>
+  <circle cx="516" cy="104" r="4" fill="#059669"/>
+  <text x="515" y="170" text-anchor="middle" font-size="10" fill="#059669">✓ Best of both worlds</text>
+  <text x="515" y="184" text-anchor="middle" font-size="10" fill="#374151">Standard for deep learning</text>
+</svg>
       <div class="code-block"><pre>
-# Manual gradient descent (linear regression)
-import numpy as np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
+import numpy as np
 
-X = np.array([1,2,3,4,5], dtype=float)                    <span class="code-comment"># turn a list into a NumPy number array</span>
-y = np.array([2,4,6,8,10], dtype=float)                   <span class="code-comment"># turn a list into a NumPy number array</span>
+# ── Manual gradient descent for linear regression ─────────────────────────────
+X = np.array([1, 2, 3, 4, 5], dtype=float)
+y = np.array([2, 4, 6, 8, 10], dtype=float)   # y = 2x
 
-w, b = 0.0, 0.0          # weights initialized to 0
-lr    = 0.01             # learning rate
-n     = len(X)                                            <span class="code-comment"># count how many items are in the collection</span>
+w, b = 0.0, 0.0     # start weights at 0
+lr   = 0.01         # learning rate: step size
+n    = len(X)
 
-for epoch in range(1000):                                 <span class="code-comment"># loop through each item in the list</span>
-    y_pred = w*X + b
-    loss   = ((y_pred - y)**2).mean()   # MSE loss
+for epoch in range(1000):
+    # Forward pass: compute predictions
+    y_pred = w * X + b
+    # Compute MSE loss
+    loss   = ((y_pred - y)**2).mean()
 
-    dw = (2/n) * (X * (y_pred - y)).sum()  # gradient w.r.t. w
-    db = (2/n) * (y_pred - y).sum()        # gradient w.r.t. b
+    # Backward pass: compute gradients (partial derivatives)
+    dw = (2/n) * (X * (y_pred - y)).sum()   # ∂Loss/∂w
+    db = (2/n) * (y_pred - y).sum()          # ∂Loss/∂b
 
-    w -= lr * dw   # update: move opposite to gradient
+    # Update weights: move opposite to gradient (downhill)
+    w -= lr * dw
     b -= lr * db
 
-print(f"w={w:.3f}, b={b:.3f}, loss={loss:.6f}")           <span class="code-comment"># show this value in the terminal</span>
-# converges to w≈2, b≈0 (correct: y = 2x)
+print(f"w={w:.3f}, b={b:.3f}, loss={loss:.6f}")   # converges to w≈2, b≈0
 </pre></div>
       <table class="term-table">
-        <tr><th>Variant</th><th>Update Frequency</th><th>Pros</th><th>Cons</th></tr>
-        <tr><td>Batch GD</td><td>Once per full dataset</td><td>Stable, smooth convergence</td><td>Slow on large data</td></tr>
-        <tr><td>Stochastic GD (SGD)</td><td>Once per sample</td><td>Fast, can escape local minima</td><td>Noisy, unstable</td></tr>
-        <tr><td>Mini-batch GD</td><td>Once per batch (32–256 rows)</td><td>Balance of speed + stability</td><td>Needs batch size tuning</td></tr>
+        <tr><th>Variant</th><th>Update Frequency</th><th>Pros</th><th>Cons</th><th>Used For</th></tr>
+        <tr><td>Batch GD</td><td>Once per full dataset</td><td>Stable, smooth convergence</td><td>Very slow on large data</td><td>Small datasets</td></tr>
+        <tr><td>Stochastic GD</td><td>Once per single sample</td><td>Fast, can escape local minima</td><td>Noisy, unstable</td><td>Online learning</td></tr>
+        <tr><td>Mini-batch GD</td><td>Once per batch (32–256)</td><td>Balance of speed + stability</td><td>Batch size tuning needed</td><td>Deep learning standard</td></tr>
       </table>
-      <table class="term-table">
-        <tr><th>Learning Rate Issue</th><th>What Happens</th><th>Fix</th></tr>
-        <tr><td>Too high</td><td>Overshoots minimum, diverges</td><td>Reduce LR; use LR scheduler</td></tr>
-        <tr><td>Too low</td><td>Converges very slowly</td><td>Increase LR</td></tr>
-        <tr><td>Just right</td><td>Smooth convergence</td><td>Use Adam optimizer (adaptive LR)</td></tr>
-      </table>
+      <div class="note-box"><strong>Adam optimizer:</strong> Modern deep learning uses Adam (Adaptive Moment Estimation) — it adapts the learning rate individually for each parameter. It almost always converges faster than vanilla SGD and requires less LR tuning. Default: lr=0.001, beta1=0.9, beta2=0.999.</div>
     </div>
 
+    <!-- REGULARIZATION -->
     <div class="topic-card">
       <h3>Regularization — L1 vs L2</h3>
+      <p style="line-height:1.7">When a model overfits, it has learned the noise in training data — its weights are too large, tuned to specific training examples rather than general patterns. Regularization adds a penalty for large weights to the loss function, forcing the model to keep weights small and generalizable. The geometric intuition below shows <em>why</em> L1 creates sparse (zero) weights while L2 merely shrinks them.</p>
+      <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">L1 vs L2 Regularization — Geometric Intuition</text>
+  <!-- L1 Lasso -->
+  <rect x="15" y="32" width="280" height="205" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="155" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">L1 (Lasso) — Sparse Solution</text>
+  <!-- axis -->
+  <line x1="100" y1="165" x2="225" y2="165" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="162" y1="90" x2="162" y2="218" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="228" y="168" font-size="9" fill="#94a3b8">w₁</text>
+  <text x="163" y="87" font-size="9" fill="#94a3b8">w₂</text>
+  <!-- diamond (L1 ball) -->
+  <polygon points="162,105 190,165 162,225 134,165" fill="#3b82f6" opacity=".2" stroke="#3b82f6" stroke-width="2"/>
+  <!-- corner point -->
+  <circle cx="134" cy="165" r="5" fill="#dc2626"/>
+  <text x="115" y="161" font-size="9" fill="#dc2626" font-weight="bold">corner!</text>
+  <text x="115" y="173" font-size="9" fill="#dc2626">w₁=0</text>
+  <!-- ellipse (loss contours) -->
+  <ellipse cx="180" cy="155" rx="50" ry="35" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <ellipse cx="180" cy="155" rx="35" ry="22" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <text x="215" y="152" font-size="9" fill="#7c3aed">loss contours</text>
+  <text x="155" y="235" text-anchor="middle" font-size="10" fill="#374151">Constraint region = diamond</text>
+  <text x="155" y="249" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">Corners → EXACT zeros → feature selection!</text>
+  <!-- L2 Ridge -->
+  <rect x="325" y="32" width="280" height="205" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="465" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#15803d">L2 (Ridge) — Shrink All Weights</text>
+  <!-- axis -->
+  <line x1="410" y1="165" x2="535" y2="165" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="472" y1="90" x2="472" y2="218" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="538" y="168" font-size="9" fill="#94a3b8">w₁</text>
+  <text x="473" y="87" font-size="9" fill="#94a3b8">w₂</text>
+  <!-- circle (L2 ball) -->
+  <circle cx="472" cy="165" r="42" fill="#22c55e" opacity=".15" stroke="#22c55e" stroke-width="2"/>
+  <!-- tangent point (edge, not corner) -->
+  <circle cx="445" cy="138" r="5" fill="#dc2626"/>
+  <text x="430" y="132" font-size="9" fill="#dc2626">smooth edge</text>
+  <text x="427" y="143" font-size="9" fill="#dc2626">w₁≈small</text>
+  <!-- ellipse (loss contours) -->
+  <ellipse cx="490" cy="148" rx="50" ry="35" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <ellipse cx="490" cy="148" rx="35" ry="22" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="3,2" opacity=".7"/>
+  <text x="425" y="235" text-anchor="middle" font-size="10" fill="#374151">Constraint region = circle</text>
+  <text x="465" y="249" text-anchor="middle" font-size="10" font-weight="bold" fill="#15803d">Smooth edges → small weights, NO exact zeros</text>
+</svg>
+      <div class="code-block"><pre>
+from sklearn.linear_model import Lasso, Ridge, ElasticNet, LogisticRegression
+
+# ── Ridge (L2): all features kept, weights shrunk proportionally ────────────
+ridge = Ridge(alpha=1.0)      # alpha = λ = regularization strength
+# loss = MSE + λ × Σw²
+# larger α → smaller weights → more regularization → less overfitting
+
+# ── Lasso (L1): drives some weights to exactly 0 → feature selection ────────
+lasso = Lasso(alpha=0.1)      # too high α → too many features zeroed out
+# loss = MSE + λ × Σ|w|
+# use: when you suspect many features are irrelevant
+
+# ── ElasticNet: combines both ─────────────────────────────────────────────────
+en = ElasticNet(alpha=0.1, l1_ratio=0.5)   # l1_ratio: 0=Ridge, 1=Lasso, 0.5=blend
+
+# ── For LogisticRegression: use C = 1/λ (inverse of regularization strength) ──
+lr_ridge = LogisticRegression(penalty='l2', C=1.0, solver='lbfgs')
+lr_lasso = LogisticRegression(penalty='l1', C=1.0, solver='liblinear')
+# C=1.0 → standard regularization; C=0.1 → strong regularization; C=10 → weak
+
+# ── After Lasso: check which features were kept ────────────────────────────────
+lasso.fit(X_train, y_train)
+kept_features = X_train.columns[lasso.coef_ != 0].tolist()
+print(f"Lasso kept {len(kept_features)} of {X_train.shape[1]} features")
+</pre></div>
       <table class="term-table">
         <tr><th></th><th>L1 (Lasso)</th><th>L2 (Ridge)</th><th>ElasticNet</th></tr>
-        <tr><td>Penalty term</td><td>λ × Σ|w|</td><td>λ × Σw²</td><td>α×L1 + (1-α)×L2</td></tr>
-        <tr><td>Effect on weights</td><td>Drives some weights exactly to 0</td><td>Shrinks all weights toward 0</td><td>Both</td></tr>
-        <tr><td>Feature selection</td><td>Yes (sparse model)</td><td>No (keeps all features)</td><td>Partial</td></tr>
-        <tr><td>Use when</td><td>Many irrelevant features</td><td>All features likely relevant / correlated features</td><td>Both conditions exist</td></tr>
-        <tr><td>Sklearn param</td><td>penalty='l1'</td><td>penalty='l2'</td><td>penalty='elasticnet'</td></tr>
+        <tr><td>Penalty term</td><td>λ × Σ|w|</td><td>λ × Σw²</td><td>α×L1 + (1−α)×L2</td></tr>
+        <tr><td>Effect on weights</td><td>Drives some to exactly 0</td><td>Shrinks all toward 0</td><td>Both effects</td></tr>
+        <tr><td>Feature selection?</td><td>Yes (sparse model)</td><td>No (keeps all)</td><td>Partial</td></tr>
+        <tr><td>Correlated features?</td><td>Picks one, zeros others</td><td>Keeps all, distributes weight</td><td>Distributes</td></tr>
+        <tr><td>Use when</td><td>Many irrelevant features suspected</td><td>All features likely relevant / correlated</td><td>Both conditions</td></tr>
       </table>
-      <div class="note-box"><strong>Interview answer for "What is regularization?"</strong><br>"Regularization prevents overfitting by adding a penalty for large weights to the loss function. L1 (Lasso) can zero out weights completely — it does built-in feature selection. L2 (Ridge) shrinks all weights proportionally — useful when all features matter. I always start with Ridge, then try Lasso if I suspect many features are irrelevant."</div>
     </div>
 
+    <!-- BAGGING VS BOOSTING -->
     <div class="topic-card">
       <h3>Ensemble Methods — Bagging vs Boosting</h3>
-      <table class="term-table">
-        <tr><th></th><th>Bagging</th><th>Boosting</th></tr>
-        <tr><td>How it works</td><td>Train multiple models in parallel on random subsets; average predictions</td><td>Train models sequentially; each corrects errors of previous</td></tr>
-        <tr><td>Goal</td><td>Reduce variance (fix overfitting)</td><td>Reduce bias (fix underfitting)</td></tr>
-        <tr><td>Models independent?</td><td>Yes — parallel</td><td>No — sequential</td></tr>
-        <tr><td>Example</td><td>Random Forest</td><td>XGBoost, LightGBM, AdaBoost</td></tr>
-        <tr><td>Overfit risk</td><td>Low (averaging reduces variance)</td><td>Higher (can overfit if too many rounds)</td></tr>
-      </table>
-      <div class="note-box"><strong>Interview answer:</strong> "Bagging trains diverse models independently and averages them — Random Forest is the best example. It reduces variance. Boosting trains models sequentially where each one focuses on the mistakes of the previous one — XGBoost does this with gradient descent on the residuals. It reduces bias. For tabular data, boosting almost always wins on accuracy but takes more careful tuning."</div>
+      <p style="line-height:1.7">Both methods combine many weak models into one strong model, but they do so in completely different ways. <strong>Bagging</strong> trains models independently (parallel) and averages their predictions — this cancels out individual errors and reduces overfitting. <strong>Boosting</strong> trains models sequentially, where each model focuses on correcting the mistakes of the previous one — this progressively reduces the error that remains after each round.</p>
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:1rem auto;font-family:sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Bagging vs Boosting — How Ensembles Work</text>
+  <!-- BAGGING left half -->
+  <rect x="10" y="30" width="290" height="225" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="155" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">BAGGING (Random Forest)</text>
+  <text x="155" y="68" text-anchor="middle" font-size="10" fill="#374151">Train trees in PARALLEL on random subsets</text>
+  <!-- data icon -->
+  <rect x="115" y="76" width="80" height="22" rx="4" fill="#3b82f6" opacity=".3"/>
+  <text x="155" y="91" text-anchor="middle" font-size="10" fill="#1d4ed8">Full Training Data</text>
+  <!-- 3 arrows down -->
+  <line x1="105" y1="98" x2="70" y2="120" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrB)"/>
+  <line x1="155" y1="98" x2="155" y2="120" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrB)"/>
+  <line x1="205" y1="98" x2="240" y2="120" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrB)"/>
+  <text x="70" y="115" text-anchor="middle" font-size="8" fill="#3b82f6">bootstrap</text>
+  <text x="155" y="115" text-anchor="middle" font-size="8" fill="#3b82f6">bootstrap</text>
+  <text x="240" y="115" text-anchor="middle" font-size="8" fill="#3b82f6">bootstrap</text>
+  <!-- 3 trees -->
+  <rect x="40" y="125" width="55" height="35" rx="4" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="67" y="147" text-anchor="middle" font-size="10" fill="#1d4ed8">Tree 1</text>
+  <rect x="127" y="125" width="55" height="35" rx="4" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="154" y="147" text-anchor="middle" font-size="10" fill="#1d4ed8">Tree 2</text>
+  <rect x="214" y="125" width="55" height="35" rx="4" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="241" y="147" text-anchor="middle" font-size="10" fill="#1d4ed8">Tree 3</text>
+  <!-- arrows to vote -->
+  <line x1="67" y1="160" x2="100" y2="185" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="154" y1="160" x2="154" y2="185" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="241" y1="160" x2="210" y2="185" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="100" y="185" width="110" height="28" rx="6" fill="#2563eb" opacity=".8"/>
+  <text x="155" y="203" text-anchor="middle" font-size="10" fill="white" font-weight="bold">MAJORITY VOTE</text>
+  <text x="155" y="225" text-anchor="middle" font-size="10" fill="#374151">Reduces VARIANCE (overfitting)</text>
+  <text x="155" y="240" text-anchor="middle" font-size="10" fill="#374151">Trees are independent → averaging</text>
+  <text x="155" y="255" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">Example: Random Forest</text>
+  <!-- BOOSTING right half -->
+  <rect x="320" y="30" width="290" height="225" rx="8" fill="#fef2f2" stroke="#f87171" stroke-width="1.5"/>
+  <text x="465" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#dc2626">BOOSTING (XGBoost)</text>
+  <text x="465" y="68" text-anchor="middle" font-size="10" fill="#374151">Train trees SEQUENTIALLY — each fixes errors</text>
+  <!-- chain of trees -->
+  <rect x="340" y="80" width="60" height="35" rx="4" fill="#fee2e2" stroke="#f87171"/>
+  <text x="370" y="102" text-anchor="middle" font-size="10" fill="#dc2626">Tree 1</text>
+  <text x="370" y="116" text-anchor="middle" font-size="8" fill="#dc2626">(learns basics)</text>
+  <line x1="400" y1="97" x2="420" y2="97" stroke="#dc2626" stroke-width="2" marker-end="url(#arrR)"/>
+  <text x="410" y="92" text-anchor="middle" font-size="8" fill="#6b7280">errors</text>
+  <rect x="420" y="80" width="60" height="35" rx="4" fill="#fee2e2" stroke="#f87171"/>
+  <text x="450" y="102" text-anchor="middle" font-size="10" fill="#dc2626">Tree 2</text>
+  <text x="450" y="116" text-anchor="middle" font-size="8" fill="#dc2626">(fixes T1 errors)</text>
+  <line x1="480" y1="97" x2="500" y2="97" stroke="#dc2626" stroke-width="2" marker-end="url(#arrR)"/>
+  <text x="490" y="92" text-anchor="middle" font-size="8" fill="#6b7280">errors</text>
+  <rect x="500" y="80" width="60" height="35" rx="4" fill="#fee2e2" stroke="#f87171"/>
+  <text x="530" y="102" text-anchor="middle" font-size="10" fill="#dc2626">Tree 3</text>
+  <text x="530" y="116" text-anchor="middle" font-size="8" fill="#dc2626">(fixes T2 errors)</text>
+  <!-- cumulative sum -->
+  <text x="465" y="145" text-anchor="middle" font-size="10" fill="#374151">Final prediction = weighted sum</text>
+  <text x="465" y="160" text-anchor="middle" font-size="10" fill="#374151">of all tree predictions</text>
+  <rect x="390" y="170" width="150" height="28" rx="6" fill="#dc2626" opacity=".8"/>
+  <text x="465" y="188" text-anchor="middle" font-size="10" fill="white" font-weight="bold">T1 + T2 + T3 + ...</text>
+  <text x="465" y="215" text-anchor="middle" font-size="10" fill="#374151">Reduces BIAS (underfitting)</text>
+  <text x="465" y="230" text-anchor="middle" font-size="10" fill="#374151">Focuses on hard examples</text>
+  <text x="465" y="248" text-anchor="middle" font-size="10" font-weight="bold" fill="#dc2626">Example: XGBoost, LightGBM</text>
+  <defs>
+    <marker id="arrB" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrR" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+</svg>
       <div class="code-block"><pre>
-# Stacking (advanced ensemble) — use predictions as features
-from sklearn.ensemble import StackingClassifier           <span class="code-comment"># grab StackingClassifier from sklearn.ensemble</span>
-from sklearn.linear_model import LogisticRegression       <span class="code-comment"># grab LogisticRegression from sklearn.linear_model</span>
-from sklearn.ensemble import RandomForestClassifier       <span class="code-comment"># grab RandomForestClassifier from sklearn.ensemble</span>
-from xgboost import XGBClassifier                         <span class="code-comment"># grab XGBClassifier from xgboost</span>
+# ── Stacking — an advanced ensemble using model predictions as features ────────
+from sklearn.ensemble import StackingClassifier, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
+from sklearn.model_selection import cross_val_score
 
+# Level-0 models (base learners): diverse algorithms
 estimators = [
-    ('rf',  RandomForestClassifier(n_estimators=100, random_state=42)), # ← # ensemble of trees voting together — reduces overfitting
-    ('xgb', XGBClassifier(n_estimators=200, random_state=42)) # ← # XGBoost: fast gradient boosting, handles missing values
+    ('rf',  RandomForestClassifier(n_estimators=100, random_state=42)),
+    ('xgb', XGBClassifier(n_estimators=200, use_label_encoder=False, eval_metric='logloss', random_state=42))
 ]
+
+# Level-1 model (meta-learner): learns how to combine base predictions
 stack = StackingClassifier(
     estimators=estimators,
-    final_estimator=LogisticRegression(),  # meta-learner
-    cv=5, passthrough=False
+    final_estimator=LogisticRegression(max_iter=1000),
+    cv=5,               # use CV to generate out-of-fold predictions for level-1
+    passthrough=False   # True = also pass original features to meta-learner
 )
-stack.fit(X_train, y_train)                               <span class="code-comment"># teach the model using training examples</span>
+scores = cross_val_score(stack, X, y, cv=5, scoring='roc_auc')
+print(f"Stacking AUC: {scores.mean():.4f} ± {scores.std():.4f}")
 </pre></div>
     </div>
 
+    <!-- BACKPROP -->
     <div class="topic-card">
-      <h3>Backpropagation — What It Is</h3>
-      <div class="note-box"><strong>Interview answer (keep it simple):</strong><br>"Backpropagation is how neural networks learn. In the forward pass, input flows through layers to produce a prediction. We calculate the loss — how wrong we were. In the backward pass, we use the chain rule of calculus to compute how much each weight contributed to that error. We then update weights using gradient descent to reduce the loss. This happens for every batch of training data until the loss converges."</div>
+      <h3>Backpropagation — The Chain Rule for Learning</h3>
+      <p style="line-height:1.7"><strong>Interview answer (keep it simple):</strong> "Backpropagation is how neural networks learn. In the forward pass, input flows through layers to produce a prediction. We calculate the loss — how wrong we were. In the backward pass, we use the chain rule of calculus to compute how much each weight contributed to that error. We then update weights using gradient descent to reduce the loss. This repeats for every batch of training data until validation loss stops improving."</p>
       <table class="term-table">
-        <tr><th>Step</th><th>What Happens</th></tr>
-        <tr><td>1. Forward pass</td><td>Input → Hidden layers → Output → Prediction</td></tr>
-        <tr><td>2. Loss calculation</td><td>Compare prediction to true label (e.g. cross-entropy)</td></tr>
-        <tr><td>3. Backward pass</td><td>Chain rule: ∂Loss/∂w = ∂Loss/∂output × ∂output/∂w</td></tr>
-        <tr><td>4. Weight update</td><td>w = w − learning_rate × gradient</td></tr>
-        <tr><td>5. Repeat</td><td>Until validation loss stops improving</td></tr>
+        <tr><th>Step</th><th>What Happens</th><th>Formula</th></tr>
+        <tr><td>1. Forward pass</td><td>Input flows through layers → prediction</td><td>ŷ = σ(W₂ × σ(W₁x + b₁) + b₂)</td></tr>
+        <tr><td>2. Loss calculation</td><td>Compare prediction to true label</td><td>L = −[y·log(ŷ) + (1−y)·log(1−ŷ)]</td></tr>
+        <tr><td>3. Backward pass</td><td>Chain rule: propagate gradients backward</td><td>∂L/∂w = ∂L/∂ŷ × ∂ŷ/∂w</td></tr>
+        <tr><td>4. Weight update</td><td>Move weights opposite to gradient</td><td>w ← w − η × ∂L/∂w</td></tr>
+        <tr><td>5. Repeat</td><td>Until validation loss stops improving</td><td>Early stopping when val_loss &gt; prev_val_loss</td></tr>
       </table>
+      <div class="note-box"><strong>Vanishing gradient:</strong> In deep networks, gradients shrink exponentially as they propagate backward through many sigmoid/tanh layers — early layers learn almost nothing. Fix: use ReLU activation (gradient = 1 when active, not 0–1 like sigmoid), batch normalization, or residual connections (ResNet adds x back to f(x) so gradient always &gt; 0).</div>
     </div>
 
+    <!-- CORE THEORY Q&A -->
     <div class="topic-card">
-      <h3>Kernel Trick in SVM</h3>
-      <div class="note-box"><strong>Interview answer:</strong><br>"SVM finds a hyperplane that separates classes with maximum margin. But in real data, classes aren't linearly separable in the original space. The kernel trick maps data into a higher-dimensional space where it becomes linearly separable — without actually computing the transformation. We just replace the dot product with a kernel function like RBF: K(x,z) = exp(−γ||x−z||²). This is computationally efficient because we never explicitly compute the high-dimensional mapping — just the kernel value between pairs of points."</div>
+      <h3>Core Theory — Interview Q&amp;A Reference</h3>
       <table class="term-table">
-        <tr><th>Kernel</th><th>Best For</th><th>Parameter</th></tr>
-        <tr><td>Linear</td><td>Linearly separable data, text classification</td><td>C only</td></tr>
-        <tr><td>RBF (Gaussian)</td><td>Non-linear boundaries, most tabular data</td><td>C, gamma</td></tr>
-        <tr><td>Polynomial</td><td>Image recognition, structured data</td><td>C, degree, gamma</td></tr>
-        <tr><td>Sigmoid</td><td>Neural network-like boundaries</td><td>C, gamma, coef0</td></tr>
-      </table>
-    </div>
-
-    <div class="topic-card">
-      <h3>Other Core Theory Questions</h3>
-      <table class="term-table">
-        <tr><th>Question</th><th>Answer</th></tr>
-        <tr><td>What is a decision boundary?</td><td>The surface that separates classes in feature space. Linear for LR/SVM-linear; curved for tree-based, RBF-SVM, neural nets.</td></tr>
-        <tr><td>What is the curse of dimensionality?</td><td>As features increase, data becomes sparse — distance metrics lose meaning (all points are "far apart"). KNN and clustering degrade. Fix: PCA, feature selection.</td></tr>
-        <tr><td>Parametric vs Non-parametric?</td><td>Parametric (Linear Reg, Logistic Reg, Naive Bayes): assumes data distribution, fixed number of parameters. Non-parametric (KNN, Decision Tree, Random Forest): no distribution assumption, parameters grow with data.</td></tr>
-        <tr><td>What is data leakage?</td><td>When information from test/future data leaks into training — causes inflated scores that don't hold in production. Examples: scaling before split, target encoding without CV, using future features.</td></tr>
-        <tr><td>Explain the Bias-Variance tradeoff</td><td>Bias = error from wrong assumptions (underfitting). Variance = sensitivity to training data fluctuations (overfitting). Total error = Bias² + Variance + Irreducible noise. Increasing complexity reduces bias but raises variance.</td></tr>
-        <tr><td>What is multicollinearity?</td><td>When two or more features are highly correlated. Harms linear models (unstable coefficients) but not tree-based. Detect with correlation matrix or VIF (&gt;10 = high). Fix: drop one of the correlated features, PCA, or use Ridge.</td></tr>
-        <tr><td>What is heteroscedasticity?</td><td>Variance of residuals is not constant across predictions. Violates linear regression assumption. Detect with residual plot (fan shape). Fix: log-transform target, weighted regression.</td></tr>
-        <tr><td>Explain p-value simply</td><td>Probability of observing data this extreme if the null hypothesis is true. p=0.03 means: "If there's truly no effect, there's only a 3% chance we'd see this result by chance." Below 0.05 → reject null → result is significant.</td></tr>
-        <tr><td>Why use log loss for classification?</td><td>It penalizes confident wrong predictions heavily. Predicting 0.99 for the wrong class gets a much higher loss than predicting 0.51. This forces the model to be calibrated, not just right-or-wrong.</td></tr>
-        <tr><td>What is vanishing gradient?</td><td>In deep networks, gradients shrink exponentially as they propagate backward through many layers — early layers learn almost nothing. Fix: ReLU activation (doesn't saturate), batch normalization, residual connections (ResNet).</td></tr>
+        <tr><th>Question</th><th>Strong Answer (2–3 sentences)</th></tr>
+        <tr><td>What is a decision boundary?</td><td>The surface separating predicted classes in feature space. Linear for logistic regression and linear SVM; curved for tree-based models, RBF-SVM, and neural networks.</td></tr>
+        <tr><td>Curse of dimensionality</td><td>As features increase, data becomes sparse — all points become "far apart" and distance metrics lose meaning. KNN, clustering, and density estimation degrade. Fix: PCA, feature selection, or domain-guided feature engineering.</td></tr>
+        <tr><td>Parametric vs Non-parametric</td><td>Parametric (Linear/Logistic Regression, Naive Bayes): fixed number of parameters, assumes a distribution shape. Non-parametric (KNN, Decision Tree, Random Forest): no distribution assumption, complexity grows with data.</td></tr>
+        <tr><td>What is data leakage?</td><td>When information from the test set or future data leaks into training — causes inflated scores that fail in production. Examples: scaling before split, target encoding without CV, using a feature computed from the future.</td></tr>
+        <tr><td>Bias-Variance tradeoff</td><td>Bias = systematic error from wrong assumptions (underfit). Variance = sensitivity to training data noise (overfit). Total error = Bias² + Variance + Irreducible noise. Increasing model complexity reduces bias but raises variance — balance is key.</td></tr>
+        <tr><td>Multicollinearity</td><td>Two or more features are highly correlated — coefficient estimates become unstable in linear models. Detect with correlation matrix or VIF (&gt;10 = problem). Fix: drop one of the correlated features, use Ridge, or PCA.</td></tr>
+        <tr><td>Heteroscedasticity</td><td>Variance of residuals changes with the predicted value — violates linear regression assumptions. Detect with residual plot (fan/cone shape). Fix: log-transform the target, or use weighted least squares.</td></tr>
+        <tr><td>Why log loss for classification?</td><td>It penalizes confident wrong predictions heavily. A model predicting 0.99 for the wrong class gets much higher loss than one predicting 0.55. This forces calibrated probabilities, not just right/wrong predictions.</td></tr>
+        <tr><td>SVM kernel trick</td><td>SVM finds the maximum-margin hyperplane. When data isn't linearly separable, the kernel trick maps it to a higher-dimensional space where it becomes separable — without explicitly computing the transformation. RBF kernel: K(x,z) = exp(−γ||x−z||²).</td></tr>
+        <tr><td>Why does Random Forest avoid overfitting?</td><td>Two reasons: (1) each tree is trained on a random bootstrap sample — different data, different models; (2) each split considers only a random subset of features — decorrelates the trees. Averaging many decorrelated trees cancels out individual errors.</td></tr>
+        <tr><td>Precision vs Recall tradeoff</td><td>You can't maximize both simultaneously — lowering the threshold catches more positives (recall ↑) but also generates more false alarms (precision ↓). The right choice depends on the relative cost of FP vs FN in your specific business context.</td></tr>
+        <tr><td>Why normalize features for KNN?</td><td>KNN measures distance between points. If salary (0–200K) and age (18–65) are both raw, salary dominates every distance calculation simply because its scale is larger. Normalization puts all features on equal footing.</td></tr>
       </table>
     </div>
 

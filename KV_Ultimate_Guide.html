@@ -10430,6 +10430,488 @@ print(f"MAPE:     {mape:.1f}%")         # scale-free, good for comparing across 
 
     <!-- CROSS-VALIDATION -->
     <div class="topic-card">
+
+    <!-- ═══ DEEP REGRESSION METRICS ═══ -->
+    <div class="topic-card">
+      <h3 style="color:#38bdf8">Regression Metrics — Deep Dive (What, Why, Inference)</h3>
+      <p style="line-height:1.7;color:#94a3b8">Regression outputs a number. Metrics measure how far that number is from reality. Each metric has a different "personality" — some punish big mistakes more, some are scale-free, some are easy to explain to a manager. Choosing the wrong metric leads to a model that looks good on paper but fails in production.</p>
+
+      <!-- SVG: Regression metric comparison -->
+      <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%;font-family:sans-serif;display:block;margin:12px auto">
+        <rect width="640" height="300" rx="12" fill="#0f172a"/>
+        <text x="320" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Regression Metrics — How Each One Behaves on the Same 5 Predictions</text>
+        <!-- Column headers -->
+        <text x="80"  y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold">Actual</text>
+        <text x="160" y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold">Predicted</text>
+        <text x="240" y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold">Error</text>
+        <text x="320" y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold">|Error|</text>
+        <text x="400" y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold">Error²</text>
+        <text x="490" y="48" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="bold">%Error</text>
+        <!-- Data rows -->
+        <line x1="20" y1="55" x2="620" y2="55" stroke="#1e293b" stroke-width="1"/>
+        <!-- Row 1: small error -->
+        <text x="80"  y="72" text-anchor="middle" fill="#f1f5f9" font-size="11">100</text>
+        <text x="160" y="72" text-anchor="middle" fill="#f1f5f9" font-size="11">102</text>
+        <text x="240" y="72" text-anchor="middle" fill="#22c55e" font-size="11">+2</text>
+        <text x="320" y="72" text-anchor="middle" fill="#22c55e" font-size="11">2</text>
+        <text x="400" y="72" text-anchor="middle" fill="#22c55e" font-size="11">4</text>
+        <text x="490" y="72" text-anchor="middle" fill="#22c55e" font-size="11">2%</text>
+        <!-- Row 2: small error -->
+        <text x="80"  y="94" text-anchor="middle" fill="#f1f5f9" font-size="11">200</text>
+        <text x="160" y="94" text-anchor="middle" fill="#f1f5f9" font-size="11">195</text>
+        <text x="240" y="94" text-anchor="middle" fill="#22c55e" font-size="11">−5</text>
+        <text x="320" y="94" text-anchor="middle" fill="#22c55e" font-size="11">5</text>
+        <text x="400" y="94" text-anchor="middle" fill="#22c55e" font-size="11">25</text>
+        <text x="490" y="94" text-anchor="middle" fill="#22c55e" font-size="11">2.5%</text>
+        <!-- Row 3: medium error -->
+        <text x="80"  y="116" text-anchor="middle" fill="#f1f5f9" font-size="11">150</text>
+        <text x="160" y="116" text-anchor="middle" fill="#f1f5f9" font-size="11">165</text>
+        <text x="240" y="116" text-anchor="middle" fill="#f59e0b" font-size="11">+15</text>
+        <text x="320" y="116" text-anchor="middle" fill="#f59e0b" font-size="11">15</text>
+        <text x="400" y="116" text-anchor="middle" fill="#f59e0b" font-size="11">225</text>
+        <text x="490" y="116" text-anchor="middle" fill="#f59e0b" font-size="11">10%</text>
+        <!-- Row 4: medium error -->
+        <text x="80"  y="138" text-anchor="middle" fill="#f1f5f9" font-size="11">300</text>
+        <text x="160" y="138" text-anchor="middle" fill="#f1f5f9" font-size="11">288</text>
+        <text x="240" y="138" text-anchor="middle" fill="#f59e0b" font-size="11">−12</text>
+        <text x="320" y="138" text-anchor="middle" fill="#f59e0b" font-size="11">12</text>
+        <text x="400" y="138" text-anchor="middle" fill="#f59e0b" font-size="11">144</text>
+        <text x="490" y="138" text-anchor="middle" fill="#f59e0b" font-size="11">4%</text>
+        <!-- Row 5: BIG outlier error -->
+        <text x="80"  y="160" text-anchor="middle" fill="#f1f5f9" font-size="11">250</text>
+        <text x="160" y="160" text-anchor="middle" fill="#f1f5f9" font-size="11">310</text>
+        <text x="240" y="160" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">+60</text>
+        <text x="320" y="160" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">60</text>
+        <text x="400" y="160" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">3600</text>
+        <text x="490" y="160" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">24%</text>
+        <line x1="20" y1="168" x2="620" y2="168" stroke="#334155" stroke-width="1"/>
+        <!-- Results row -->
+        <text x="80"  y="186" text-anchor="middle" fill="#94a3b8" font-size="10">—</text>
+        <text x="160" y="186" text-anchor="middle" fill="#94a3b8" font-size="10">—</text>
+        <text x="240" y="186" text-anchor="middle" fill="#94a3b8" font-size="10">—</text>
+        <text x="320" y="186" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">MAE=18.8</text>
+        <text x="400" y="186" text-anchor="middle" fill="#f9a8d4" font-size="11" font-weight="bold">RMSE=38.0</text>
+        <text x="490" y="186" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">MAPE=8.5%</text>
+        <!-- Commentary -->
+        <text x="320" y="212" text-anchor="middle" fill="#94a3b8" font-size="10">RMSE (38) is much larger than MAE (18.8) — the outlier row (60 error) inflated RMSE via squaring.</text>
+        <text x="320" y="228" text-anchor="middle" fill="#94a3b8" font-size="10">MAE treats all errors equally. RMSE punishes the outlier 4× harder (60² = 3600 vs 60×1 = 60).</text>
+        <!-- Legend -->
+        <rect x="40" y="244" width="12" height="12" fill="#93c5fd" rx="2"/>
+        <text x="58" y="254" fill="#93c5fd" font-size="10">MAE — robust, easy to explain</text>
+        <rect x="220" y="244" width="12" height="12" fill="#f9a8d4" rx="2"/>
+        <text x="238" y="254" fill="#f9a8d4" font-size="10">RMSE — penalises big errors</text>
+        <rect x="400" y="244" width="12" height="12" fill="#86efac" rx="2"/>
+        <text x="418" y="254" fill="#86efac" font-size="10">MAPE — scale-free %</text>
+        <text x="320" y="278" text-anchor="middle" fill="#475569" font-size="10">⚠ Outlier row (error=60) almost doubled RMSE vs MAE — use RMSE only when big errors are truly costly</text>
+      </svg>
+
+      <!-- Each metric card -->
+      <div class="concept-box" style="border-color:#3b82f6;margin-top:16px">
+        <h4 style="color:#93c5fd">MAE — Mean Absolute Error</h4>
+        <p><strong>Formula:</strong> <code>MAE = (1/n) × Σ |actual − predicted|</code></p>
+        <p><strong>What it is:</strong> The average size of your mistakes, in the same unit as your target. If you're predicting house prices and MAE = ₹4,00,000, the model is off by ₹4 lakh on average — simple as that.</p>
+        <p><strong>Where to use:</strong> When every error is equally bad — no single big mistake is "much worse" than a small one. Use when your target has outliers you don't want to punish disproportionately.</p>
+        <p><strong>Why use:</strong> Most interpretable regression metric. Can directly say "our predictions are off by X units on average." Robust to outliers since it doesn't square them.</p>
+        <p><strong>What inference to draw:</strong> "MAE of ₹2,500 on a ticket price model with average price ₹25,000 means we're within 10% on average — acceptable for dynamic pricing."</p>
+        <p><strong>Weakness:</strong> Not differentiable at zero (matters for some optimizers). Treats all errors equally, so doesn't capture whether big misses are occurring.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#ec4899;margin-top:12px">
+        <h4 style="color:#f9a8d4">RMSE — Root Mean Squared Error</h4>
+        <p><strong>Formula:</strong> <code>RMSE = √((1/n) × Σ (actual − predicted)²)</code></p>
+        <p><strong>What it is:</strong> Like MAE but squares each error before averaging, then takes the square root. This means large errors contribute much more than small ones.</p>
+        <p><strong>Where to use:</strong> When large errors are disproportionately bad. In loan default prediction: a prediction that is off by ₹50L is not just "50× worse" than being off by ₹1L — it's catastrophically worse. RMSE captures this.</p>
+        <p><strong>Why use:</strong> Mathematically convenient (differentiable everywhere), widely used in competitions. When MSE/RMSE and MAE diverge significantly, it means outlier predictions exist.</p>
+        <p><strong>What inference to draw:</strong> "RMSE = 45 but MAE = 12 → large gap means a few predictions are badly wrong. Investigate those cases — could be data quality issues or edge cases the model hasn't learned."</p>
+        <p><strong>Weakness:</strong> Sensitive to outliers in the target variable. Not directly interpretable without context (unlike MAE). Always report alongside MAE for comparison.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#a855f7;margin-top:12px">
+        <h4 style="color:#d8b4fe">R² — Coefficient of Determination</h4>
+        <p><strong>Formula:</strong> <code>R² = 1 − (SS_res / SS_tot)</code> where SS_res = Σ(actual−predicted)², SS_tot = Σ(actual−mean)²</p>
+        <p><strong>What it is:</strong> How much of the target's variance does the model explain? R²=0.82 means "the model explains 82% of why prices vary." The baseline (predicting the mean always) gives R²=0. A model worse than always predicting the mean gives negative R².</p>
+        <p><strong>Where to use:</strong> To compare models, to communicate how well the model captures the underlying pattern. Best used alongside MAE/RMSE, not alone.</p>
+        <p><strong>Why use:</strong> Scale-independent — works across different problems. R²=0.85 for house prices vs R²=0.85 for stock returns are comparable in meaning. Easy for stakeholders.</p>
+        <p><strong>What inference to draw:</strong> R²&lt;0.5 = model barely better than guessing. R²=0.7–0.85 = decent for real-world messy data. R²&gt;0.95 = check for data leakage. R²=1.0 = suspect, almost never legitimate.</p>
+        <p><strong>Weakness:</strong> R² always increases when you add more features (even useless ones). Use Adjusted R² when comparing models with different numbers of features.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#f59e0b;margin-top:12px">
+        <h4 style="color:#fde68a">MAPE — Mean Absolute Percentage Error</h4>
+        <p><strong>Formula:</strong> <code>MAPE = (100/n) × Σ |actual − predicted| / |actual|</code></p>
+        <p><strong>What it is:</strong> Average percentage error. If MAPE=8%, the model is off by 8% of the actual value on average. Scale-independent — works across any unit.</p>
+        <p><strong>Where to use:</strong> Sales forecasting, demand planning, revenue projections — anywhere percentage accuracy matters more than absolute error. Enables comparison across products with vastly different prices.</p>
+        <p><strong>Why use:</strong> Business-friendly — "our forecast is 8% off" is understood by anyone. Consistent across scale: ₹80 error on a ₹1000 item vs ₹8000 error on a ₹1,00,000 item are both 8%.</p>
+        <p><strong>What inference to draw:</strong> MAPE &lt;5% = excellent forecast. 5–10% = good. 10–20% = acceptable in volatile domains. &gt;20% = model needs improvement or domain is inherently unpredictable.</p>
+        <p><strong>Weakness:</strong> Blows up when actual values are near zero (division by near-zero). Use sMAPE (symmetric MAPE) instead when targets can be zero.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#22c55e;margin-top:12px">
+        <h4 style="color:#86efac">Adjusted R² — Penalises Useless Features</h4>
+        <p><strong>Formula:</strong> <code>Adj R² = 1 − (1 − R²)(n − 1) / (n − p − 1)</code> where n=samples, p=features</p>
+        <p><strong>What it is:</strong> Like R² but applies a penalty for each extra feature you add. Adding a useless feature to a model always increases R² — Adjusted R² will decrease if the feature doesn't genuinely help.</p>
+        <p><strong>Where to use:</strong> Whenever comparing models with different numbers of features. Always use Adjusted R² in feature selection — never plain R².</p>
+        <p><strong>What inference to draw:</strong> If Adj R² drops when you add a feature, that feature is noise — remove it. If Adj R² increases by &gt;0.01 per feature added, that feature is genuinely useful.</p>
+      </div>
+
+      <table class="term-table" style="margin-top:16px">
+        <tr><th>Metric</th><th>Formula essence</th><th>Outlier sensitive?</th><th>Business-friendly?</th><th>Use when</th></tr>
+        <tr><td>MAE</td><td>avg |error|</td><td>No</td><td>Yes — "off by X units"</td><td>Robust baseline, explainable to non-tech</td></tr>
+        <tr><td>RMSE</td><td>√(avg error²)</td><td>Yes</td><td>Somewhat</td><td>Big errors are disproportionately bad</td></tr>
+        <tr><td>R²</td><td>1 − residual/total variance</td><td>No</td><td>Yes — "explains X% of variance"</td><td>Comparing models, communicating fit</td></tr>
+        <tr><td>MAPE</td><td>avg % error</td><td>Yes (near-zero)</td><td>Very — "%  off"</td><td>Forecasting, cross-scale comparison</td></tr>
+        <tr><td>Adj R²</td><td>R² penalised by features</td><td>No</td><td>Yes</td><td>Feature selection, multi-feature comparison</td></tr>
+      </table>
+    </div>
+
+    <!-- ═══ TIME SERIES METRICS ═══ -->
+    <div class="topic-card">
+      <h3 style="color:#38bdf8">Time Series Forecasting Metrics — Deep Dive</h3>
+      <p style="line-height:1.7;color:#94a3b8">Time series metrics are mostly the same as regression metrics (MAE, RMSE, MAPE) but applied to sequential predictions. The key difference: <strong>you must never let future data leak into past predictions.</strong> Also, some metrics specific to time series (SMAPE, MASE, WAPE) solve specific problems like handling zero values or enabling comparison across different series.</p>
+
+      <svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%;font-family:sans-serif;display:block;margin:12px auto">
+        <rect width="640" height="260" rx="12" fill="#0f172a"/>
+        <text x="320" y="22" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Time Series Forecast Error — Actual vs Predicted Over Time</text>
+        <!-- Axes -->
+        <line x1="50" y1="200" x2="600" y2="200" stroke="#475569" stroke-width="1.5"/>
+        <line x1="50" y1="200" x2="50"  y2="40"  stroke="#475569" stroke-width="1.5"/>
+        <text x="325" y="225" text-anchor="middle" fill="#94a3b8" font-size="11">Time →</text>
+        <text x="22"  y="120" text-anchor="middle" fill="#94a3b8" font-size="11" transform="rotate(-90,22,120)">Value</text>
+        <!-- Actual line (wavy) -->
+        <polyline points="70,160 120,130 170,145 220,110 270,125 320,90 370,105 420,75 470,95 520,70 570,85"
+                  fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+        <!-- Predicted line (smoother) -->
+        <polyline points="70,155 120,138 170,138 220,118 270,120 320,98 370,100 420,82 470,90 520,78 570,90"
+                  fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6,3"/>
+        <!-- Error bars at 3 points -->
+        <line x1="220" y1="110" x2="220" y2="118" stroke="#ef4444" stroke-width="2"/>
+        <line x1="420" y1="75"  x2="420" y2="82"  stroke="#ef4444" stroke-width="2"/>
+        <line x1="570" y1="85"  x2="570" y2="90"  stroke="#ef4444" stroke-width="2"/>
+        <!-- Shaded error region -->
+        <path d="M70,160 L120,130 L170,145 L220,110 L270,125 L320,90 L370,105 L420,75 L470,95 L520,70 L570,85
+                 L570,90 L520,78 L470,90 L420,82 L370,100 L320,98 L270,120 L220,118 L170,138 L120,138 L70,155 Z"
+              fill="#ef4444" opacity="0.12"/>
+        <!-- Legend -->
+        <line x1="80"  y1="240" x2="110" y2="240" stroke="#38bdf8" stroke-width="2.5"/>
+        <text x="118" y="244" fill="#38bdf8" font-size="10">Actual</text>
+        <line x1="200" y1="240" x2="230" y2="240" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="238" y="244" fill="#f59e0b" font-size="10">Forecast</text>
+        <rect x="340" y="234" width="12" height="8" fill="#ef4444" opacity="0.4"/>
+        <text x="358" y="244" fill="#ef4444" font-size="10">Error (forecast - actual)</text>
+        <text x="320" y="15" text-anchor="middle" fill="#94a3b8" font-size="9" display="none">metrics measure the red shaded area in different ways</text>
+      </svg>
+
+      <div class="concept-box" style="border-color:#38bdf8;margin-top:16px">
+        <h4 style="color:#7dd3fc">MAE / RMSE in Time Series</h4>
+        <p><strong>Same formulas as regression</strong> — but applied per time step. RMSE penalises large single-step errors (e.g., missing a demand spike). MAE gives equal weight to every time step.</p>
+        <p><strong>What inference:</strong> "RMSE of 450 units vs MAE of 120 units for a demand forecast" → massive RMSE/MAE gap means the model is missing spikes (holiday surges, promotions). Investigate those time windows specifically.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#f59e0b;margin-top:12px">
+        <h4 style="color:#fde68a">MAPE vs sMAPE — Handling Zeros</h4>
+        <p><strong>MAPE problem:</strong> When actual value = 0 (e.g., a product sold zero units on Sunday), MAPE = (|0 − predicted|) / 0 = ∞. Division by zero breaks everything.</p>
+        <p><strong>sMAPE (Symmetric MAPE) fix:</strong> <code>sMAPE = (200/n) × Σ |actual − predicted| / (|actual| + |predicted|)</code></p>
+        <p><strong>Where to use sMAPE:</strong> Retail demand forecasting where products can have zero sales. Handles both over-forecast and under-forecast symmetrically.</p>
+        <p><strong>What inference:</strong> sMAPE of 15% = forecasts are 15% off on average in either direction, even for zero-sales periods.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#a855f7;margin-top:12px">
+        <h4 style="color:#d8b4fe">MASE — Mean Absolute Scaled Error (Scale-Free Champion)</h4>
+        <p><strong>Formula:</strong> <code>MASE = MAE_model / MAE_naïve</code> where MAE_naïve = MAE of "predict yesterday's value today"</p>
+        <p><strong>What it is:</strong> Compares your model's MAE against a naïve baseline (yesterday's value). MASE &lt;1 = better than naïve. MASE &gt;1 = worse than just copying yesterday's number.</p>
+        <p><strong>Where to use:</strong> Comparing forecasting models across completely different scales (e.g., forecasting both daily visitors and monthly revenue on one leaderboard). M4 and M5 competitions use MASE.</p>
+        <p><strong>What inference:</strong> MASE=0.75 = your model is 25% better than naïve forecast. MASE=1.2 = you should just use yesterday's value — your model makes things worse.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#22c55e;margin-top:12px">
+        <h4 style="color:#86efac">WAPE — Weighted Absolute Percentage Error</h4>
+        <p><strong>Formula:</strong> <code>WAPE = Σ|actual − predicted| / Σ|actual|</code></p>
+        <p><strong>What it is:</strong> Like MAPE but weighted by actual volume. High-demand periods count more than low-demand periods. A 20% error when 1000 units sell counts 10× more than a 20% error when 100 units sell.</p>
+        <p><strong>Where to use:</strong> Supply chain, retail — when you care about absolute volume accuracy not just percentage accuracy across all SKUs equally.</p>
+        <p><strong>What inference:</strong> "WAPE=12% for our top-50 SKUs, WAPE=35% for tail SKUs." Normal — long-tail items are harder to forecast, and WAPE ensures you don't over-optimise for them at the expense of high-volume items.</p>
+      </div>
+
+      <table class="term-table" style="margin-top:16px">
+        <tr><th>Metric</th><th>Best for</th><th>Zero-proof?</th><th>Scale-free?</th><th>Baseline comparison?</th></tr>
+        <tr><td>MAE</td><td>Single series, same scale</td><td>Yes</td><td>No</td><td>No</td></tr>
+        <tr><td>RMSE</td><td>Penalising spikes/outlier errors</td><td>Yes</td><td>No</td><td>No</td></tr>
+        <tr><td>MAPE</td><td>% accuracy communication</td><td>No (breaks at 0)</td><td>Yes</td><td>No</td></tr>
+        <tr><td>sMAPE</td><td>Retail with zero-sales periods</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+        <tr><td>MASE</td><td>Cross-series benchmarks</td><td>Yes</td><td>Yes</td><td>Yes (vs naïve)</td></tr>
+        <tr><td>WAPE</td><td>Volume-weighted accuracy</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+      </table>
+
+      <div class="code-block" style="margin-top:12px"><pre>
+import numpy as np
+
+def mae(actual, predicted):
+    return np.mean(np.abs(actual - predicted))
+
+def rmse(actual, predicted):
+    return np.sqrt(np.mean((actual - predicted)**2))
+
+def mape(actual, predicted):
+    mask = actual != 0                        # skip zero-actual rows
+    return np.mean(np.abs((actual[mask] - predicted[mask]) / actual[mask])) * 100
+
+def smape(actual, predicted):
+    denom = np.abs(actual) + np.abs(predicted)
+    mask  = denom != 0
+    return np.mean(2 * np.abs(actual[mask] - predicted[mask]) / denom[mask]) * 100
+
+def mase(actual, predicted, seasonal_period=1):
+    naive_errors = np.abs(np.diff(actual, n=seasonal_period))  # actual[t] - actual[t-period]
+    naive_mae    = np.mean(naive_errors)
+    return mae(actual[seasonal_period:], predicted[seasonal_period:]) / naive_mae
+
+def wape(actual, predicted):
+    return np.sum(np.abs(actual - predicted)) / np.sum(np.abs(actual)) * 100
+
+# Example usage
+actual    = np.array([100, 120, 0, 80, 150, 200, 130])
+predicted = np.array([105, 115, 5, 90, 140, 210, 125])
+
+print(f"MAE:   {mae(actual, predicted):.1f}")
+print(f"RMSE:  {rmse(actual, predicted):.1f}")
+print(f"MAPE:  {mape(actual, predicted):.1f}%")    # skips zero row automatically
+print(f"sMAPE: {smape(actual, predicted):.1f}%")   # handles zero row
+print(f"MASE:  {mase(actual, predicted):.3f}")     # &lt;1 = better than naive
+print(f"WAPE:  {wape(actual, predicted):.1f}%")
+</pre></div>
+    </div>
+
+    <!-- ═══ CLUSTERING METRICS ═══ -->
+    <div class="topic-card">
+      <h3 style="color:#38bdf8">Clustering Metrics — How to Evaluate Unsupervised Models</h3>
+      <p style="line-height:1.7;color:#94a3b8">Clustering is unsupervised — there are no ground-truth labels to compare against. So how do you know if your clusters are good? You use <strong>internal metrics</strong> that measure cluster quality using only the data itself (no labels needed), or <strong>external metrics</strong> when you have labels for validation.</p>
+
+      <svg viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%;font-family:sans-serif;display:block;margin:12px auto">
+        <rect width="620" height="240" rx="12" fill="#0f172a"/>
+        <text x="310" y="22" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Good Clusters vs Bad Clusters — What Metrics Measure</text>
+        <!-- Left: Good clusters -->
+        <rect x="20" y="36" width="270" height="185" rx="8" fill="#1e293b"/>
+        <text x="155" y="56" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">Good Clustering</text>
+        <text x="155" y="70" text-anchor="middle" fill="#94a3b8" font-size="10">Tight within-cluster, wide between-cluster</text>
+        <!-- Cluster A: tight blue -->
+        <circle cx="85"  cy="120" r="6" fill="#3b82f6"/>
+        <circle cx="100" cy="110" r="6" fill="#3b82f6"/>
+        <circle cx="90"  cy="135" r="6" fill="#3b82f6"/>
+        <circle cx="110" cy="125" r="6" fill="#3b82f6"/>
+        <circle cx="95"  cy="105" r="6" fill="#3b82f6"/>
+        <circle cx="100" cy="120" r="28" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <!-- Cluster B: tight orange, far away -->
+        <circle cx="215" cy="155" r="6" fill="#f97316"/>
+        <circle cx="230" cy="145" r="6" fill="#f97316"/>
+        <circle cx="220" cy="170" r="6" fill="#f97316"/>
+        <circle cx="240" cy="160" r="6" fill="#f97316"/>
+        <circle cx="225" cy="140" r="6" fill="#f97316"/>
+        <circle cx="225" cy="155" r="28" fill="none" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <!-- Distance between clusters -->
+        <line x1="128" y1="120" x2="197" y2="155" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="163" y="128" fill="#22c55e" font-size="9">large gap</text>
+        <text x="155" y="205" text-anchor="middle" fill="#22c55e" font-size="10">Silhouette ≈ 0.7 — GOOD</text>
+        <!-- Right: Bad clusters -->
+        <rect x="330" y="36" width="270" height="185" rx="8" fill="#1e293b"/>
+        <text x="465" y="56" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Bad Clustering</text>
+        <text x="465" y="70" text-anchor="middle" fill="#94a3b8" font-size="10">Loose within-cluster, overlapping clusters</text>
+        <!-- Cluster A: scattered blue -->
+        <circle cx="365" cy="130" r="6" fill="#3b82f6"/>
+        <circle cx="430" cy="100" r="6" fill="#3b82f6"/>
+        <circle cx="395" cy="160" r="6" fill="#3b82f6"/>
+        <circle cx="460" cy="140" r="6" fill="#3b82f6"/>
+        <circle cx="380" cy="105" r="6" fill="#3b82f6"/>
+        <!-- Cluster B: overlapping orange -->
+        <circle cx="410" cy="120" r="6" fill="#f97316"/>
+        <circle cx="445" cy="130" r="6" fill="#f97316"/>
+        <circle cx="420" cy="155" r="6" fill="#f97316"/>
+        <circle cx="475" cy="110" r="6" fill="#f97316"/>
+        <circle cx="390" cy="145" r="6" fill="#f97316"/>
+        <!-- Overlap region -->
+        <ellipse cx="415" cy="130" rx="60" ry="40" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.7"/>
+        <text x="465" y="205" text-anchor="middle" fill="#ef4444" font-size="10">Silhouette ≈ 0.1 — BAD</text>
+      </svg>
+
+      <div class="concept-box" style="border-color:#38bdf8;margin-top:16px">
+        <h4 style="color:#7dd3fc">Silhouette Score — The Most Important Clustering Metric</h4>
+        <p><strong>Formula:</strong> For each point: <code>s = (b − a) / max(a, b)</code> where a = avg distance to points in own cluster, b = avg distance to nearest other cluster.</p>
+        <p><strong>Range:</strong> −1 to +1. Score +1 = perfectly inside its cluster, far from all others. Score 0 = on the boundary between clusters. Score −1 = probably assigned to the wrong cluster.</p>
+        <p><strong>Where to use:</strong> Always. This is the primary metric for evaluating any clustering result — K-Means, DBSCAN, hierarchical.</p>
+        <p><strong>What inference:</strong> &gt;0.7 = strong structure found. 0.5–0.7 = reasonable structure. 0.25–0.5 = weak structure. &lt;0.25 = no meaningful clusters (data may be naturally uniform).</p>
+        <p><strong>Also use for choosing K:</strong> Run K-Means with K=2,3,...10. Plot silhouette score per K. Pick K with highest score.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#f59e0b;margin-top:12px">
+        <h4 style="color:#fde68a">Davies-Bouldin Index (DBI)</h4>
+        <p><strong>What it is:</strong> Average ratio of within-cluster scatter to between-cluster separation, for each pair of clusters. Lower = better (opposite of silhouette).</p>
+        <p><strong>Where to use:</strong> Secondary clustering metric, especially when comparing algorithms or K values. Faster to compute than silhouette for large datasets.</p>
+        <p><strong>What inference:</strong> DBI near 0 = tight, well-separated clusters. DBI &gt;2 = overlapping or sprawling clusters. Use alongside silhouette — they sometimes disagree, which tells you something about cluster shape.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#22c55e;margin-top:12px">
+        <h4 style="color:#86efac">Calinski-Harabasz Index (Variance Ratio Criterion)</h4>
+        <p><strong>What it is:</strong> Ratio of between-cluster variance to within-cluster variance. Higher = better (tighter, more separated clusters).</p>
+        <p><strong>Where to use:</strong> When you need a fast metric (much faster than silhouette for large datasets). Good for automating K selection in pipelines.</p>
+        <p><strong>What inference:</strong> No universal scale — only useful for comparison. If K=4 gives CH=850 and K=6 gives CH=620, choose K=4.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#a855f7;margin-top:12px">
+        <h4 style="color:#d8b4fe">Inertia (WCSS) — K-Means Specific</h4>
+        <p><strong>What it is:</strong> Sum of squared distances from each point to its cluster centroid. This is what K-Means directly minimises.</p>
+        <p><strong>Where to use:</strong> Only for K-Means. Use for the elbow method (plot inertia vs K, pick elbow). Do not compare across algorithms — DBSCAN has no centroids, so no inertia.</p>
+        <p><strong>What inference:</strong> Inertia always decreases as K increases — you need the elbow method because a lower inertia at K=10 doesn't mean K=10 is better than K=3.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#ef4444;margin-top:12px">
+        <h4 style="color:#fca5a5">ARI and NMI — External Metrics (When You Have True Labels)</h4>
+        <p><strong>Adjusted Rand Index (ARI):</strong> Measures agreement between predicted cluster assignments and true labels. Range: −0.5 to 1. ARI=1 = perfect match. ARI≈0 = random. ARI can be negative (worse than random).</p>
+        <p><strong>Normalized Mutual Information (NMI):</strong> Information-theoretic overlap between cluster assignments and true labels. Range: 0 to 1. NMI=1 = clusters perfectly recover the true groups.</p>
+        <p><strong>When to use:</strong> Research or experiments where you have ground-truth labels (e.g., you know customers should group into 3 segments and you're validating that K-Means finds them). Not available in production clustering.</p>
+      </div>
+
+      <div class="code-block" style="margin-top:12px"><pre>
+from sklearn.cluster import KMeans, DBSCAN
+from sklearn.metrics import (silhouette_score, davies_bouldin_score,
+                              calinski_harabasz_score, adjusted_rand_score,
+                              normalized_mutual_info_score)
+import numpy as np
+
+# ── Fit K-Means ───────────────────────────────────────────────────────────────
+km = KMeans(n_clusters=4, random_state=42, n_init=10)
+labels = km.fit_predict(X_scaled)
+
+# ── Internal metrics (no true labels needed) ─────────────────────────────────
+sil = silhouette_score(X_scaled, labels)           # -1 to 1, higher is better
+dbi = davies_bouldin_score(X_scaled, labels)       # 0 to ∞, LOWER is better
+ch  = calinski_harabasz_score(X_scaled, labels)    # higher is better
+print(f"Silhouette:       {sil:.3f}")   # &gt;0.5 = good
+print(f"Davies-Bouldin:   {dbi:.3f}")   # &lt;1.0 = good
+print(f"Calinski-Harabasz:{ch:.1f}")    # compare across K values only
+
+# ── Choose K using silhouette ─────────────────────────────────────────────────
+best_k, best_score = 2, -1
+for k in range(2, 11):
+    km_k = KMeans(n_clusters=k, random_state=42, n_init=10).fit(X_scaled)
+    score = silhouette_score(X_scaled, km_k.labels_)
+    if score &gt; best_score:
+        best_score, best_k = score, k
+print(f"Best K: {best_k} (silhouette={best_score:.3f})")
+
+# ── External metrics (only if you have ground-truth labels) ──────────────────
+# y_true = known true labels (e.g., from labelled validation set)
+# ari = adjusted_rand_score(y_true, labels)   # -0.5 to 1
+# nmi = normalized_mutual_info_score(y_true, labels)  # 0 to 1
+</pre></div>
+
+      <table class="term-table" style="margin-top:12px">
+        <tr><th>Metric</th><th>Type</th><th>Range</th><th>Better when</th><th>Use for</th></tr>
+        <tr><td>Silhouette</td><td>Internal</td><td>−1 to +1</td><td>Higher</td><td>Primary: always compute this</td></tr>
+        <tr><td>Davies-Bouldin</td><td>Internal</td><td>0 to ∞</td><td>Lower</td><td>Fast secondary check</td></tr>
+        <tr><td>Calinski-Harabasz</td><td>Internal</td><td>0 to ∞</td><td>Higher</td><td>Automated K selection in pipelines</td></tr>
+        <tr><td>Inertia (WCSS)</td><td>K-Means only</td><td>0 to ∞</td><td>Lower</td><td>Elbow method for K selection</td></tr>
+        <tr><td>ARI</td><td>External</td><td>−0.5 to 1</td><td>Higher</td><td>Research/validation with true labels</td></tr>
+        <tr><td>NMI</td><td>External</td><td>0 to 1</td><td>Higher</td><td>Research/validation with true labels</td></tr>
+      </table>
+    </div>
+
+    <!-- ═══ RANKING / RECOMMENDATION METRICS ═══ -->
+    <div class="topic-card">
+      <h3 style="color:#38bdf8">Ranking &amp; Recommendation Metrics</h3>
+      <p style="line-height:1.7;color:#94a3b8">Recommendation systems don't just predict — they rank. "Did we recommend the right items?" is a different question from "was our prediction correct?" These metrics measure quality of ranked lists.</p>
+
+      <div class="concept-box" style="border-color:#3b82f6">
+        <h4 style="color:#93c5fd">Precision@K and Recall@K</h4>
+        <p><strong>Precision@K:</strong> Of the top-K items recommended, what fraction are actually relevant? "We recommended 10 movies — 6 were ones the user liked. Precision@10 = 0.60."</p>
+        <p><strong>Recall@K:</strong> Of all relevant items, how many did we include in the top-K? "The user likes 20 movies. We showed 10 — and 8 of those 20 were in our list. Recall@10 = 0.40."</p>
+        <p><strong>Where to use:</strong> E-commerce (top-10 recommendations), search results (top-5 links), content feeds (top-20 posts).</p>
+        <p><strong>What inference:</strong> High Precision@K = relevant results. High Recall@K = good coverage. Usually trade off against each other — use F1@K for balance.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#f59e0b;margin-top:12px">
+        <h4 style="color:#fde68a">NDCG — Normalised Discounted Cumulative Gain</h4>
+        <p><strong>What it is:</strong> Measures ranking quality by giving more credit for relevant items appearing higher in the list. Rank 1 is worth much more than rank 10. "Getting the best result at position 1 is exponentially better than at position 8."</p>
+        <p><strong>Formula:</strong> <code>DCG = Σ (2^relevance − 1) / log₂(rank + 1)</code>. NDCG = DCG / ideal DCG (best possible ranking).</p>
+        <p><strong>Range:</strong> 0 to 1. NDCG=1 = perfect ranking. NDCG=0.5 = mediocre.</p>
+        <p><strong>Where to use:</strong> Search engines, music/movie recommendations where position matters. Google Search, Spotify, Netflix all use NDCG variants.</p>
+        <p><strong>What inference:</strong> NDCG@10 = 0.82 vs competitor's 0.75 = our top-10 is significantly better ranked for users.</p>
+      </div>
+
+      <div class="concept-box" style="border-color:#22c55e;margin-top:12px">
+        <h4 style="color:#86efac">MRR — Mean Reciprocal Rank</h4>
+        <p><strong>What it is:</strong> For each query, find the rank of the first relevant result. MRR = average of 1/rank across all queries.</p>
+        <p><strong>Example:</strong> 3 queries: first relevant result at rank 1, 2, 4. MRR = (1/1 + 1/2 + 1/4)/3 = 0.58.</p>
+        <p><strong>Where to use:</strong> Question-answering systems, one-item search (user wants one specific answer). "Did we put the right answer first?"</p>
+        <p><strong>What inference:</strong> MRR=0.85 = on average, the first relevant result is ranked within position 1.2. MRR=0.33 = relevant result is typically around position 3.</p>
+      </div>
+
+      <table class="term-table" style="margin-top:12px">
+        <tr><th>Metric</th><th>Measures</th><th>Position matters?</th><th>Use for</th></tr>
+        <tr><td>Precision@K</td><td>Fraction relevant in top-K</td><td>No</td><td>E-commerce, content feed</td></tr>
+        <tr><td>Recall@K</td><td>Coverage of all relevant items</td><td>No</td><td>Coverage-focused systems</td></tr>
+        <tr><td>NDCG@K</td><td>Ranking quality with position weights</td><td>Yes</td><td>Search, ranked recommendations</td></tr>
+        <tr><td>MRR</td><td>Rank of first relevant result</td><td>Yes</td><td>QA, single-answer search</td></tr>
+      </table>
+    </div>
+
+    <!-- ═══ WHICH METRIC WHEN — QUICK REFERENCE ═══ -->
+    <div class="topic-card">
+      <h3 style="color:#38bdf8">Metric Selection Quick Reference</h3>
+      <svg viewBox="0 0 640 320" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%;font-family:sans-serif;display:block;margin:12px auto">
+        <rect width="640" height="320" rx="12" fill="#0f172a"/>
+        <text x="320" y="22" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Which Metric to Use — Decision Guide</text>
+        <!-- Classification box -->
+        <rect x="20" y="38" width="185" height="265" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="112" y="58" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold">CLASSIFICATION</text>
+        <text x="112" y="76" text-anchor="middle" fill="#94a3b8" font-size="9">Balanced classes → Accuracy / F1</text>
+        <text x="112" y="90" text-anchor="middle" fill="#94a3b8" font-size="9">Imbalanced → F1 / AUC-ROC</text>
+        <text x="112" y="104" text-anchor="middle" fill="#94a3b8" font-size="9">Very imbalanced → PR-AUC</text>
+        <text x="112" y="122" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="bold">FN costly (cancer/fraud)</text>
+        <text x="112" y="134" text-anchor="middle" fill="#ef4444" font-size="9">→ Recall / Sensitivity</text>
+        <text x="112" y="150" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="bold">FP costly (spam filter)</text>
+        <text x="112" y="162" text-anchor="middle" fill="#f59e0b" font-size="9">→ Precision</text>
+        <text x="112" y="178" text-anchor="middle" fill="#22c55e" font-size="9" font-weight="bold">Both matter</text>
+        <text x="112" y="190" text-anchor="middle" fill="#22c55e" font-size="9">→ F1 / Fβ score</text>
+        <text x="112" y="210" text-anchor="middle" fill="#94a3b8" font-size="9">Threshold-free ranking</text>
+        <text x="112" y="222" text-anchor="middle" fill="#94a3b8" font-size="9">→ AUC-ROC</text>
+        <text x="112" y="240" text-anchor="middle" fill="#94a3b8" font-size="9">Multi-class → macro/weighted</text>
+        <text x="112" y="252" text-anchor="middle" fill="#94a3b8" font-size="9">F1 or log-loss</text>
+        <!-- Regression box -->
+        <rect x="225" y="38" width="185" height="265" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="317" y="58" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">REGRESSION</text>
+        <text x="317" y="76" text-anchor="middle" fill="#94a3b8" font-size="9">Explainable to business → MAE</text>
+        <text x="317" y="90" text-anchor="middle" fill="#94a3b8" font-size="9">Penalise big errors → RMSE</text>
+        <text x="317" y="104" text-anchor="middle" fill="#94a3b8" font-size="9">% accuracy matters → MAPE</text>
+        <text x="317" y="120" text-anchor="middle" fill="#94a3b8" font-size="9">Zeros in target → sMAPE</text>
+        <text x="317" y="134" text-anchor="middle" fill="#94a3b8" font-size="9">Compare models → R²/Adj R²</text>
+        <text x="317" y="150" text-anchor="middle" fill="#94a3b8" font-size="9">Feature selection → Adj R²</text>
+        <line x1="245" y1="163" x2="395" y2="163" stroke="#334155" stroke-width="1"/>
+        <text x="317" y="177" text-anchor="middle" fill="#86efac" font-size="9" font-weight="bold">TIME SERIES</text>
+        <text x="317" y="193" text-anchor="middle" fill="#94a3b8" font-size="9">Single series → MAE / RMSE</text>
+        <text x="317" y="207" text-anchor="middle" fill="#94a3b8" font-size="9">Has zeros → sMAPE</text>
+        <text x="317" y="221" text-anchor="middle" fill="#94a3b8" font-size="9">vs naive baseline → MASE</text>
+        <text x="317" y="235" text-anchor="middle" fill="#94a3b8" font-size="9">Volume-weighted → WAPE</text>
+        <text x="317" y="249" text-anchor="middle" fill="#94a3b8" font-size="9">Cross-series compare → MASE</text>
+        <!-- Unsupervised / Ranking box -->
+        <rect x="430" y="38" width="190" height="265" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+        <text x="525" y="58" text-anchor="middle" fill="#d8b4fe" font-size="11" font-weight="bold">CLUSTERING / RANKING</text>
+        <text x="525" y="76" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold">Clustering (no labels):</text>
+        <text x="525" y="90" text-anchor="middle" fill="#94a3b8" font-size="9">Primary → Silhouette score</text>
+        <text x="525" y="104" text-anchor="middle" fill="#94a3b8" font-size="9">Secondary → Davies-Bouldin</text>
+        <text x="525" y="118" text-anchor="middle" fill="#94a3b8" font-size="9">Fast/pipeline → Calinski-Harabasz</text>
+        <text x="525" y="132" text-anchor="middle" fill="#94a3b8" font-size="9">K selection → Inertia (elbow)</text>
+        <line x1="450" y1="145" x2="605" y2="145" stroke="#334155" stroke-width="1"/>
+        <text x="525" y="161" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold">Ranking / Recommendations:</text>
+        <text x="525" y="177" text-anchor="middle" fill="#94a3b8" font-size="9">List quality → NDCG@K</text>
+        <text x="525" y="191" text-anchor="middle" fill="#94a3b8" font-size="9">Coverage → Recall@K</text>
+        <text x="525" y="205" text-anchor="middle" fill="#94a3b8" font-size="9">Precision of list → Precision@K</text>
+        <text x="525" y="219" text-anchor="middle" fill="#94a3b8" font-size="9">First-result quality → MRR</text>
+        <line x1="450" y1="230" x2="605" y2="230" stroke="#334155" stroke-width="1"/>
+        <text x="525" y="246" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold">With labels (validation):</text>
+        <text x="525" y="260" text-anchor="middle" fill="#94a3b8" font-size="9">Cluster vs true → ARI / NMI</text>
+        <!-- Bottom label -->
+        <text x="320" y="308" text-anchor="middle" fill="#475569" font-size="10">Always report MULTIPLE metrics — each reveals a different facet of model quality</text>
+      </svg>
+    </div>
+
       <h3>Cross-Validation — Getting a Reliable Score</h3>
       <p style="line-height:1.7">A single train/test split gives you one number that may be lucky or unlucky. Cross-validation averages over multiple splits so you get a more stable estimate and a sense of variance. The standard is 5-fold or 10-fold — shuffle and split into K folds, train on K-1 folds, test on 1, repeat K times. The ± std dev in the result tells you how stable the model is.</p>
       <div class="code-block"><pre>

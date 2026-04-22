@@ -6358,336 +6358,1031 @@ print(classification_report(y_test, y_pred_class))
 ═══════════════════════════════════════════════════ -->
 <div class="algo-section" id="s12">
   <div class="algo-header">
-    <div class="algo-number">12</div>
+    <span class="algo-icon">🔄</span>
     <div>
-      <div class="algo-title">LSTM — Long Short-Term Memory</div>
-      <div class="algo-subtitle">Neural networks with memory — perfect for sequences and time series</div>
-    </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('s12','what')">📖 What Is It</button>
-    <button class="tab-btn" onclick="showTab('s12','how')">⚙️ How It Works</button>
-    <button class="tab-btn" onclick="showTab('s12','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s12','code')">💻 Code & Internals</button>
-    <button class="tab-btn" onclick="showTab('s12','terms')">📚 Key Terms</button>
-  </div>
-
-  <div class="tab-content active" id="s12-what">
-    <div class="card">
-      <h3>The Problem with Regular Neural Networks on Sequences</h3>
-      <p>Regular ANNs treat each input independently — they have no memory of what came before. But many problems require understanding <strong>sequences</strong> where order matters: stock prices, text, audio, weather.</p>
-      <div class="highlight"><p>If you're predicting tomorrow's stock price, today's price matters. Last week's matters. Last month's matters. A regular ANN sees only one point at a time with no context.</p></div>
-    </div>
-    <div class="analogy">
-      <div class="label">📔 Analogy — Reading a Book</div>
-      <p>When reading a novel, you remember what happened in previous chapters. LSTM is like a reader with a notepad: it decides which information to write down (remember), which old notes to erase (forget), and which notes to use for the current decision (output). This selective memory is exactly what makes LSTM powerful for sequences.</p>
-    </div>
-    <div class="card">
-      <h3>Why Not Regular RNN?</h3>
-      <p>Regular Recurrent Neural Networks (RNNs) do have memory but suffer from the <strong>vanishing gradient problem</strong>: when backpropagating through many timesteps, gradients become exponentially small — the network forgets events from more than ~10 steps ago. LSTM solves this with its gating mechanism.</p>
+      <div class="algo-title">LSTM (Long Short-Term Memory)</div>
+      <div class="algo-subtitle">Sequential Deep Learning — Remember Long-Term Patterns in Time Series and Text</div>
     </div>
   </div>
 
-  <div class="tab-content" id="s12-how">
-    <div class="card">
-      <h3>The Three Gates of LSTM</h3>
-      <p>An LSTM cell has three "gates" — each is a small neural network that decides what to do with information:</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s12','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s12','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s12','params')">Parameters</button>
+    <button class="tab-btn" onclick="showTab('s12','code')">Code</button>
+    <button class="tab-btn" onclick="showTab('s12','tips')">When to Use</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s12-concept">
+    <h3 style="color:#38bdf8">What is LSTM? (Plain English First)</h3>
+    <p>Regular neural networks (ANNs) process each input independently — they have no memory. But real-world problems often have <strong>sequences</strong>: a sentence where word order matters, stock prices where yesterday affects today, or music where each note depends on what came before.</p>
+    <p>LSTM is designed to process sequences with <strong>memory</strong>. It maintains a "memory cell" that it can choose to remember, update, or forget at each timestep — like a human reading a book who selectively remembers important plot points and forgets minor details.</p>
+
+    <div class="concept-box">
+      <h4>The Problem with Simple RNNs — Vanishing Gradients</h4>
+      <p>Before LSTM, Recurrent Neural Networks (RNNs) were used for sequences. RNNs pass their hidden state from one step to the next. But when training with backpropagation over many timesteps:</p>
       <ul>
-        <li><strong>Forget Gate:</strong> "What from long-term memory should I erase?" — Outputs 0-1 per memory cell (0=fully forget, 1=fully keep)</li>
-        <li><strong>Input Gate:</strong> "What new information should I store in memory?" — Decides which new info is important enough to remember</li>
-        <li><strong>Output Gate:</strong> "What should I pass to the next step?" — Decides what part of memory is relevant for current output</li>
+        <li>Gradients (error signals) are multiplied together at every timestep going backwards</li>
+        <li>If each multiplication is a small fraction (like 0.5), after 100 steps: 0.5^100 ≈ 0</li>
+        <li>The gradient essentially disappears — the model cannot learn from events 100 steps ago</li>
+        <li>This is the <strong>vanishing gradient problem</strong></li>
       </ul>
+      <p><strong>LSTM's solution:</strong> A separate "cell state" that flows through time like a highway. Unlike the hidden state, the cell state changes very little unless a gate explicitly modifies it, allowing gradients to flow unchanged across many timesteps.</p>
     </div>
-    <div class="card">
-      <h3>Cell State vs Hidden State</h3>
+
+    <h3 style="color:#38bdf8;margin-top:20px">The 3 Gates — How LSTM Controls Memory</h3>
+    <p>Each gate is a small neural network (sigmoid activation → outputs 0 to 1). Gate output of 0 = fully closed (block everything). Gate output of 1 = fully open (pass everything through).</p>
+
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Gate 1: Forget Gate — "What should I forget?"</h4>
+      <p>Looks at the current input xₜ and previous hidden state hₜ₋₁. Outputs a value between 0 and 1 for each number in the cell state.</p>
       <ul>
-        <li><strong>Cell State (c_t)</strong> — Long-term memory highway. Information can flow unchanged across many timesteps. The forget and input gates modify it.</li>
-        <li><strong>Hidden State (h_t)</strong> — Short-term memory. The "working memory" passed to the next timestep and used for the current output.</li>
+        <li>0 = completely forget this piece of information</li>
+        <li>1 = completely keep this piece of information</li>
       </ul>
-      <div class="analogy">
-        <div class="label">🧠 Memory Analogy</div>
-        <p>Cell state = your long-term memory (childhood memories, skills). Hidden state = your working memory right now (what you're currently thinking about). The gates control what moves between them.</p>
+      <p><strong>Example:</strong> In language modelling, when you see a new subject, the forget gate removes the previous subject's gender from memory so pronoun agreement is updated.</p>
+      <div style="background:#0f172a;padding:8px;border-radius:6px;font-family:monospace;font-size:11px;margin-top:8px">
+        fₜ = σ(Wf · [hₜ₋₁, xₜ] + bf)  ← sigmoid of (weight × [hidden+input] + bias)
       </div>
     </div>
-    <div class="card">
-      <h3>Preparing Sequence Data — Sliding Window</h3>
-      <p>To predict day 61's stock price, you use days 1-60 as input. This is called a sliding window: [day1..day60] → predict day61. Then [day2..day61] → predict day62. And so on.</p>
+
+    <div class="concept-box" style="border-color:#3b82f6">
+      <h4 style="color:#93c5fd">Gate 2: Input Gate + Candidate — "What new info should I store?"</h4>
+      <p>Two parts working together:</p>
+      <ul>
+        <li><strong>Input Gate (σ):</strong> Decides which values to update (0-1 scale)</li>
+        <li><strong>Candidate Cell State (tanh):</strong> Creates new candidate values to potentially add to cell state (−1 to 1 scale)</li>
+      </ul>
+      <p>Final cell state update = (forget × old cell state) + (input gate × candidate values)</p>
+      <div style="background:#0f172a;padding:8px;border-radius:6px;font-family:monospace;font-size:11px;margin-top:8px">
+        iₜ = σ(Wi · [hₜ₋₁, xₜ] + bi)  ← how much to update<br>
+        C̃ₜ = tanh(Wc · [hₜ₋₁, xₜ] + bc)  ← new candidate values<br>
+        Cₜ = fₜ × Cₜ₋₁ + iₜ × C̃ₜ  ← new cell state
+      </div>
+    </div>
+
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Gate 3: Output Gate — "What should I output as my hidden state?"</h4>
+      <p>Decides what part of the cell state to expose as the hidden state (which is the actual output passed to the next layer or used for prediction).</p>
+      <div style="background:#0f172a;padding:8px;border-radius:6px;font-family:monospace;font-size:11px;margin-top:8px">
+        oₜ = σ(Wo · [hₜ₋₁, xₜ] + bo)  ← output gate<br>
+        hₜ = oₜ × tanh(Cₜ)  ← hidden state = output gate × filtered cell state
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">Key LSTM Concepts</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Term</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">What It Is</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Shape</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#f59e0b"><strong>Cell State (Cₜ)</strong></td>
+        <td style="padding:8px">Long-term memory highway. Flows from step to step with minimal modification.</td>
+        <td style="padding:8px">[batch, units]</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#22c55e"><strong>Hidden State (hₜ)</strong></td>
+        <td style="padding:8px">Short-term memory / output. Passed to next timestep AND used for prediction.</td>
+        <td style="padding:8px">[batch, units]</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;color:#a855f7"><strong>Timestep</strong></td>
+        <td style="padding:8px">One step in the sequence (one word, one day of stock data, one music note).</td>
+        <td style="padding:8px">—</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;color:#3b82f6"><strong>return_sequences</strong></td>
+        <td style="padding:8px">True = output hidden state at EVERY timestep. False = output only the LAST timestep.</td>
+        <td style="padding:8px">[batch, steps, units] or [batch, units]</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s12-visual">
+    <h3 style="color:#38bdf8">Inside the LSTM Cell — All 3 Gates Labelled</h3>
+    <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;width:100%;font-family:sans-serif">
+  <rect width="600" height="360" rx="12" fill="#0f172a"/>
+  <text x="300" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">LSTM Cell — 3 Gates + Cell State + Hidden State</text>
+  <!-- Cell state (top horizontal highway) -->
+  <line x1="20" y1="80" x2="580" y2="80" stroke="#f59e0b" stroke-width="3"/>
+  <text x="300" y="70" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="bold">Cell State Cₜ — The Long-Term Memory Highway</text>
+  <!-- Input from left: h(t-1) and x(t) -->
+  <text x="20" y="195" fill="#94a3b8" font-size="10">hₜ₋₁</text>
+  <line x1="40" y1="190" x2="100" y2="190" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="20" y="215" fill="#94a3b8" font-size="10">xₜ</text>
+  <line x1="40" y1="210" x2="100" y2="210" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#22c55e"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+  <!-- Gate 1: Forget Gate -->
+  <rect x="100" y="155" width="90" height="75" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+  <text x="145" y="178" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">FORGET</text>
+  <text x="145" y="194" text-anchor="middle" fill="#ef4444" font-size="10">GATE</text>
+  <text x="145" y="210" text-anchor="middle" fill="#fca5a5" font-size="10">σ(Wf·[h,x]+bf)</text>
+  <text x="145" y="223" text-anchor="middle" fill="#94a3b8" font-size="9">output: 0 (forget)</text>
+  <text x="145" y="235" text-anchor="middle" fill="#94a3b8" font-size="9">to 1 (keep)</text>
+  <!-- Forget × cell state -->
+  <line x1="145" y1="155" x2="145" y2="95" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowOrange)"/>
+  <circle cx="145" cy="95" r="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+  <text x="145" y="99" text-anchor="middle" fill="#ef4444" font-size="12">×</text>
+  <!-- Gate 2: Input Gate -->
+  <rect x="220" y="155" width="90" height="75" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <text x="265" y="178" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="bold">INPUT</text>
+  <text x="265" y="194" text-anchor="middle" fill="#3b82f6" font-size="10">GATE</text>
+  <text x="265" y="210" text-anchor="middle" fill="#93c5fd" font-size="10">σ(Wi·[h,x]+bi)</text>
+  <text x="265" y="223" text-anchor="middle" fill="#94a3b8" font-size="9">decides what new</text>
+  <text x="265" y="235" text-anchor="middle" fill="#94a3b8" font-size="9">info to store</text>
+  <!-- Candidate Gate (tilde C) -->
+  <rect x="220" y="258" width="90" height="60" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <text x="265" y="278" text-anchor="middle" fill="#d8b4fe" font-size="11" font-weight="bold">CANDIDATE</text>
+  <text x="265" y="292" text-anchor="middle" fill="#d8b4fe" font-size="10">tanh(Wc·[h,x]+bc)</text>
+  <text x="265" y="306" text-anchor="middle" fill="#94a3b8" font-size="9">new values to add</text>
+  <!-- Input × Candidate multiply -->
+  <line x1="265" y1="155" x2="265" y2="105" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="265" y1="258" x2="265" y2="115" stroke="#a855f7" stroke-width="1.5"/>
+  <circle cx="265" cy="110" r="10" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+  <text x="265" y="114" text-anchor="middle" fill="#22c55e" font-size="12">×</text>
+  <line x1="265" y1="100" x2="265" y2="95" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  <!-- Add to cell state -->
+  <circle cx="265" cy="95" r="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+  <text x="265" y="99" text-anchor="middle" fill="#f59e0b" font-size="12">+</text>
+  <!-- Gate 3: Output Gate -->
+  <rect x="400" y="155" width="90" height="75" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+  <text x="445" y="178" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="bold">OUTPUT</text>
+  <text x="445" y="194" text-anchor="middle" fill="#22c55e" font-size="10">GATE</text>
+  <text x="445" y="210" text-anchor="middle" fill="#86efac" font-size="10">σ(Wo·[h,x]+bo)</text>
+  <text x="445" y="223" text-anchor="middle" fill="#94a3b8" font-size="9">what to output</text>
+  <text x="445" y="235" text-anchor="middle" fill="#94a3b8" font-size="9">as hidden state</text>
+  <!-- tanh(cell) × output gate = hidden state -->
+  <line x1="445" y1="155" x2="445" y2="110" stroke="#22c55e" stroke-width="1.5"/>
+  <!-- Cell state tanh box -->
+  <rect x="390" y="92" width="55" height="26" rx="4" fill="#334155"/>
+  <text x="417" y="109" text-anchor="middle" fill="#f1f5f9" font-size="10">tanh(Cₜ)</text>
+  <circle cx="480" cy="105" r="10" fill="#1e293b" stroke="#22c55e" stroke-width="2"/>
+  <text x="480" y="109" text-anchor="middle" fill="#22c55e" font-size="12">×</text>
+  <line x1="445" y1="105" x2="470" y2="105" stroke="#22c55e" stroke-width="1.5"/>
+  <line x1="445" y1="80" x2="445" y2="100" stroke="#f59e0b" stroke-width="1.5"/>
+  <!-- Output: hₜ -->
+  <line x1="490" y1="105" x2="560" y2="105" stroke="#22c55e" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="565" y="109" fill="#86efac" font-size="11" font-weight="bold">hₜ</text>
+  <text x="565" y="123" fill="#94a3b8" font-size="10">hidden state</text>
+  <!-- Legend bottom -->
+  <rect x="20" y="325" width="560" height="26" rx="4" fill="#1e293b"/>
+  <text x="300" y="335" text-anchor="middle" fill="#94a3b8" font-size="10">σ = sigmoid (0→1) | tanh = hyperbolic tangent (-1→1) | Cₜ = cell state | hₜ = hidden state | × = multiply | + = add</text>
+  <text x="300" y="348" text-anchor="middle" fill="#94a3b8" font-size="10">Each gate = neural network layer with its own learnable weights (W, b)</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">The yellow highway at the top is the cell state (long-term memory). Red = Forget Gate (× multiply = selectively erase). Blue × Purple = Input Gate + Candidate (decide what new info to store). Green = Output Gate (decide what to expose as hidden state hₜ).</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">RNN vs LSTM — The Vanishing Gradient Problem</h3>
+    <svg viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="260" rx="12" fill="#0f172a"/>
+  <text x="290" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">RNN vs LSTM — The Vanishing Gradient Problem</text>
+  <!-- RNN Panel -->
+  <rect x="20" y="40" width="260" height="200" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="150" y="62" text-anchor="middle" fill="#f87171" font-size="12" font-weight="bold">Simple RNN</text>
+  <text x="150" y="78" text-anchor="middle" fill="#94a3b8" font-size="10">Signal fades over time (vanishing gradient)</text>
+  <!-- 5 RNN cells -->
+  <rect x="35"  cy="100" x="35"  y="95" width="40" height="35" rx="4" fill="#374151"/>
+  <rect x="85"  y="95" width="40" height="35" rx="4" fill="#374151"/>
+  <rect x="135" y="95" width="40" height="35" rx="4" fill="#374151"/>
+  <rect x="185" y="95" width="40" height="35" rx="4" fill="#374151"/>
+  <rect x="235" y="95" width="40" height="35" rx="4" fill="#374151"/>
+  <text x="55"  y="116" text-anchor="middle" fill="#f1f5f9" font-size="9">t-4</text>
+  <text x="105" y="116" text-anchor="middle" fill="#f1f5f9" font-size="9">t-3</text>
+  <text x="155" y="116" text-anchor="middle" fill="#f1f5f9" font-size="9">t-2</text>
+  <text x="205" y="116" text-anchor="middle" fill="#f1f5f9" font-size="9">t-1</text>
+  <text x="255" y="116" text-anchor="middle" fill="#f1f5f9" font-size="9">t</text>
+  <!-- Gradient arrows getting smaller (vanishing) -->
+  <line x1="75"  y1="112" x2="85"  y2="112" stroke="#ef4444" stroke-width="4"/>
+  <line x1="125" y1="112" x2="135" y2="112" stroke="#ef4444" stroke-width="3"/>
+  <line x1="175" y1="112" x2="185" y2="112" stroke="#ef4444" stroke-width="2"/>
+  <line x1="225" y1="112" x2="235" y2="112" stroke="#ef4444" stroke-width="1"/>
+  <!-- Gradient labels -->
+  <text x="80"  y="142" text-anchor="middle" fill="#94a3b8" font-size="9">g=1.0</text>
+  <text x="130" y="142" text-anchor="middle" fill="#94a3b8" font-size="9">g=0.5</text>
+  <text x="180" y="142" text-anchor="middle" fill="#94a3b8" font-size="9">g=0.2</text>
+  <text x="230" y="142" text-anchor="middle" fill="#94a3b8" font-size="9">g≈0</text>
+  <!-- Early context forgotten -->
+  <text x="150" y="175" text-anchor="middle" fill="#ef4444" font-size="11">Early context is FORGOTTEN</text>
+  <text x="150" y="193" text-anchor="middle" fill="#94a3b8" font-size="10">Can only remember ~5-10 steps back</text>
+  <text x="150" y="210" text-anchor="middle" fill="#94a3b8" font-size="10">Fails on long sequences</text>
+  <text x="150" y="228" text-anchor="middle" fill="#94a3b8" font-size="10">(e.g., long documents, music)</text>
+
+  <!-- LSTM Panel -->
+  <rect x="300" y="40" width="260" height="200" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="430" y="62" text-anchor="middle" fill="#86efac" font-size="12" font-weight="bold">LSTM</text>
+  <text x="430" y="78" text-anchor="middle" fill="#94a3b8" font-size="10">Cell state highway preserves gradients</text>
+  <!-- 5 LSTM cells -->
+  <rect x="315" y="95" width="40" height="35" rx="4" fill="#1e3a5f"/>
+  <rect x="365" y="95" width="40" height="35" rx="4" fill="#1e3a5f"/>
+  <rect x="415" y="95" width="40" height="35" rx="4" fill="#1e3a5f"/>
+  <rect x="465" y="95" width="40" height="35" rx="4" fill="#1e3a5f"/>
+  <rect x="515" y="95" width="40" height="35" rx="4" fill="#1e3a5f"/>
+  <text x="335" y="116" text-anchor="middle" fill="#93c5fd" font-size="9">t-4</text>
+  <text x="385" y="116" text-anchor="middle" fill="#93c5fd" font-size="9">t-3</text>
+  <text x="435" y="116" text-anchor="middle" fill="#93c5fd" font-size="9">t-2</text>
+  <text x="485" y="116" text-anchor="middle" fill="#93c5fd" font-size="9">t-1</text>
+  <text x="535" y="116" text-anchor="middle" fill="#93c5fd" font-size="9">t</text>
+  <!-- Cell state highway (constant width) -->
+  <line x1="315" y1="86" x2="555" y2="86" stroke="#f59e0b" stroke-width="3"/>
+  <line x1="355" y1="112" x2="365" y2="112" stroke="#22c55e" stroke-width="3"/>
+  <line x1="405" y1="112" x2="415" y2="112" stroke="#22c55e" stroke-width="3"/>
+  <line x1="455" y1="112" x2="465" y2="112" stroke="#22c55e" stroke-width="3"/>
+  <line x1="505" y1="112" x2="515" y2="112" stroke="#22c55e" stroke-width="3"/>
+  <!-- Highway label -->
+  <text x="435" y="82" text-anchor="middle" fill="#fbbf24" font-size="9">cell state highway (constant gradient flow)</text>
+  <!-- Labels -->
+  <text x="430" y="175" text-anchor="middle" fill="#22c55e" font-size="11">Long-term memory PRESERVED</text>
+  <text x="430" y="193" text-anchor="middle" fill="#94a3b8" font-size="10">Can remember 100s of steps back</text>
+  <text x="430" y="210" text-anchor="middle" fill="#94a3b8" font-size="10">Forget gate selectively removes</text>
+  <text x="430" y="228" text-anchor="middle" fill="#94a3b8" font-size="10">old irrelevant information</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">In a simple RNN (left), the gradient signal shrinks at every timestep going backwards — the early timesteps get almost no learning signal. LSTM (right) has a cell state highway where the gradient can flow unchanged across many timesteps. This allows LSTM to learn patterns spanning hundreds of timesteps.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">External Reference: LSTM Visualised</h3>
+    <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*goJVQs-p9kgLODFNyhl9zA.png"
+         alt="LSTM Cell State Diagram"
+         style="max-width:100%;border-radius:8px;border:1px solid #334155"
+         onerror="this.style.display='none'">
+  </div>
+
+  <!-- PARAMS TAB -->
+  <div class="tab-content" id="s12-params">
+    <h3 style="color:#38bdf8">Keras LSTM Layer — Every Parameter Explained</h3>
+
+    <div class="param-card">
+      <div class="param-name">units <span class="param-default">required, e.g. 64</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> The dimensionality of the hidden state and cell state — the size of the "memory" vector at each timestep.<br>
+        <strong>Think of it as:</strong> How many "memory slots" the LSTM has available at each timestep.<br>
+        <strong>Impact:</strong>
+        <ul>
+          <li>More units → bigger capacity to remember complex patterns → more parameters to train → slower + more data needed</li>
+          <li>Too few units → underfitting (cannot capture sequence patterns)</li>
+          <li>Too many units → overfitting if dataset is small</li>
+        </ul>
+        <strong>Typical values:</strong> 32, 64, 128, 256. Start with 64 for medium complexity tasks.<br>
+        <strong>Parameters created:</strong> 4 × units × (units + input_size + 1) — one for each gate (forget, input, candidate, output).
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">return_sequences <span class="param-default">default=False</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Whether to return the hidden state at EVERY timestep or only the LAST one.<br>
+        <strong>False (default):</strong> Only returns the final hidden state hₜ. Shape: [batch_size, units]. Use for: classification (sentiment analysis: one label per entire sentence).<br>
+        <strong>True:</strong> Returns hidden state for every timestep. Shape: [batch_size, timesteps, units]. <strong>Required when:</strong>
+        <ul>
+          <li>Stacking multiple LSTM layers (inner LSTMs must pass sequence to the next layer)</li>
+          <li>Sequence-to-sequence tasks (e.g., machine translation, speech recognition)</li>
+          <li>Token-level predictions (e.g., named entity recognition — label every word)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">return_state <span class="param-default">default=False</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Whether to also return the final cell state (Cₜ) and hidden state (hₜ) as separate outputs.<br>
+        <strong>True:</strong> Returns 3 outputs: (output, hidden_state, cell_state). Needed in encoder-decoder architectures where the encoder's final state seeds the decoder.<br>
+        <strong>False (default):</strong> Only returns the sequence output. Sufficient for most use cases.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">dropout <span class="param-default">default=0.0</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Fraction of the input units to drop at each timestep during training (applied to input connections).<br>
+        <strong>Range:</strong> 0.0 to 1.0. 0.2 means randomly silence 20% of inputs at each step.<br>
+        <strong>Purpose:</strong> Regularisation — prevents overfitting by forcing the LSTM to not rely on any single input feature.<br>
+        <strong>Note:</strong> The same dropout mask is applied at every timestep (not re-randomised each step). This is intentional — random masks across timesteps hurt sequence learning.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">recurrent_dropout <span class="param-default">default=0.0</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Fraction of the units to drop for the recurrent connections (applied to the hidden state hₜ₋₁, not the input).<br>
+        <strong>Purpose:</strong> Prevents the hidden state from becoming over-dependent on any subset of memory units.<br>
+        <strong>When to use:</strong> When you observe overfitting on sequence data. Typical values: 0.1–0.3.<br>
+        <strong>Warning:</strong> Using recurrent_dropout > 0 forces the model to use CPU (no GPU acceleration for this).
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">activation <span class="param-default">default='tanh'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Activation function for the cell state candidates and output gate filtering.<br>
+        <strong>tanh (default):</strong> Maps values to [-1, 1]. Standard for LSTM — do not change unless experimenting.<br>
+        <strong>recurrent_activation (default='sigmoid'):</strong> Activation for the three gates (forget, input, output). Sigmoid maps to [0,1] which is exactly what gate open/close behaviour needs.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">stateful <span class="param-default">default=False</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Whether to carry the cell state and hidden state from the end of one batch to the beginning of the next.<br>
+        <strong>False (default):</strong> States reset to zero at the start of each batch. Appropriate for independent sequences (e.g., different sentences).<br>
+        <strong>True:</strong> States persist across batches. Use when you have one long continuous sequence split into chunks (e.g., a very long time series). Must manually reset with model.reset_states() between unrelated sequences.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">go_backwards <span class="param-default">default=False</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Process the input sequence in reverse order.<br>
+        <strong>Use case:</strong> Bidirectional LSTMs (use Keras Bidirectional wrapper) — one LSTM reads forward, another reads backward. Their outputs are concatenated so each timestep has context from both past AND future. Very powerful for NLP tasks.
+      </div>
     </div>
   </div>
 
-  <div class="tab-content" id="s12-use">
-    <div class="card">
-      <h3>📈 Real Use Case: Stock Price Prediction</h3>
-      <p>A trading firm wants to predict tomorrow's closing price of a stock using the past 60 days of prices, volume, and technical indicators.</p>
-    </div>
-    <div class="card">
-      <h3>Why LSTM Works Here</h3>
-      <ul>
-        <li>Stock prices are <strong>sequential</strong> — yesterday's price directly influences today's</li>
-        <li>Long-term patterns matter — a price trend from 30 days ago might still be relevant</li>
-        <li>LSTM's memory cells can selectively remember monthly trends while tracking daily noise</li>
-      </ul>
-      <div class="highlight"><p>Important caveat: Stock price prediction is notoriously difficult. LSTM can capture some patterns but markets have inherent randomness. Use this for learning, not trading!</p></div>
-    </div>
-    <div class="card">
-      <h3>Other LSTM Applications</h3>
-      <ul>
-        <li><strong>Google Translate:</strong> Sequence-to-sequence: English sentence → French sentence</li>
-        <li><strong>Speech Recognition:</strong> Audio waveform sequence → text transcript</li>
-        <li><strong>Predictive Text:</strong> Previous words → predict next word</li>
-        <li><strong>Anomaly Detection:</strong> Learn normal sensor patterns, detect deviations</li>
-        <li><strong>Weather Forecasting:</strong> Past 30 days of weather data → tomorrow's prediction</li>
-      </ul>
-    </div>
-  </div>
-
+  <!-- CODE TAB -->
   <div class="tab-content" id="s12-code">
-    <div class="card"><h3>Complete Code: Stock Price Prediction with LSTM</h3></div>
-    <div class="code-block"><pre>
-<span class="c-kw">import</span> numpy <span class="c-kw">as</span> np                                        <span class="code-comment"># bring in the numpy as np toolkit</span>
-<span class="c-kw">import</span> matplotlib.pyplot <span class="c-kw">as</span> plt
-<span class="c-kw">from</span> sklearn.preprocessing <span class="c-kw">import</span> <span class="c-cls">MinMaxScaler</span>            <span class="code-comment"># grab MinMaxScaler from sklearn.preprocessing</span>
-<span class="c-kw">from</span> tensorflow.keras.models <span class="c-kw">import</span> <span class="c-cls">Sequential</span>            <span class="code-comment"># grab Sequential from tensorflow.keras.models</span>
-<span class="c-kw">from</span> tensorflow.keras.layers <span class="c-kw">import</span> <span class="c-cls">LSTM</span>, <span class="c-cls">Dense</span>, <span class="c-cls">Dropout</span>  <span class="code-comment"># grab LSTM, Dense, Dropout from tensorflow.keras.layers</span>
-<span class="c-kw">from</span> tensorflow.keras.callbacks <span class="c-kw">import</span> <span class="c-cls">EarlyStopping</span>      <span class="code-comment"># grab EarlyStopping from tensorflow.keras.callbacks</span>
+    <h3 style="color:#38bdf8">Complete LSTM Workflow — Annotated</h3>
+    <pre><code class="language-python">
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import numpy as np
 
-np.random.seed(42)                                        <span class="code-comment"># lock in a random seed so results are the same every run</span>
-n_days = 500
-t = np.arange(n_days)                                     <span class="code-comment"># list of whole numbers in a range</span>
-prices = 100 + 20*np.sin(t/30) + 10*np.sin(t/7) + np.random.randn(n_days)*3
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 1: Sentiment Analysis — classify entire sentence
+# Input: sequence of word IDs → Output: positive/negative
+# ══════════════════════════════════════════════════════════
 
-scaler = <span class="c-cls">MinMaxScaler</span>(feature_range=(0, 1))               <span class="code-comment"># squish all values to fit between 0 and 1</span>
-prices_scaled = scaler.fit_transform(prices.reshape(-1, 1)) # ← # fit then transform in one step (use only on training data)
+vocab_size   = 10000   # total number of unique words in vocabulary
+max_length   = 100     # maximum sentence length (pad/truncate to this)
+embedding_dim = 64     # each word → a 64-dimensional vector
 
-window_size = 60
-X_seq, y_seq = [], []
-for i in range(window_size, len(prices_scaled)):          <span class="code-comment"># loop through each item in the list</span>
-    X_seq.append(prices_scaled[i-window_size:i, 0])
-    y_seq.append(prices_scaled[i, 0])
+model_sentiment = keras.Sequential([
+    # Embedding: converts word IDs to dense vectors
+    # e.g. word_id=42 → [0.3, -0.1, 0.8, ..., 0.2] (64 numbers)
+    layers.Embedding(input_dim=vocab_size, output_dim=embedding_dim, input_length=max_length),
 
-X_seq = np.array(X_seq).reshape(-1, window_size, 1)       <span class="code-comment"># turn a list into a NumPy number array</span>
-y_seq = np.array(y_seq)                                   <span class="code-comment"># turn a list into a NumPy number array</span>
+    # LSTM: processes the 100-word sequence
+    layers.LSTM(
+        units=64,               # hidden state dimension — LSTM "memory" size
+        return_sequences=False, # only need the LAST hidden state for classification
+        dropout=0.2,            # drop 20% of inputs each step (regularisation)
+        recurrent_dropout=0.1,  # drop 10% of hidden state connections
+    ),
 
-split = int(len(X_seq) * 0.8)                             <span class="code-comment"># count how many items are in the collection</span>
-X_train, X_test = X_seq[:split], X_seq[split:]
-y_train, y_test = y_seq[:split], y_seq[split:]
-
-model = <span class="c-cls">Sequential</span>([
-    <span class="c-cls">LSTM</span>(64, return_sequences=True, input_shape=(60, 1)),
-    <span class="c-cls">Dropout</span>(0.2),
-    <span class="c-cls">LSTM</span>(32, return_sequences=False),
-    <span class="c-cls">Dropout</span>(0.2),
-    <span class="c-cls">Dense</span>(16, activation='relu'),
-    <span class="c-cls">Dense</span>(1)
+    # Dense output layer
+    layers.Dense(1, activation='sigmoid')   # binary: positive (1) or negative (0)
 ])
 
-model.compile(optimizer='adam', loss='mse')
-early_stop = <span class="c-cls">EarlyStopping</span>(monitor='val_loss', patience=10, restore_best_weights=True)
-model.fit(X_train, y_train, epochs=50, batch_size=16,     <span class="code-comment"># teach the model using training examples</span>
-          validation_split=0.1, callbacks=[early_stop], verbose=1)
+model_sentiment.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+# model_sentiment.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val))
 
-y_pred_scaled = model.predict(X_test)                     <span class="code-comment"># let the model guess labels for test data</span>
-y_pred = scaler.inverse_transform(y_pred_scaled)
-y_actual = scaler.inverse_transform(y_test.reshape(-1,1))
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 2: Time Series Prediction (stock prices)
+# Input: past 30 days → Output: next day's price
+# ══════════════════════════════════════════════════════════
 
-plt.figure(figsize=(12, 5))                               <span class="code-comment"># create a blank canvas for the chart</span>
-plt.plot(y_actual, label='Actual Price', color='#4fc3f7')
-plt.plot(y_pred, label='LSTM Prediction', color='#e63946')
-plt.title('LSTM Stock Price Prediction')                  <span class="code-comment"># add a title to the chart</span>
-plt.legend()                                              <span class="code-comment"># add a colour key explaining each line or bar</span>
-plt.show()                                                <span class="code-comment"># display the chart</span>
-</pre></div>
+model_timeseries = keras.Sequential([
+    # Input shape: (30 timesteps, 5 features per timestep)
+    # 5 features: open, high, low, close, volume
+    layers.LSTM(
+        units=128,
+        return_sequences=True,   # True because we stack another LSTM below
+        input_shape=(30, 5),
+    ),
+
+    # Second LSTM layer (deeper = learns higher-level temporal patterns)
+    layers.LSTM(
+        units=64,
+        return_sequences=False,  # False because this is the last LSTM layer
+        dropout=0.3,
+    ),
+
+    layers.Dense(32, activation='relu'),  # intermediate processing
+    layers.Dense(1),                      # output: single price value
+])
+
+model_timeseries.compile(optimizer='adam', loss='mse')
+
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 3: Bidirectional LSTM — reads forward AND backward
+# Best for NLP where future context also matters
+# ══════════════════════════════════════════════════════════
+
+model_bidir = keras.Sequential([
+    layers.Embedding(vocab_size, embedding_dim),
+
+    # Bidirectional wraps the LSTM so it runs in both directions
+    # Output = concatenation of forward and backward hidden states
+    # So if LSTM units=64, Bidirectional output size = 128 (64 forward + 64 backward)
+    layers.Bidirectional(layers.LSTM(64, return_sequences=True)),
+    layers.Bidirectional(layers.LSTM(32)),  # second Bidirectional LSTM
+
+    layers.Dense(64, activation='relu'),
+    layers.Dropout(0.3),
+    layers.Dense(1, activation='sigmoid')
+])
+
+# ══════════════════════════════════════════════════════════
+# EXAMPLE 4: Access internal states (for encoder-decoder)
+# ══════════════════════════════════════════════════════════
+
+encoder_inputs = keras.Input(shape=(None, 5))   # variable length sequences
+# return_state=True: returns (output, hidden_state, cell_state)
+encoder_outputs, state_h, state_c = layers.LSTM(
+    64,
+    return_state=True    # I want both cell state AND hidden state
+)(encoder_inputs)
+
+# state_h = final hidden state (short-term memory)
+# state_c = final cell state   (long-term memory)
+# These are passed to the decoder in seq2seq models
+
+encoder_states = [state_h, state_c]   # packaged for decoder input
+    </code></pre>
   </div>
 
-  <div class="tab-content" id="s12-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Sequence</span></td><td>Ordered data where position matters. Each element depends on previous elements.</td><td>Stock prices: [₹150, ₹148, ₹155, ₹160, ₹158...]</td></tr>
-        <tr><td><span class="term-name">Timesteps</span></td><td>How many past steps the model looks at to make a prediction. The "window" of history.</td><td>timesteps=60: use 60 days of prices to predict day 61</td></tr>
-        <tr><td><span class="term-name">Cell State</span></td><td>Long-term memory in LSTM. Can carry information across many timesteps without degradation.</td><td>Remembers a trend from 30 days ago that's still relevant</td></tr>
-        <tr><td><span class="term-name">Hidden State</span></td><td>Short-term working memory. Passed to next timestep and used for current output.</td><td>What the LSTM is "thinking about" at the current step</td></tr>
-        <tr><td><span class="term-name">Forget Gate</span></td><td>Decides what to erase from long-term memory. Outputs 0-1 for each memory cell.</td><td>If a new trend starts, forget gate erases the old trend memory</td></tr>
-        <tr><td><span class="term-name">Input Gate</span></td><td>Decides what new information to write into long-term memory</td><td>When an unusual price spike occurs, input gate decides if it's worth remembering</td></tr>
-        <tr><td><span class="term-name">Output Gate</span></td><td>Decides what part of current memory to output to the next step</td><td>Even if long-term memory has old info, output gate filters what's relevant now</td></tr>
-        <tr><td><span class="term-name">Vanishing Gradient</span></td><td>Problem with regular RNNs: gradients shrink exponentially over time → network can't learn long-range dependencies. LSTM gates solve this.</td><td>Regular RNN forgets events from &gt;10 steps ago. LSTM can remember hundreds of steps.</td></tr>
-        <tr><td><span class="term-name">return_sequences</span></td><td>If True: LSTM outputs at every timestep (needed for stacked LSTMs). If False: only outputs at last timestep.</td><td>Stack two LSTMs: first needs return_sequences=True, second False</td></tr>
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s12-tips">
+    <h3 style="color:#38bdf8">When to Use LSTM</h3>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Use LSTM When:</h4>
+      <ul style="line-height:1.9">
+        <li><strong>Sequential data with long-range dependencies</strong> — sentiment depending on a word 50 steps earlier</li>
+        <li><strong>Time series forecasting</strong> — stock prices, weather prediction, energy demand</li>
+        <li><strong>Text generation</strong> — character-level or word-level language models</li>
+        <li><strong>Speech recognition</strong> — audio frames processed sequentially</li>
+        <li><strong>Anomaly detection in sequences</strong> — fraud detection in transaction streams</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Avoid LSTM When:</h4>
+      <ul style="line-height:1.9">
+        <li>Data is <strong>not sequential</strong> — use regular dense networks or tree-based models</li>
+        <li>Sequences are <strong>very short</strong> (&lt; 10 steps) — simpler RNN or 1D CNN may suffice</li>
+        <li>You need <strong>very long context</strong> (1000+ steps) — Transformers handle this better with self-attention</li>
+        <li>You need <strong>fast training at scale</strong> — LSTMs cannot be parallelised across timesteps; Transformers can</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">LSTM vs GRU vs Transformer</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#1e293b">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Model</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">Gates</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">Parameters</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">Long-range context</th>
+          <th style="padding:7px;text-align:center;color:#94a3b8">Parallelisable</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#3b82f6">LSTM</td>
+          <td style="padding:7px;text-align:center">3 (F, I, O)</td>
+          <td style="padding:7px;text-align:center">More</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Good</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">No (sequential)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#22c55e">GRU</td>
+          <td style="padding:7px;text-align:center">2 (Reset, Update)</td>
+          <td style="padding:7px;text-align:center">Fewer</td>
+          <td style="padding:7px;text-align:center;color:#f59e0b">Moderate</td>
+          <td style="padding:7px;text-align:center;color:#ef4444">No (sequential)</td>
+        </tr>
+        <tr>
+          <td style="padding:7px;color:#a855f7">Transformer</td>
+          <td style="padding:7px;text-align:center">Self-attention</td>
+          <td style="padding:7px;text-align:center">Many more</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Excellent</td>
+          <td style="padding:7px;text-align:center;color:#22c55e">Yes (GPU-friendly)</td>
+        </tr>
       </table>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      13. TRANSFORMERS & BERT
 ═══════════════════════════════════════════════════ -->
 <div class="algo-section" id="s13">
   <div class="algo-header">
-    <div class="algo-number">13</div>
+    <span class="algo-icon">🤖</span>
     <div>
-      <div class="algo-title">Transformers &amp; BERT</div>
-      <div class="algo-subtitle">The architecture behind ChatGPT — attention mechanism revolutionized AI</div>
+      <div class="algo-title">Transformers & BERT</div>
+      <div class="algo-subtitle">Attention-Based Architecture — The Foundation of All Modern NLP and AI</div>
     </div>
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('s13','what')">📖 What Is It</button>
-    <button class="tab-btn" onclick="showTab('s13','how')">⚙️ How It Works</button>
-    <button class="tab-btn" onclick="showTab('s13','use')">🏢 Real World Use</button>
-    <button class="tab-btn" onclick="showTab('s13','code')">💻 Code & Internals</button>
-    <button class="tab-btn" onclick="showTab('s13','terms')">📚 Key Terms</button>
   </div>
 
-  <div class="tab-content active" id="s13-what">
-    <div class="card">
-      <h3>The Revolution: "Attention Is All You Need" (2017)</h3>
-      <p>The Transformer architecture, introduced in the Google paper "Attention Is All You Need," completely replaced LSTMs for most NLP tasks. It processes all words in parallel (not sequentially) and uses <strong>attention</strong> to understand context.</p>
-    </div>
-    <div class="analogy">
-      <div class="label">🎯 Analogy — Understanding "Bank" in Context</div>
-      <p>Sentence 1: "I went to the river bank." Sentence 2: "I went to the bank to deposit money."<br>The word "bank" has completely different meanings. A Transformer's attention mechanism lets "bank" look at all other words simultaneously — "river" vs "deposit" — and get a different representation in each context. LSTM reads left to right and might lose the early context by the time it reaches "bank".</p>
-    </div>
-    <div class="card">
-      <h3>BERT — Bidirectional Encoder Representations from Transformers</h3>
-      <p>BERT (Google, 2018) is a specific Transformer model pre-trained on:</p>
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('s13','concept')">Concept</button>
+    <button class="tab-btn" onclick="showTab('s13','visual')">Visuals</button>
+    <button class="tab-btn" onclick="showTab('s13','params')">Parameters</button>
+    <button class="tab-btn" onclick="showTab('s13','code')">Code</button>
+    <button class="tab-btn" onclick="showTab('s13','tips')">When to Use</button>
+  </div>
+
+  <!-- CONCEPT TAB -->
+  <div class="tab-content active" id="s13-concept">
+    <h3 style="color:#38bdf8">What is a Transformer? (Plain English First)</h3>
+    <p>Before Transformers, LSTMs processed sequences word by word — they had to wait for word 1 before processing word 2, making them inherently slow. They also struggled to connect information from very far apart in a sequence.</p>
+    <p>Transformers solve both problems with one idea: <strong>self-attention</strong>. Instead of reading one word at a time, a Transformer looks at ALL words simultaneously and determines which words are most relevant to each other — like reading an entire page at once and drawing connections anywhere on the page instantly.</p>
+    <p>This architecture is the foundation of: GPT (ChatGPT), BERT, T5, DALL-E, Stable Diffusion, Whisper, and essentially every state-of-the-art AI system since 2018.</p>
+
+    <div class="concept-box">
+      <h4>Self-Attention — The Core Mechanism</h4>
+      <p>For every word (token) in a sequence, self-attention asks: <strong>"How relevant is every other word to understanding THIS word?"</strong></p>
+      <p>Each word generates 3 vectors (all learned through training):</p>
       <ul>
-        <li><strong>Masked Language Modeling:</strong> Some words are hidden, model predicts them using context from BOTH sides</li>
-        <li><strong>Next Sentence Prediction:</strong> Given two sentences, predict if B follows A</li>
+        <li><strong>Query (Q)</strong> — "What am I looking for?" (what this word wants to know)</li>
+        <li><strong>Key (K)</strong> — "What do I offer?" (what this word can provide to others)</li>
+        <li><strong>Value (V)</strong> — "What information do I contain?" (the actual content to pass along)</li>
       </ul>
-      <div class="highlight"><p>BERT reads sentences from BOTH directions simultaneously (bidirectional) — unlike GPT which reads left to right. This bidirectional understanding makes BERT exceptional for understanding tasks (classification, Q&amp;A).</p></div>
-    </div>
-  </div>
-
-  <div class="tab-content" id="s13-how">
-    <div class="card">
-      <h3>Self-Attention: Every Word Looks at Every Other Word</h3>
-      <p>For each word in the input, self-attention computes a score for how much attention to pay to every other word. Then each word's representation is updated as a weighted sum of all words.</p>
-      <div class="analogy">
-        <div class="label">👁️ Attention Analogy</div>
-        <p>"The trophy didn't fit in the suitcase because it was too big." What does "it" refer to? The trophy. Attention scores would be: trophy(0.9), suitcase(0.05), big(0.05). The word "it" gets updated based mostly on "trophy" — the model correctly resolves the ambiguity.</p>
+      <p>Attention score between word A and word B = dot product of A's Query with B's Key. High score = very relevant to each other. Scores are normalised with softmax, then used to take a weighted average of all Value vectors.</p>
+      <div style="background:#0f172a;padding:10px;border-radius:6px;font-family:monospace;font-size:12px;margin-top:10px;text-align:center">
+        Attention(Q, K, V) = softmax(QKᵀ / √dₖ) × V
+        <div style="color:#94a3b8;font-size:10px;margin-top:4px">dₖ = key dimension (scaling prevents gradients becoming too small)</div>
       </div>
     </div>
-    <div class="card">
-      <h3>Multi-Head Attention</h3>
-      <p>Instead of one attention pattern, Transformers use <strong>multiple "heads"</strong> — each head learns to attend to different types of relationships:</p>
+
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">Multi-Head Attention — Why Use Multiple Attention Heads?</h4>
+      <p>One attention head captures one type of relationship. Multiple heads run in parallel, each learning different relationship types:</p>
       <ul>
-        <li>Head 1: might focus on grammatical relationships (subject-verb)</li>
-        <li>Head 2: might focus on co-reference (what pronouns refer to)</li>
-        <li>Head 3: might focus on entity relationships (who does what to whom)</li>
+        <li>Head 1 might learn syntactic relationships (subject-verb agreement)</li>
+        <li>Head 2 might learn semantic relationships (synonyms, antonyms)</li>
+        <li>Head 3 might learn coreference (pronoun refers to which noun)</li>
+        <li>Head 4 might learn positional relationships (nearby words)</li>
       </ul>
-      <p style="margin-top:8px">All heads' outputs are concatenated and projected. BERT-base uses 12 heads across 12 layers.</p>
+      <p>All heads' outputs are concatenated and linearly projected back to the original dimension.</p>
+      <p><strong>BERT uses 12 heads. GPT-4 uses 96 heads.</strong></p>
     </div>
-    <div class="card">
-      <h3>Fine-Tuning BERT for Your Task</h3>
-      <p>BERT is pre-trained on massive text (Wikipedia + BookCorpus). You take this pre-trained model and <strong>fine-tune</strong> it on your specific labeled dataset:</p>
-      <div class="flow">
-        <div class="flow-step"><div class="step-num">Start</div><div class="step-txt">Pre-trained BERT (knows general language)</div></div>
-        <div class="flow-step"><div class="step-num">Add Head</div><div class="step-txt">Add a classification layer on top for your task</div></div>
-        <div class="flow-step"><div class="step-num">Fine-Tune</div><div class="step-txt">Train on your labeled data (1000-50000 examples)</div></div>
-        <div class="flow-step"><div class="step-num">Result</div><div class="step-txt">State-of-art performance with much less data than training from scratch</div></div>
+
+    <div class="concept-box" style="border-color:#a855f7">
+      <h4 style="color:#d8b4fe">Positional Encoding — "Order Doesn't Exist in Attention"</h4>
+      <p>Pure self-attention sees all words simultaneously — it has no inherent sense of word order. "The cat sat" and "sat cat The" would look identical without positional encoding.</p>
+      <p>Solution: add a unique vector to each token's embedding that encodes its position (1st word, 2nd word, etc.). These vectors follow a mathematical pattern (sine and cosine at different frequencies) that allows the model to infer relative positions.</p>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">BERT — Bidirectional Encoder Representations from Transformers</h3>
+    <p>BERT is a Transformer trained by Google in 2018. It uses only the Transformer <em>encoder</em> (not the decoder). Key innovations:</p>
+
+    <div class="concept-box" style="border-color:#3b82f6">
+      <h4 style="color:#93c5fd">How BERT Was Pre-Trained (2 Tasks)</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <tr style="background:#0f172a">
+          <th style="padding:8px;text-align:left;color:#94a3b8">Task</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">What It Does</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">Why It Helps</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px;color:#22c55e"><strong>Masked Language Modelling (MLM)</strong></td>
+          <td style="padding:8px">15% of words are randomly masked. BERT predicts the masked words using surrounding context.</td>
+          <td style="padding:8px">Forces BERT to understand bidirectional context — both left AND right of every word.</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;color:#f59e0b"><strong>Next Sentence Prediction (NSP)</strong></td>
+          <td style="padding:8px">Given two sentences, predict if sentence B actually follows sentence A in the original text.</td>
+          <td style="padding:8px">Teaches BERT to understand discourse and inter-sentence relationships.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Fine-Tuning BERT for Your Task</h4>
+      <p>BERT was pre-trained on 3.3 billion words. You take this pre-trained model and add a small task-specific head on top, then train (fine-tune) on your specific dataset. Fine-tuning is much faster than training from scratch.</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <tr style="background:#0f172a">
+          <th style="padding:8px;text-align:left;color:#94a3b8">Downstream Task</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">What You Add on Top</th>
+          <th style="padding:8px;text-align:left;color:#94a3b8">Example</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px">Text Classification</td>
+          <td style="padding:8px">Dense layer on [CLS] token</td>
+          <td style="padding:8px">Sentiment analysis, spam detection</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:8px">Named Entity Recognition</td>
+          <td style="padding:8px">Dense layer on each token</td>
+          <td style="padding:8px">Label each word as Person/Location/Org</td>
+        </tr>
+        <tr>
+          <td style="padding:8px">Question Answering</td>
+          <td style="padding:8px">Two output vectors (start/end position)</td>
+          <td style="padding:8px">Find answer span in a passage</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:20px">BERT Key Specifications</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Property</th>
+        <th style="padding:8px;text-align:center;color:#94a3b8">BERT-base</th>
+        <th style="padding:8px;text-align:center;color:#94a3b8">BERT-large</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Encoder layers (blocks)</td>
+        <td style="padding:8px;text-align:center">12</td>
+        <td style="padding:8px;text-align:center">24</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Attention heads</td>
+        <td style="padding:8px;text-align:center">12</td>
+        <td style="padding:8px;text-align:center">16</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Hidden size (d_model)</td>
+        <td style="padding:8px;text-align:center">768</td>
+        <td style="padding:8px;text-align:center">1024</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px">Max sequence length</td>
+        <td style="padding:8px;text-align:center">512 tokens</td>
+        <td style="padding:8px;text-align:center">512 tokens</td>
+      </tr>
+      <tr>
+        <td style="padding:8px">Parameters</td>
+        <td style="padding:8px;text-align:center">110 million</td>
+        <td style="padding:8px;text-align:center">340 million</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- VISUAL TAB -->
+  <div class="tab-content" id="s13-visual">
+    <h3 style="color:#38bdf8">Self-Attention: How "it" Finds "cat"</h3>
+    <svg viewBox="0 0 580 320" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;font-family:sans-serif">
+  <rect width="580" height="320" rx="12" fill="#0f172a"/>
+  <text x="290" y="26" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Self-Attention: "The cat sat on the mat — what does 'it' refer to?"</text>
+  <!-- 4 word tokens -->
+  <rect x="30"  y="50" width="80" height="35" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="70"  y="72" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">The</text>
+  <rect x="140" y="50" width="80" height="35" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="180" y="72" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">cat</text>
+  <rect x="250" y="50" width="80" height="35" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="290" y="72" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">sat</text>
+  <rect x="360" y="50" width="80" height="35" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="400" y="72" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">it</text>
+  <rect x="470" y="50" width="80" height="35" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="510" y="72" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">mat</text>
+  <!-- Q K V labels -->
+  <text x="290" y="110" text-anchor="middle" fill="#94a3b8" font-size="10">Each token produces 3 vectors:</text>
+  <rect x="80"  y="120" width="120" height="28" rx="4" fill="#3b1a1a" stroke="#ef4444" stroke-width="1"/>
+  <text x="140" y="138" text-anchor="middle" fill="#fca5a5" font-size="11" font-weight="bold">Q = Query ("What am I?") </text>
+  <rect x="220" y="120" width="120" height="28" rx="4" fill="#1a3b1a" stroke="#22c55e" stroke-width="1"/>
+  <text x="280" y="138" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">K = Key ("What I have")</text>
+  <rect x="360" y="120" width="120" height="28" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+  <text x="420" y="138" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="bold">V = Value ("Info to pass")</text>
+  <!-- Attention scores: "it" attends to all tokens -->
+  <text x="290" y="175" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Attention score: Q("it") · K(each token) = how much "it" attends to each word</text>
+  <!-- Attention weights as bars -->
+  <text x="70"  y="200" text-anchor="middle" fill="#94a3b8" font-size="10">The</text>
+  <rect x="35"  y="205" width="70" height="8" rx="3" fill="#334155"/>
+  <rect x="35"  y="205" width="7"  height="8" rx="3" fill="#3b82f6"/>
+  <text x="70"  y="223" text-anchor="middle" fill="#94a3b8" font-size="9">0.05</text>
+
+  <text x="180" y="200" text-anchor="middle" fill="#94a3b8" font-size="10">cat</text>
+  <rect x="145" y="205" width="70" height="8" rx="3" fill="#334155"/>
+  <rect x="145" y="205" width="56" height="8" rx="3" fill="#22c55e"/>
+  <text x="180" y="223" text-anchor="middle" fill="#22c55e" font-size="9">0.70 ← highest!</text>
+
+  <text x="290" y="200" text-anchor="middle" fill="#94a3b8" font-size="10">sat</text>
+  <rect x="255" y="205" width="70" height="8" rx="3" fill="#334155"/>
+  <rect x="255" y="205" width="12" height="8" rx="3" fill="#3b82f6"/>
+  <text x="290" y="223" text-anchor="middle" fill="#94a3b8" font-size="9">0.10</text>
+
+  <text x="400" y="200" text-anchor="middle" fill="#94a3b8" font-size="10">it (self)</text>
+  <rect x="365" y="205" width="70" height="8" rx="3" fill="#334155"/>
+  <rect x="365" y="205" width="9"  height="8" rx="3" fill="#3b82f6"/>
+  <text x="400" y="223" text-anchor="middle" fill="#94a3b8" font-size="9">0.08</text>
+
+  <text x="510" y="200" text-anchor="middle" fill="#94a3b8" font-size="10">mat</text>
+  <rect x="475" y="205" width="70" height="8" rx="3" fill="#334155"/>
+  <rect x="475" y="205" width="6"  height="8" rx="3" fill="#3b82f6"/>
+  <text x="510" y="223" text-anchor="middle" fill="#94a3b8" font-size="9">0.07</text>
+
+  <!-- Result -->
+  <rect x="100" y="240" width="380" height="50" rx="8" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="290" y="261" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">Output for "it" = weighted sum of all Value vectors</text>
+  <text x="290" y="277" text-anchor="middle" fill="#f1f5f9" font-size="10">= 0.70 × V("cat") + 0.10 × V("sat") + 0.05 × V("The") + ...</text>
+  <text x="290" y="292" text-anchor="middle" fill="#94a3b8" font-size="10">Result: "it" now contains information mostly about "cat" — it knows "it" refers to the cat</text>
+  <!-- Formula note -->
+  <text x="290" y="312" text-anchor="middle" fill="#475569" font-size="10">Attention(Q,K,V) = softmax(QKᵀ/√dₖ) × V  — scaled dot-product attention</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">When processing the word "it", self-attention computes a score for every other word. "cat" gets the highest attention score (0.70) because the model has learned that "it" as a pronoun most often refers back to a nearby noun. The output for "it" is a weighted blend of all words' Value vectors — dominated by "cat"'s information.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Transformer Encoder Block Architecture</h3>
+    <svg viewBox="0 0 540 360" xmlns="http://www.w3.org/2000/svg" style="max-width:540px;width:100%;font-family:sans-serif">
+  <rect width="540" height="360" rx="12" fill="#0f172a"/>
+  <text x="270" y="24" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Transformer Encoder Block (repeated N times)</text>
+  <!-- Input -->
+  <text x="270" y="355" text-anchor="middle" fill="#94a3b8" font-size="11">Input Tokens + Positional Encoding</text>
+  <line x1="270" y1="340" x2="270" y2="320" stroke="#94a3b8" stroke-width="1.5"/>
+  <!-- Embedding + Positional Encoding box -->
+  <rect x="140" y="298" width="260" height="28" rx="6" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="270" y="316" text-anchor="middle" fill="#93c5fd" font-size="11">Token Embedding + Positional Encoding</text>
+  <line x1="270" y1="298" x2="270" y2="274" stroke="#3b82f6" stroke-width="1.5"/>
+  <!-- Multi-Head Attention -->
+  <rect x="120" y="248" width="300" height="32" rx="6" fill="#1a3b1a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="270" y="269" text-anchor="middle" fill="#86efac" font-size="11" font-weight="bold">Multi-Head Self-Attention (h=8 or 12 heads)</text>
+  <!-- Add & Norm -->
+  <rect x="160" y="212" width="220" height="24" rx="4" fill="#334155"/>
+  <text x="270" y="228" text-anchor="middle" fill="#94a3b8" font-size="10">Add &amp; LayerNorm (residual connection)</text>
+  <line x1="270" y1="248" x2="270" y2="236" stroke="#22c55e" stroke-width="1.5"/>
+  <line x1="270" y1="212" x2="270" y2="188" stroke="#94a3b8" stroke-width="1.5"/>
+  <!-- Feed-Forward Network -->
+  <rect x="120" y="160" width="300" height="32" rx="6" fill="#3b1a1a" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="270" y="181" text-anchor="middle" fill="#fde68a" font-size="11" font-weight="bold">Feed-Forward Network (2 dense layers, ReLU)</text>
+  <!-- Add & Norm 2 -->
+  <rect x="160" y="124" width="220" height="24" rx="4" fill="#334155"/>
+  <text x="270" y="140" text-anchor="middle" fill="#94a3b8" font-size="10">Add &amp; LayerNorm (residual connection)</text>
+  <line x1="270" y1="160" x2="270" y2="148" stroke="#f59e0b" stroke-width="1.5"/>
+  <line x1="270" y1="124" x2="270" y2="100" stroke="#94a3b8" stroke-width="1.5"/>
+  <!-- Repeat × N -->
+  <rect x="100" y="50" width="340" height="55" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="270" y="72" text-anchor="middle" fill="#d8b4fe" font-size="11">↑  Repeat this encoder block N times</text>
+  <text x="270" y="88" text-anchor="middle" fill="#94a3b8" font-size="10">BERT: 12 blocks | GPT-2: 12 blocks | GPT-4: ~96 blocks</text>
+  <line x1="270" y1="50" x2="270" y2="35" stroke="#a855f7" stroke-width="1.5"/>
+  <!-- Output -->
+  <text x="270" y="30" text-anchor="middle" fill="#94a3b8" font-size="10">Output: Contextual embeddings for each token</text>
+</svg>
+    <p style="color:#94a3b8;margin-top:8px">One encoder block: tokens enter as embeddings + positional encoding → Multi-Head Self-Attention (every token attends to every other) → Add residual + LayerNorm → Feed-Forward Network (2 dense layers) → Add residual + LayerNorm. This block is repeated N times (12 for BERT-base). The residual connections (Add &amp; LayerNorm) let gradients flow freely during training.</p>
+
+    <h3 style="color:#38bdf8;margin-top:24px">External Reference: Attention is All You Need</h3>
+    <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*BHzGVskWGS_3jEcYYi6miQ.png"
+         alt="Transformer Architecture"
+         style="max-width:100%;border-radius:8px;border:1px solid #334155"
+         onerror="this.style.display='none'">
+  </div>
+
+  <!-- PARAMS TAB -->
+  <div class="tab-content" id="s13-params">
+    <h3 style="color:#38bdf8">HuggingFace Transformers — Key Parameters</h3>
+
+    <div class="param-card">
+      <div class="param-name">model_name_or_path <span class="param-default">e.g. 'bert-base-uncased'</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Which pre-trained model to load from HuggingFace model hub.<br>
+        <strong>Common choices:</strong>
+        <ul>
+          <li><code>'bert-base-uncased'</code> — BERT, 110M params, lowercase input, general purpose</li>
+          <li><code>'bert-base-cased'</code> — Case-sensitive BERT (better for NER where "Apple" ≠ "apple")</li>
+          <li><code>'distilbert-base-uncased'</code> — Smaller, 40% fewer params, 60% faster, 97% accuracy of BERT</li>
+          <li><code>'roberta-base'</code> — Improved BERT training (no NSP, more data, longer training)</li>
+          <li><code>'sentence-transformers/all-MiniLM-L6-v2'</code> — Fast sentence embeddings for similarity</li>
+        </ul>
       </div>
     </div>
+
+    <div class="param-card">
+      <div class="param-name">max_length / max_seq_length <span class="param-default">typically 128-512</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Maximum number of tokens in one input sequence. BERT supports up to 512.<br>
+        <strong>Impact:</strong>
+        <ul>
+          <li>Shorter (128): Faster training, less memory. Good for short texts (tweets, reviews).</li>
+          <li>Longer (512): Captures more context. Required for longer documents, Q&amp;A tasks.</li>
+          <li>Sequences longer than max_length are <em>truncated</em> — important information may be lost.</li>
+        </ul>
+        <strong>Memory impact:</strong> Self-attention memory grows as O(n²) where n = sequence length. Doubling length quadruples memory.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">num_labels <span class="param-default">required for classification</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Number of output classes for the classification head.<br>
+        <strong>Values:</strong> 2 for binary (spam/not-spam), >2 for multi-class (positive/neutral/negative).<br>
+        <strong>Effect:</strong> Adds a Dense(num_labels) layer on top of the [CLS] token's representation.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">hidden_dropout_prob <span class="param-default">default=0.1</span></div>
+      <div class="param-desc">
+        <strong>What it is:</strong> Dropout probability applied to all hidden states in the model.<br>
+        <strong>Impact:</strong> 0.1 = 10% of neurons randomly silenced during training. Prevents overfitting.<br>
+        <strong>Reduce to 0.05 or 0</strong> when fine-tuning on very small datasets to avoid under-using the pre-trained knowledge.
+      </div>
+    </div>
+
+    <div class="param-card">
+      <div class="param-name">learning_rate (fine-tuning) <span class="param-default">typically 2e-5 to 5e-5</span></div>
+      <div class="param-desc">
+        <strong>Why so small?</strong> BERT's weights are already well-trained. A large learning rate would destroy the pre-trained representations and force relearning from scratch.<br>
+        <strong>Rule of thumb:</strong> 2e-5 for BERT fine-tuning. Use linear learning rate decay with warmup steps (increase for first 10% of training, then linearly decrease).
+      </div>
+    </div>
+
+    <h3 style="color:#38bdf8;margin-top:24px">Important Special Tokens in BERT</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:#1e293b">
+        <th style="padding:8px;text-align:left;color:#94a3b8">Token</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Meaning</th>
+        <th style="padding:8px;text-align:left;color:#94a3b8">Use</th>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#f59e0b">[CLS]</td>
+        <td style="padding:8px">Classification token — always added at the start</td>
+        <td style="padding:8px">Its final hidden state used for sentence-level classification</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#a855f7">[SEP]</td>
+        <td style="padding:8px">Separator token — separates two sentences</td>
+        <td style="padding:8px">Required for sentence-pair tasks (Q&amp;A, NLI)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #334155">
+        <td style="padding:8px;font-family:monospace;color:#ef4444">[MASK]</td>
+        <td style="padding:8px">Replaced randomly during pre-training MLM task</td>
+        <td style="padding:8px">Model must predict original word from context</td>
+      </tr>
+      <tr>
+        <td style="padding:8px;font-family:monospace;color:#94a3b8">[PAD]</td>
+        <td style="padding:8px">Padding token — fills sequences shorter than max_length</td>
+        <td style="padding:8px">Ignored during attention via attention_mask</td>
+      </tr>
+    </table>
   </div>
 
-  <div class="tab-content" id="s13-use">
-    <div class="card">
-      <h3>✈️ Real Use Case: Airline Tweet Sentiment Analysis</h3>
-      <p>An airline wants to automatically classify customer tweets as Positive, Negative, or Neutral to prioritize responses. BERT/Transformers are the state-of-art approach.</p>
-    </div>
-    <div class="card">
-      <h3>Why Transformers Beat LSTM Here</h3>
-      <ul>
-        <li>"The flight was not bad" — negation requires understanding whole sentence at once</li>
-        <li>"Despite the delay, the crew was amazing" — complex sentiment requiring context</li>
-        <li>Slang, abbreviations, typos — BERT's subword tokenization handles these</li>
-        <li>BERT fine-tuned on tweet sentiment achieves ~92% accuracy vs ~82% for LSTM</li>
-      </ul>
-      <div class="highlight"><p>Google Search uses BERT to understand the intent behind search queries. This improved search quality for 10% of all queries when launched in 2019.</p></div>
-    </div>
-    <div class="card">
-      <h3>Other Real Applications</h3>
-      <ul>
-        <li><strong>ChatGPT:</strong> GPT-4 is a much larger Transformer (decoder-only, generative)</li>
-        <li><strong>Google Translate:</strong> Encoder-decoder Transformer</li>
-        <li><strong>Customer Support:</strong> Auto-route tickets based on content understanding</li>
-        <li><strong>Medical:</strong> Extract information from clinical notes</li>
-        <li><strong>Code:</strong> GitHub Copilot, CodeLlama — Transformers trained on code</li>
-      </ul>
-    </div>
-  </div>
-
+  <!-- CODE TAB -->
   <div class="tab-content" id="s13-code">
-    <div class="card"><h3>Complete Code: Sentiment Analysis with HuggingFace Transformers</h3></div>
-    <div class="code-block"><pre>
-<span class="c-cm"># pip install transformers torch</span>
-<span class="c-kw">from</span> transformers <span class="c-kw">import</span> pipeline, <span class="c-cls">AutoTokenizer</span>, <span class="c-cls">AutoModelForSequenceClassification</span> <span class="code-comment"># grab pipeline, AutoTokenizer, AutoModelForSequenceClassification from transformers</span>
-<span class="c-kw">from</span> transformers <span class="c-kw">import</span> <span class="c-cls">TrainingArguments</span>, <span class="c-cls">Trainer</span>       <span class="code-comment"># grab TrainingArguments, Trainer from transformers</span>
-<span class="c-kw">import</span> torch                                              <span class="code-comment"># bring in the torch toolkit</span>
+    <h3 style="color:#38bdf8">Fine-Tuning BERT for Sentiment Classification — Annotated</h3>
+    <pre><code class="language-python">
+from transformers import (
+    AutoTokenizer,           # automatically loads the right tokenizer for any model
+    AutoModelForSequenceClassification,  # BERT + classification head
+    TrainingArguments,       # configure training
+    Trainer,                 # high-level training API
+)
+import torch
 
-<span class="c-cm"># PART 1: Instant Sentiment Analysis (pre-trained, no training needed)</span>
-sentiment_analyzer = pipeline(                            <span class="code-comment"># load a ready-made AI model for a specific task</span>
-    "sentiment-analysis",
-    model="distilbert-base-uncased-finetuned-sst-2-english"
+# ── Step 1: Load tokenizer ─────────────────────────────────────────────────────
+# Tokenizer converts text to token IDs, handles [CLS], [SEP], [PAD] automatically
+tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+# 'uncased' = converts text to lowercase before tokenising
+# BERT uses WordPiece tokenisation: "embeddings" → ["em", "##bed", "##dings"]
+
+# ── Step 2: Tokenise your text data ───────────────────────────────────────────
+texts  = ["I love this movie!", "This was terrible.", "It was okay I guess."]
+labels = [1, 0, 1]    # 1=positive, 0=negative
+
+# tokenizer() returns a dict with:
+# - input_ids: integer IDs for each token including [CLS] and [SEP]
+# - attention_mask: 1 for real tokens, 0 for [PAD] tokens
+# - token_type_ids: 0 for sentence A, 1 for sentence B (for sentence pairs)
+encodings = tokenizer(
+    texts,
+    max_length=128,        # truncate/pad to exactly 128 tokens
+    padding='max_length',  # pad shorter sequences with [PAD] to reach max_length
+    truncation=True,       # truncate sequences longer than max_length
+    return_tensors='pt',   # return PyTorch tensors ('tf' for TensorFlow)
+)
+print(f"Input IDs shape: {encodings['input_ids'].shape}")   # [3, 128]
+
+# ── Step 3: Load pre-trained BERT with classification head ────────────────────
+model = AutoModelForSequenceClassification.from_pretrained(
+    'bert-base-uncased',   # load 110M pre-trained weights from HuggingFace
+    num_labels=2,           # add Dense(2) head on [CLS] token
+    hidden_dropout_prob=0.1,     # dropout in BERT layers
+    attention_probs_dropout_prob=0.1,  # dropout in attention weights
+)
+# The model has 2 components:
+# 1. BERT encoder (110M params, pre-trained, fine-tuned slowly)
+# 2. Classification head (small, trained fast)
+
+# ── Step 4: Create dataset ────────────────────────────────────────────────────
+class SimpleDataset(torch.utils.data.Dataset):
+    def __init__(self, encodings, labels):
+        self.encodings = encodings
+        self.labels    = labels
+    def __getitem__(self, idx):
+        item = {k: v[idx] for k, v in self.encodings.items()}
+        item['labels'] = torch.tensor(self.labels[idx])
+        return item
+    def __len__(self): return len(self.labels)
+
+dataset = SimpleDataset(encodings, labels)
+
+# ── Step 5: Configure training ────────────────────────────────────────────────
+training_args = TrainingArguments(
+    output_dir='./bert_sentiment',    # where to save checkpoints
+    num_train_epochs=3,               # 3 passes through the training data
+    per_device_train_batch_size=16,   # 16 examples per GPU per step
+    learning_rate=2e-5,               # very small LR — BERT is already trained
+    warmup_steps=100,                 # linearly increase LR for first 100 steps
+    weight_decay=0.01,                # L2 regularisation on BERT weights
+    logging_steps=10,                 # print training loss every 10 steps
+    evaluation_strategy='epoch',      # evaluate on val set after each epoch
+    save_strategy='epoch',            # save checkpoint after each epoch
+    load_best_model_at_end=True,      # load best checkpoint when done
 )
 
-tweets = [
-    "@AmericanAir The flight was absolutely terrible. 3 hours late!",
-    "Great service from the crew! Will definitely fly again.",
-    "Flight was okay, nothing special but not bad either.",
-    "Lost my luggage AGAIN. This is unacceptable."
-]
-
-results = sentiment_analyzer(tweets)
-for tweet, result in zip(tweets, results):                <span class="code-comment"># loop through each item in the list</span>
-    print(f"Tweet: {tweet[:50]}...")                      <span class="code-comment"># show this value in the terminal</span>
-    print(f"  → {result['label']} (confidence: {result['score']:.1%})\n") # ← # print output to console
-
-<span class="c-cm"># PART 2: Tokenizer — how text becomes numbers</span>
-tokenizer = <span class="c-cls">AutoTokenizer</span>.from_pretrained("bert-base-uncased")
-sample = "Flight delayed by 3 hours. No explanation given."
-tokens = tokenizer(sample, max_length=128, padding='max_length',
-                   truncation=True, return_tensors='pt')
-print("Token IDs:", tokens['input_ids'][0][:10])          <span class="code-comment"># show this value in the terminal</span>
-print("Decoded:", tokenizer.decode(tokens['input_ids'][0][:10])) # ← # print output to console
-
-<span class="c-cm"># PART 3: Fine-tuning BERT on custom data (outline)</span>
-model = <span class="c-cls">AutoModelForSequenceClassification</span>.from_pretrained(
-    "bert-base-uncased", num_labels=3
+# ── Step 6: Train ─────────────────────────────────────────────────────────────
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=dataset,
+    # eval_dataset=val_dataset,    # add a validation set here
 )
+trainer.train()
 
-training_args = <span class="c-cls">TrainingArguments</span>(
-    output_dir='./sentiment_model',
-    num_train_epochs=3,
-    per_device_train_batch_size=16,
-    learning_rate=2e-5,
-    warmup_steps=100,
-    evaluation_strategy='epoch',
-    save_strategy='epoch',
-    load_best_model_at_end=True
-)
-<span class="c-cm"># trainer = Trainer(model, training_args, train_dataset, eval_dataset)</span>
-<span class="c-cm"># trainer.train()  → fine-tunes BERT on your labeled tweets!</span>
-</pre></div>
+# ── Step 7: Predict ───────────────────────────────────────────────────────────
+new_texts = ["What a wonderful film!", "I wasted 2 hours on this."]
+new_enc   = tokenizer(new_texts, max_length=128, padding='max_length',
+                      truncation=True, return_tensors='pt')
+
+with torch.no_grad():   # no gradient computation needed for inference
+    outputs = model(**new_enc)
+
+logits = outputs.logits          # raw scores before softmax: shape [2, 2]
+probs  = torch.softmax(logits, dim=1)   # convert to probabilities
+preds  = logits.argmax(dim=1)    # predicted class: 0=negative, 1=positive
+print(f"Predictions: {preds}")   # e.g. tensor([1, 0])
+print(f"Probabilities: {probs.round(decimals=3)}")
+
+# ── Step 8: Generate sentence embeddings (without fine-tuning) ────────────────
+# If you just want vector representations of sentences:
+from sentence_transformers import SentenceTransformer
+
+embed_model = SentenceTransformer('all-MiniLM-L6-v2')  # fast, 384-dim embeddings
+sentences = ["The cat sat on the mat.", "A kitten rested on the carpet."]
+embeddings = embed_model.encode(sentences)   # shape: [2, 384]
+
+# Cosine similarity — how semantically similar are these sentences?
+from sklearn.metrics.pairwise import cosine_similarity
+similarity = cosine_similarity([embeddings[0]], [embeddings[1]])
+print(f"Semantic similarity: {similarity[0][0]:.3f}")   # e.g. 0.83 (very similar)
+    </code></pre>
   </div>
 
-  <div class="tab-content" id="s13-terms">
-    <div class="card">
-      <h3>Key Terms</h3>
-      <table class="term-table">
-        <tr><th>Term</th><th>Plain English</th><th>Example</th></tr>
-        <tr><td><span class="term-name">Attention Mechanism</span></td><td>Each word computes how much it should "attend to" every other word. Produces context-aware representations.</td><td>"bank" attends to "river" (score 0.9) → gets river-bank meaning</td></tr>
-        <tr><td><span class="term-name">Self-Attention</span></td><td>Each word in a sequence attends to all other words in the SAME sequence — not an external query</td><td>All words in "the cat sat on the mat" attend to each other simultaneously</td></tr>
-        <tr><td><span class="term-name">Multi-Head Attention</span></td><td>Run attention mechanism multiple times in parallel with different learned weight matrices. Each head learns different types of relationships.</td><td>BERT-base: 12 attention heads per layer, 12 layers = 144 total attention patterns</td></tr>
-        <tr><td><span class="term-name">Token</span></td><td>The basic unit of text that BERT processes. Not always a whole word — BERT uses subword tokenization.</td><td>"unbelievable" → ["un", "##believable"] — two tokens</td></tr>
-        <tr><td><span class="term-name">Embedding</span></td><td>Dense vector representation of a token. Similar words have similar embeddings. BERT learns contextualized embeddings.</td><td>"king" → [0.2, -0.5, 0.8, 0.1, ...] (768 numbers)</td></tr>
-        <tr><td><span class="term-name">[CLS] Token</span></td><td>Special token added at the beginning of every BERT input. Its final representation is used for classification tasks.</td><td>Input: "[CLS] flight was terrible [SEP]" → [CLS] vector → classifier → sentiment</td></tr>
-        <tr><td><span class="term-name">Fine-Tuning</span></td><td>Taking a pre-trained model (trained on huge data) and adapting it to your specific task with a small labeled dataset</td><td>BERT pretrained on Wikipedia → fine-tune on 1000 labeled tweets → airline sentiment classifier</td></tr>
-        <tr><td><span class="term-name">Pretrained Model</span></td><td>A model already trained on massive data, encoding general knowledge. You use it as a starting point instead of training from scratch.</td><td>bert-base-uncased: 110M parameters, trained on Wikipedia + BookCorpus</td></tr>
-        <tr><td><span class="term-name">Tokenizer</span></td><td>Converts raw text to token IDs that the model understands. Each model has its own tokenizer — use the matching one!</td><td>AutoTokenizer.from_pretrained("bert-base-uncased") → match BERT exactly</td></tr>
+  <!-- TIPS TAB -->
+  <div class="tab-content" id="s13-tips">
+    <h3 style="color:#38bdf8">When to Use Transformers/BERT</h3>
+    <div class="concept-box" style="border-color:#22c55e">
+      <h4 style="color:#86efac">Use Transformers When:</h4>
+      <ul style="line-height:1.9">
+        <li><strong>Any NLP task</strong> — sentiment, classification, NER, Q&A, summarisation, translation</li>
+        <li>You want to <strong>fine-tune a pre-trained model</strong> on small domain-specific data (100–10,000 examples)</li>
+        <li>You need the model to <strong>understand context bidirectionally</strong> (BERT) — not just left-to-right</li>
+        <li><strong>Text embeddings</strong> for similarity search, recommendation, clustering of documents</li>
+        <li>You have access to a <strong>GPU</strong> (Transformers are memory-intensive but GPU-parallelisable)</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#ef4444">
+      <h4 style="color:#f87171">Avoid or Be Careful When:</h4>
+      <ul style="line-height:1.9">
+        <li>You need <strong>very low latency</strong> (&lt;10ms) — use DistilBERT or quantised models instead</li>
+        <li>You only have a <strong>CPU</strong> — inference is slow without a GPU</li>
+        <li>Sequences are <strong>longer than 512 tokens</strong> — use Longformer, BigBird, or chunk the input</li>
+        <li>Data is <strong>not text</strong> — Transformers work for images (ViT) and tabular data but these are specialized variants</li>
+      </ul>
+    </div>
+    <div class="concept-box" style="border-color:#f59e0b">
+      <h4 style="color:#fbbf24">BERT vs GPT vs T5 — Key Differences</h4>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <tr style="background:#1e293b">
+          <th style="padding:7px;text-align:left;color:#94a3b8">Model</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Architecture</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Reads</th>
+          <th style="padding:7px;text-align:left;color:#94a3b8">Best For</th>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#3b82f6">BERT</td>
+          <td style="padding:7px">Encoder only</td>
+          <td style="padding:7px">Bidirectional (left+right)</td>
+          <td style="padding:7px">Classification, NER, Q&A</td>
+        </tr>
+        <tr style="border-bottom:1px solid #334155">
+          <td style="padding:7px;color:#22c55e">GPT (1/2/3/4)</td>
+          <td style="padding:7px">Decoder only</td>
+          <td style="padding:7px">Left-to-right only</td>
+          <td style="padding:7px">Text generation, chat, completion</td>
+        </tr>
+        <tr>
+          <td style="padding:7px;color:#a855f7">T5 / BART</td>
+          <td style="padding:7px">Encoder + Decoder</td>
+          <td style="padding:7px">Bidirectional encoder, auto-regressive decoder</td>
+          <td style="padding:7px">Translation, summarisation, seq2seq</td>
+        </tr>
       </table>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      14. SNOWFLAKE
 ═══════════════════════════════════════════════════ -->
